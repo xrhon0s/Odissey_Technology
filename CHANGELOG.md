@@ -1,0 +1,12 @@
+# Changelog
+
+All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and Semantic Versioning.
+
+## [Unreleased]
+
+### Added
+
+- Initial Next.js application foundation.
+- Type checking, linting, formatting and unit-test workflows.
+- Repository contribution and agent guidance.
+- Pull request validation workflow.
