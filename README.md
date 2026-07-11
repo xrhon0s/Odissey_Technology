@@ -35,6 +35,9 @@ La aplicación estará disponible en `http://localhost:3000`.
 | `pnpm test:watch`   | Vitest interactivo             |
 | `pnpm format:check` | Verificar formato              |
 | `pnpm format`       | Aplicar formato                |
+| `pnpm db:generate`  | Generar migraciones            |
+| `pnpm db:check`     | Validar migraciones            |
+| `pnpm db:studio`    | Abrir Drizzle Studio           |
 
 ## Variables de entorno
 
@@ -42,7 +45,7 @@ La aplicación estará disponible en `http://localhost:3000`.
 
 ## Base de datos y migraciones
 
-El esquema residirá en `src/db/schema` y las migraciones reproducibles en `src/db/migrations`. Drizzle se configurará en el bloque de persistencia. No se deben modificar bases de producción manualmente ni ejecutar migraciones destructivas sin revisión y autorización.
+El esquema reside en `src/db/schema` y las migraciones reproducibles en `src/db/migrations`. Para generar una migración local configura `DATABASE_URL` y ejecuta `pnpm db:generate`; este comando no aplica la migración. No se deben modificar bases de producción manualmente ni ejecutar migraciones destructivas sin revisión y autorización.
 
 ## Pruebas
 

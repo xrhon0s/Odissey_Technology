@@ -10,3 +10,5 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Type checking, linting, formatting and unit-test workflows.
 - Repository contribution and agent guidance.
 - Pull request validation workflow.
+- Drizzle and PostgreSQL persistence foundation for catalog and inventory.
+- Auditable inventory movement rules and database constraints.
