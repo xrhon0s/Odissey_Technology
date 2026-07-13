@@ -24,20 +24,24 @@ La aplicación estará disponible en `http://localhost:3000`.
 
 ## Scripts
 
-| Comando             | Uso                            |
-| ------------------- | ------------------------------ |
-| `pnpm dev`          | Servidor local                 |
-| `pnpm build`        | Build de producción            |
-| `pnpm start`        | Ejecutar el build              |
-| `pnpm lint`         | ESLint                         |
-| `pnpm typecheck`    | TypeScript sin emitir archivos |
-| `pnpm test`         | Pruebas unitarias              |
-| `pnpm test:watch`   | Vitest interactivo             |
-| `pnpm format:check` | Verificar formato              |
-| `pnpm format`       | Aplicar formato                |
-| `pnpm db:generate`  | Generar migraciones            |
-| `pnpm db:check`     | Validar migraciones            |
-| `pnpm db:studio`    | Abrir Drizzle Studio           |
+| Comando             | Uso                             |
+| ------------------- | ------------------------------- |
+| `pnpm dev`          | Servidor local                  |
+| `pnpm build`        | Build de producción             |
+| `pnpm start`        | Ejecutar el build               |
+| `pnpm lint`         | ESLint                          |
+| `pnpm typecheck`    | TypeScript sin emitir archivos  |
+| `pnpm test`         | Pruebas unitarias               |
+| `pnpm test:watch`   | Vitest interactivo              |
+| `pnpm format:check` | Verificar formato               |
+| `pnpm format`       | Aplicar formato                 |
+| `pnpm db:generate`  | Generar migraciones             |
+| `pnpm db:check`     | Validar migraciones             |
+| `pnpm db:migrate`   | Aplicar migraciones localmente  |
+| `pnpm db:seed`      | Cargar catálogo de demostración |
+| `pnpm db:studio`    | Abrir Drizzle Studio            |
+| `pnpm db:start`     | Iniciar PostgreSQL con Docker   |
+| `pnpm db:stop`      | Detener PostgreSQL local        |
 
 ## Variables de entorno
 
@@ -46,6 +50,28 @@ La aplicación estará disponible en `http://localhost:3000`.
 ## Base de datos y migraciones
 
 El esquema reside en `src/db/schema` y las migraciones reproducibles en `src/db/migrations`. Para generar una migración local configura `DATABASE_URL` y ejecuta `pnpm db:generate`; este comando no aplica la migración. No se deben modificar bases de producción manualmente ni ejecutar migraciones destructivas sin revisión y autorización.
+
+### PostgreSQL local y datos de demostración
+
+Docker permite probar el catálogo sin crear todavía un proyecto de Supabase:
+
+```bash
+pnpm db:start
+cp .env.example .env.local
+pnpm db:migrate
+SEED_DEMO_DATA=true pnpm db:seed
+pnpm dev
+```
+
+Visita `http://localhost:3000/catalogo`. El seed es idempotente y se niega a ejecutar en producción o sin `SEED_DEMO_DATA=true`. Sus productos usan SKU con prefijo `DEMO-` y no contienen imágenes externas.
+
+Para detener la base sin eliminar sus datos:
+
+```bash
+pnpm db:stop
+```
+
+El volumen `postgres_data` conserva la información entre reinicios. Eliminar ese volumen es una operación destructiva y no forma parte del flujo normal.
 
 ## Pruebas
 

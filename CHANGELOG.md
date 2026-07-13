@@ -14,3 +14,4 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Auditable inventory movement rules and database constraints.
 - Validated and paginated public catalog queries.
 - Responsive public catalog and product detail pages with loading, empty, error, and not-found states.
+- Reproducible local PostgreSQL environment and idempotent demo catalog seed.
