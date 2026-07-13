@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="flex flex-1 items-center bg-slate-950 px-6 py-20 text-white">
@@ -9,8 +11,15 @@ export default function Home() {
           Tecnología útil para acompañar tu día.
         </h1>
         <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
-          Estamos preparando una tienda rápida, confiable y hecha para Colombia.
+          Accesorios seleccionados, precios claros y una experiencia hecha para
+          Colombia.
         </p>
+        <Link
+          href="/catalogo"
+          className="mt-8 inline-flex rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-300"
+        >
+          Explorar catálogo
+        </Link>
       </div>
     </main>
   );

@@ -13,3 +13,4 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Drizzle and PostgreSQL persistence foundation for catalog and inventory.
 - Auditable inventory movement rules and database constraints.
 - Validated and paginated public catalog queries.
+- Responsive public catalog and product detail pages with loading, empty, error, and not-found states.
