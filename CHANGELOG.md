@@ -12,3 +12,4 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 - Pull request validation workflow.
 - Drizzle and PostgreSQL persistence foundation for catalog and inventory.
 - Auditable inventory movement rules and database constraints.
+- Validated and paginated public catalog queries.
