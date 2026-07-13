@@ -41,6 +41,18 @@ export type CatalogPage = {
   totalPages: number;
 };
 
+export async function listActiveCategories() {
+  return getDb()
+    .select({
+      id: categories.id,
+      name: categories.name,
+      slug: categories.slug,
+    })
+    .from(categories)
+    .where(eq(categories.isActive, true))
+    .orderBy(asc(categories.sortOrder), asc(categories.name));
+}
+
 function getCatalogConditions(filters: CatalogFilters): SQL[] {
   const conditions: SQL[] = [
     eq(products.status, "active"),
@@ -202,6 +214,10 @@ export async function getCatalogProductBySlug(slug: string) {
       )
       .orderBy(asc(productVariants.priceInCop), asc(productVariants.name)),
   ]);
+
+  if (variants.length === 0) {
+    return null;
+  }
 
   return { ...product, images, variants };
 }

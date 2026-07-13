@@ -5,6 +5,7 @@ import { createCatalogService } from "./catalog-service";
 function createRepository() {
   return {
     findProductBySlug: vi.fn().mockResolvedValue(null),
+    listCategories: vi.fn().mockResolvedValue([]),
     listProducts: vi.fn().mockResolvedValue({
       items: [],
       page: 1,
@@ -16,6 +17,15 @@ function createRepository() {
 }
 
 describe("catalogService", () => {
+  it("lists filter categories through the repository", async () => {
+    const repository = createRepository();
+    const service = createCatalogService(repository);
+
+    await service.listCategories();
+
+    expect(repository.listCategories).toHaveBeenCalledOnce();
+  });
+
   it("validates and normalizes filters before querying", async () => {
     const repository = createRepository();
     const service = createCatalogService(repository);
