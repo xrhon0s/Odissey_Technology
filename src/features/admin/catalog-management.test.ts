@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   createProductInputSchema,
+  productImageInputSchema,
   variantInputSchema,
 } from "./catalog-management";
 
@@ -38,6 +39,28 @@ describe("variantInputSchema", () => {
       variantInputSchema.parse({ ...validVariant, compareAtPriceInCop: "" })
         .compareAtPriceInCop,
     ).toBeNull();
+  });
+});
+
+describe("productImageInputSchema", () => {
+  it("acepta imágenes HTTPS alojadas en Cloudinary", () => {
+    expect(
+      productImageInputSchema.safeParse({
+        altText: "Cargador visto de frente",
+        sortOrder: "0",
+        url: "https://res.cloudinary.com/demo/image/upload/cargador.jpg",
+      }).success,
+    ).toBe(true);
+  });
+
+  it("rechaza hosts externos que Next Image no tiene autorizados", () => {
+    expect(
+      productImageInputSchema.safeParse({
+        altText: "Imagen externa",
+        sortOrder: 0,
+        url: "https://example.com/producto.jpg",
+      }).success,
+    ).toBe(false);
   });
 });
 

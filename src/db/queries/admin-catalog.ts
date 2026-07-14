@@ -1,12 +1,19 @@
 import { asc, count, eq, min, sql } from "drizzle-orm";
 
 import { getDb } from "..";
-import { categories, inventory, products, productVariants } from "../schema";
+import {
+  categories,
+  inventory,
+  productImages,
+  products,
+  productVariants,
+} from "../schema";
 
 export async function listAdminCategories() {
   return getDb()
     .select({
       id: categories.id,
+      description: categories.description,
       isActive: categories.isActive,
       name: categories.name,
       slug: categories.slug,
@@ -57,23 +64,35 @@ export async function getAdminProduct(productId: string) {
 
   if (!product) return null;
 
-  const variants = await db
-    .select({
-      availableQuantity: sql<number>`greatest(coalesce(${inventory.quantity}, 0) - coalesce(${inventory.reservedQuantity}, 0), 0)::integer`,
-      compareAtPriceInCop: productVariants.compareAtPriceInCop,
-      id: productVariants.id,
-      isActive: productVariants.isActive,
-      lowStockThreshold: sql<number>`coalesce(${inventory.lowStockThreshold}, 0)::integer`,
-      name: productVariants.name,
-      priceInCop: productVariants.priceInCop,
-      quantity: sql<number>`coalesce(${inventory.quantity}, 0)::integer`,
-      reservedQuantity: sql<number>`coalesce(${inventory.reservedQuantity}, 0)::integer`,
-      sku: productVariants.sku,
-    })
-    .from(productVariants)
-    .leftJoin(inventory, eq(inventory.variantId, productVariants.id))
-    .where(eq(productVariants.productId, product.id))
-    .orderBy(asc(productVariants.name));
+  const [variants, images] = await Promise.all([
+    db
+      .select({
+        availableQuantity: sql<number>`greatest(coalesce(${inventory.quantity}, 0) - coalesce(${inventory.reservedQuantity}, 0), 0)::integer`,
+        compareAtPriceInCop: productVariants.compareAtPriceInCop,
+        id: productVariants.id,
+        isActive: productVariants.isActive,
+        lowStockThreshold: sql<number>`coalesce(${inventory.lowStockThreshold}, 0)::integer`,
+        name: productVariants.name,
+        priceInCop: productVariants.priceInCop,
+        quantity: sql<number>`coalesce(${inventory.quantity}, 0)::integer`,
+        reservedQuantity: sql<number>`coalesce(${inventory.reservedQuantity}, 0)::integer`,
+        sku: productVariants.sku,
+      })
+      .from(productVariants)
+      .leftJoin(inventory, eq(inventory.variantId, productVariants.id))
+      .where(eq(productVariants.productId, product.id))
+      .orderBy(asc(productVariants.name)),
+    db
+      .select({
+        altText: productImages.altText,
+        id: productImages.id,
+        sortOrder: productImages.sortOrder,
+        url: productImages.url,
+      })
+      .from(productImages)
+      .where(eq(productImages.productId, product.id))
+      .orderBy(asc(productImages.sortOrder), asc(productImages.createdAt)),
+  ]);
 
-  return { ...product, variants };
+  return { ...product, images, variants };
 }

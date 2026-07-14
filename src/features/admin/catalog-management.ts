@@ -1,4 +1,5 @@
 import { and, eq } from "drizzle-orm";
+import { createHash } from "node:crypto";
 import { z } from "zod";
 
 import { getDb } from "@/db";
@@ -7,6 +8,7 @@ import {
   categories,
   inventory,
   inventoryMovements,
+  productImages,
   products,
   productVariants,
 } from "@/db/schema";
@@ -22,6 +24,7 @@ const optionalPrice = z.preprocess(
 );
 
 export const categoryInputSchema = z.object({
+  description: optionalText,
   isActive: z.boolean(),
   name: z.string().trim().min(2).max(120),
   slug: z.string().trim().min(2).max(140),
@@ -66,9 +69,22 @@ export const createProductInputSchema = productInputSchema.extend({
   variant: variantInputSchema,
 });
 
+export const productImageInputSchema = z.object({
+  altText: z.string().trim().min(3).max(240),
+  sortOrder: z.coerce.number().int().min(0).max(10_000),
+  url: z.url().refine(
+    (value) => {
+      const url = new URL(value);
+      return url.protocol === "https:" && url.hostname === "res.cloudinary.com";
+    },
+    { message: "La imagen debe usar una URL HTTPS de Cloudinary." },
+  ),
+});
+
 export type CategoryInput = z.infer<typeof categoryInputSchema>;
 export type ProductInput = z.infer<typeof productInputSchema>;
 export type VariantInput = z.infer<typeof variantInputSchema>;
+export type ProductImageInput = z.infer<typeof productImageInputSchema>;
 
 export class CatalogManagementError extends Error {
   constructor(
@@ -76,6 +92,7 @@ export class CatalogManagementError extends Error {
       | "ADMIN_FORBIDDEN"
       | "CATEGORY_NOT_FOUND"
       | "DUPLICATE_VALUE"
+      | "IMAGE_NOT_FOUND"
       | "PRODUCT_NOT_FOUND"
       | "VARIANT_NOT_FOUND",
     message: string,
@@ -133,6 +150,134 @@ export async function createCategory(adminId: string, input: CategoryInput) {
     }
     throw error;
   }
+}
+
+export async function updateCategory(
+  adminId: string,
+  categoryId: string,
+  input: CategoryInput,
+) {
+  try {
+    return await getDb().transaction(async (transaction) => {
+      await assertAdmin(transaction, adminId);
+      const [updated] = await transaction
+        .update(categories)
+        .set({ ...input, updatedAt: new Date() })
+        .where(eq(categories.id, categoryId))
+        .returning({ id: categories.id });
+      if (!updated) {
+        throw new CatalogManagementError(
+          "CATEGORY_NOT_FOUND",
+          "La categoría no existe.",
+        );
+      }
+      return updated;
+    });
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      throw new CatalogManagementError(
+        "DUPLICATE_VALUE",
+        "Ya existe una categoría con ese slug.",
+      );
+    }
+    throw error;
+  }
+}
+
+function externalImageId(url: string) {
+  return `external-${createHash("sha256").update(url).digest("hex")}`;
+}
+
+export async function addProductImage(
+  adminId: string,
+  productId: string,
+  input: ProductImageInput,
+) {
+  try {
+    return await getDb().transaction(async (transaction) => {
+      await assertAdmin(transaction, adminId);
+      const [product] = await transaction
+        .select({ id: products.id })
+        .from(products)
+        .where(eq(products.id, productId))
+        .limit(1);
+      if (!product) {
+        throw new CatalogManagementError(
+          "PRODUCT_NOT_FOUND",
+          "El producto no existe.",
+        );
+      }
+      const [image] = await transaction
+        .insert(productImages)
+        .values({
+          ...input,
+          cloudinaryPublicId: externalImageId(input.url),
+          productId,
+        })
+        .returning({ id: productImages.id });
+      return image;
+    });
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      throw new CatalogManagementError(
+        "DUPLICATE_VALUE",
+        "Esa imagen ya está registrada en el catálogo.",
+      );
+    }
+    throw error;
+  }
+}
+
+export async function updateProductImage(
+  adminId: string,
+  imageId: string,
+  input: ProductImageInput,
+) {
+  try {
+    return await getDb().transaction(async (transaction) => {
+      await assertAdmin(transaction, adminId);
+      const [updated] = await transaction
+        .update(productImages)
+        .set({
+          ...input,
+          cloudinaryPublicId: externalImageId(input.url),
+        })
+        .where(eq(productImages.id, imageId))
+        .returning({ id: productImages.id });
+      if (!updated) {
+        throw new CatalogManagementError(
+          "IMAGE_NOT_FOUND",
+          "La imagen no existe.",
+        );
+      }
+      return updated;
+    });
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      throw new CatalogManagementError(
+        "DUPLICATE_VALUE",
+        "Esa imagen ya está registrada en el catálogo.",
+      );
+    }
+    throw error;
+  }
+}
+
+export async function removeProductImage(adminId: string, imageId: string) {
+  return getDb().transaction(async (transaction) => {
+    await assertAdmin(transaction, adminId);
+    const [removed] = await transaction
+      .delete(productImages)
+      .where(eq(productImages.id, imageId))
+      .returning({ id: productImages.id });
+    if (!removed) {
+      throw new CatalogManagementError(
+        "IMAGE_NOT_FOUND",
+        "La imagen no existe.",
+      );
+    }
+    return removed;
+  });
 }
 
 export async function createProduct(
