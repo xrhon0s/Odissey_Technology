@@ -1,10 +1,10 @@
 # Odissey Technology
 
-Ecommerce colombiano de accesorios tecnológicos. El MVP reúne tienda pública, checkout, pagos y administración en un monolito modular, con COP y español como valores predeterminados.
+Ecommerce colombiano de accesorios tecnológicos. El MVP reúne tienda pública, checkout, pagos manuales y administración en un monolito modular, con COP y español como valores predeterminados.
 
 ## Stack
 
-Next.js (App Router), React, TypeScript estricto, Tailwind CSS y pnpm. La arquitectura aprobada incorpora PostgreSQL/Supabase, Drizzle, Zod, Wompi, Cloudinary, Resend, Sentry, GA4, Vitest y Playwright conforme se implementen sus dominios.
+Next.js (App Router), React, TypeScript estricto, Tailwind CSS y pnpm. La arquitectura incorpora PostgreSQL/Supabase, Drizzle, Zod, Cloudinary, Resend, Sentry, GA4, Vitest y Playwright conforme se implementen sus dominios. El MVP comienza con transferencias verificadas manualmente; una pasarela podrá incorporarse después de validar el negocio.
 
 ## Requisitos
 

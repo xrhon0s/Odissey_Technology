@@ -26,6 +26,8 @@ type OrderResponse =
       ok: true;
       order: {
         id: string;
+        paymentMethod: "manual_transfer";
+        paymentStatus: "pending";
         reference: string;
         reservationExpiresAt: string;
         reused: boolean;
@@ -106,13 +108,19 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
           Referencia {order.reference}
         </h2>
         <p className="mt-4 text-slate-600">
-          El pedido está pendiente y reservamos tus productos mientras completas
-          el pago.
+          El pedido está pendiente y reservamos tus productos mientras
+          coordinamos la transferencia manual.
         </p>
         <dl className="mx-auto mt-6 max-w-sm space-y-3 rounded-xl bg-slate-50 p-5 text-left">
           <div className="flex justify-between gap-4">
             <dt className="text-slate-600">Estado</dt>
             <dd className="font-semibold text-slate-950">Pendiente</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-slate-600">Forma de pago</dt>
+            <dd className="text-right font-semibold text-slate-950">
+              Transferencia manual
+            </dd>
           </div>
           <div className="flex justify-between gap-4">
             <dt className="text-slate-600">Total</dt>
@@ -130,10 +138,14 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
             </dd>
           </div>
         </dl>
-        <p className="mt-6 text-sm leading-6 text-amber-800">
-          La integración de pago se habilitará en la siguiente etapa. Conserva
-          esta referencia.
-        </p>
+        <div className="mt-6 rounded-xl bg-amber-50 p-4 text-left text-sm leading-6 text-amber-900">
+          <p className="font-semibold">Siguiente paso</p>
+          <p className="mt-1">
+            Conserva la referencia del pedido. El equipo te compartirá los datos
+            de transferencia y confirmará el pedido después de revisar el
+            comprobante.
+          </p>
+        </div>
         <Link
           href="/catalogo"
           className="mt-6 inline-flex rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white"
@@ -143,7 +155,6 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
       </section>
     );
   }
-
   if (items.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
