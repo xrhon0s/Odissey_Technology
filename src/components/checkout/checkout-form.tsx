@@ -172,12 +172,20 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
             </p>
           )}
         </div>
-        <Link
-          href="/catalogo"
-          className="mt-6 inline-flex rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white"
-        >
-          Volver al catálogo
-        </Link>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Link
+            href={`/pedido?reference=${encodeURIComponent(order.reference)}`}
+            className="inline-flex rounded-xl bg-cyan-700 px-5 py-3 text-sm font-semibold text-white"
+          >
+            Consultar este pedido
+          </Link>
+          <Link
+            href="/catalogo"
+            className="inline-flex rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white"
+          >
+            Volver al catálogo
+          </Link>
+        </div>
       </section>
     );
   }

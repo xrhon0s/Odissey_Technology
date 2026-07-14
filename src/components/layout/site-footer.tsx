@@ -34,6 +34,11 @@ export async function SiteFooter() {
                 Carrito
               </Link>
             </li>
+            <li>
+              <Link href="/pedido" className="hover:text-cyan-800">
+                Consultar pedido
+              </Link>
+            </li>
             {whatsappUrl ? (
               <li>
                 <a

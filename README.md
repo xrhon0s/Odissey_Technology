@@ -80,6 +80,12 @@ El checkout permite seleccionar Nequi, DaviPlata, transferencia Bancolombia o ef
 
 El efectivo contraentrega se valida en el servidor y solo se acepta para recogida local o entregas en los diez municipios del Valle de Aburrá: Medellín, Barbosa, Girardota, Copacabana, Bello, Itagüí, Envigado, Sabaneta, La Estrella y Caldas.
 
+Los métodos de envío, sus precios, disponibilidad y orden se administran en `/admin/configuracion`; no es necesario modificar la base de datos para ajustar el checkout.
+
+## Consulta de pedidos
+
+El comprador puede consultar el estado en `/pedido` usando la referencia y el mismo correo de la compra. La respuesta pública muestra el avance del pedido, pago, entrega, productos y totales, pero omite dirección, teléfono e historial administrativo.
+
 ## Acceso administrativo
 
 El panel usa Supabase Auth con sesión por cookies y vuelve a verificar en PostgreSQL que el usuario pertenezca a `admin_users` y esté activo. Sin configuración, `/admin` permanece cerrado y `/login` explica qué falta.
