@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { serverEnvSchema } from "./env";
+import { migrationDatabaseUrlSchema, serverEnvSchema } from "./env";
 
 describe("serverEnvSchema", () => {
   it("accepts a PostgreSQL connection URL", () => {
@@ -17,5 +17,15 @@ describe("serverEnvSchema", () => {
     });
 
     expect(result.success).toBe(false);
+  });
+});
+
+describe("migrationDatabaseUrlSchema", () => {
+  it("accepts a direct PostgreSQL connection", () => {
+    expect(
+      migrationDatabaseUrlSchema.safeParse(
+        "postgresql://postgres:secret@db.example.supabase.co:5432/postgres",
+      ).success,
+    ).toBe(true);
   });
 });

@@ -46,7 +46,7 @@ La aplicación estará disponible en `http://localhost:3000`.
 
 ## Variables de entorno
 
-`.env.example` documenta todas las integraciones previstas con valores ficticios. Copia únicamente las variables necesarias a `.env.local`; nunca confirmes credenciales. La validación con Zod se añadirá junto con cada integración para no exigir servicios todavía inactivos.
+`.env.example` documenta todas las integraciones previstas con valores ficticios. Copia únicamente las variables necesarias a `.env.local`; nunca confirmes credenciales. `DATABASE_URL` usa el pooler de transacciones para la aplicación desplegada y `MIGRATION_DATABASE_URL` usa la conexión directa o el pooler de sesión para las migraciones.
 
 ## Base de datos y migraciones
 
