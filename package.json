@@ -6,6 +6,11 @@
     "node": ">=22"
   },
   "packageManager": "pnpm@10.28.1",
+  "pnpm": {
+    "overrides": {
+      "postcss": "8.5.16"
+    }
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
