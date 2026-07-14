@@ -7,13 +7,31 @@ import { ProductPurchasePanel } from "@/components/products/product-purchase-pan
 import { productSlugSchema } from "@/features/catalog/catalog-filters";
 import { catalogService } from "@/features/catalog/catalog-service";
 
-export const metadata: Metadata = { title: "Producto" };
+type ProductPageProps = { params: Promise<{ slug: string }> };
 
-export default async function ProductPage({
+export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+}: ProductPageProps): Promise<Metadata> {
+  const parsedSlug = productSlugSchema.safeParse((await params).slug);
+  if (!parsedSlug.success) return { title: "Producto" };
+
+  const product = await catalogService.getProductBySlug(parsedSlug.data);
+  if (!product) return { title: "Producto" };
+
+  return {
+    title: product.name,
+    description: product.description.slice(0, 160),
+    openGraph: product.images[0]
+      ? {
+          images: [
+            { alt: product.images[0].altText, url: product.images[0].url },
+          ],
+        }
+      : undefined,
+  };
+}
+
+export default async function ProductPage({ params }: ProductPageProps) {
   const parsedSlug = productSlugSchema.safeParse((await params).slug);
   if (!parsedSlug.success) notFound();
 
@@ -23,53 +41,64 @@ export default async function ProductPage({
   const mainImage = product.images[0];
 
   return (
-    <main className="flex-1 bg-white">
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
-        <nav aria-label="Migas de pan" className="mb-6 text-sm text-slate-600">
-          <Link
-            href="/catalogo"
-            className="hover:text-cyan-800 hover:underline"
-          >
+    <main className="bg-background flex-1">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10">
+        <nav
+          aria-label="Migas de pan"
+          className="text-muted mb-6 flex items-center gap-2 text-xs font-bold"
+        >
+          <Link href="/catalogo" className="hover:text-brand transition">
             Catálogo
           </Link>
-          <span aria-hidden="true"> / </span>
+          <span aria-hidden="true">/</span>
           <span>{product.categoryName}</span>
         </nav>
 
-        <div className="grid gap-10 lg:grid-cols-2">
-          <div>
-            <div className="relative aspect-square overflow-hidden rounded-3xl bg-slate-100">
+        <div className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16">
+          <div className="lg:sticky lg:top-32 lg:self-start">
+            <div className="bg-surface-muted relative aspect-square overflow-hidden rounded-[2rem]">
               {mainImage ? (
                 <Image
                   src={mainImage.url}
                   alt={mainImage.altText}
                   fill
                   priority
-                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  sizes="(min-width: 1024px) 55vw, 100vw"
                   className="object-cover"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center text-slate-500">
-                  Imagen próximamente
+                <div className="text-muted flex h-full flex-col items-center justify-center gap-5">
+                  <span
+                    aria-hidden="true"
+                    className="border-brand/20 text-brand grid size-32 place-items-center rounded-full border-[22px] text-4xl font-black"
+                  >
+                    •
+                  </span>
+                  <span className="text-sm font-black">
+                    Imagen próximamente
+                  </span>
                 </div>
               )}
+              <span className="bg-surface text-foreground absolute top-4 left-4 rounded-full px-3 py-1.5 text-[10px] font-black tracking-wide uppercase shadow-sm">
+                Disponible en Colombia
+              </span>
             </div>
             {product.images.length > 1 ? (
               <div
-                className="mt-4 grid grid-cols-2 gap-4"
+                className="mt-3 grid grid-cols-3 gap-3"
                 aria-label="Imágenes adicionales del producto"
               >
-                {product.images.slice(1).map((image) => (
+                {product.images.slice(1, 4).map((image) => (
                   <div
                     key={image.id}
-                    className="relative aspect-square overflow-hidden rounded-2xl bg-slate-100"
+                    className="bg-surface-muted relative aspect-square overflow-hidden rounded-[1.25rem]"
                   >
                     <Image
                       src={image.url}
                       alt={image.altText}
                       fill
-                      sizes="(min-width: 1024px) 25vw, 50vw"
-                      className="object-cover"
+                      sizes="(min-width: 1024px) 18vw, 33vw"
+                      className="object-cover transition duration-300 hover:scale-105"
                     />
                   </div>
                 ))}
@@ -77,17 +106,21 @@ export default async function ProductPage({
             ) : null}
           </div>
 
-          <section aria-labelledby="product-title">
-            <p className="text-sm font-bold tracking-widest text-cyan-700 uppercase">
+          <section aria-labelledby="product-title" className="py-2 lg:py-6">
+            <p className="text-brand flex items-center gap-2 text-xs font-black tracking-[0.18em] uppercase">
+              <span
+                className="bg-accent h-0.5 w-5 rounded-full"
+                aria-hidden="true"
+              />
               {product.categoryName}
             </p>
             <h1
               id="product-title"
-              className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl"
+              className="font-display text-foreground mt-4 text-4xl leading-[1.02] font-black tracking-[-0.045em] sm:text-5xl"
             >
               {product.name}
             </h1>
-            <p className="mt-5 leading-7 text-slate-600">
+            <p className="text-muted mt-5 text-base leading-7">
               {product.description}
             </p>
 
@@ -99,22 +132,28 @@ export default async function ProductPage({
               variants={product.variants}
             />
 
-            {product.compatibility ? (
-              <div className="mt-7">
-                <h2 className="font-bold text-slate-950">Compatibilidad</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {product.compatibility}
-                </p>
-              </div>
-            ) : null}
-            {product.warranty ? (
-              <div className="mt-5">
-                <h2 className="font-bold text-slate-950">Garantía</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {product.warranty}
-                </p>
-              </div>
-            ) : null}
+            <div className="divide-line border-line mt-8 divide-y border-y">
+              {product.compatibility ? (
+                <div className="grid gap-2 py-5 sm:grid-cols-[150px_1fr]">
+                  <h2 className="text-foreground text-sm font-black">
+                    Compatibilidad
+                  </h2>
+                  <p className="text-muted text-sm leading-6">
+                    {product.compatibility}
+                  </p>
+                </div>
+              ) : null}
+              {product.warranty ? (
+                <div className="grid gap-2 py-5 sm:grid-cols-[150px_1fr]">
+                  <h2 className="text-foreground text-sm font-black">
+                    Garantía
+                  </h2>
+                  <p className="text-muted text-sm leading-6">
+                    {product.warranty}
+                  </p>
+                </div>
+              ) : null}
+            </div>
           </section>
         </div>
       </div>

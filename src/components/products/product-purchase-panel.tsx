@@ -45,11 +45,18 @@ export function ProductPurchasePanel({
   if (!selectedVariant) return null;
 
   const canAdd = selectedVariant.availableQuantity > 0;
+  const availableQuantity = selectedVariant.availableQuantity;
 
   function selectVariant(variantId: string) {
     setSelectedVariantId(variantId);
     setQuantity(1);
     setConfirmation("");
+  }
+
+  function changeQuantity(delta: number) {
+    setQuantity((current) =>
+      clampCartQuantity(current + delta, availableQuantity),
+    );
   }
 
   function addSelectedVariant() {
@@ -76,63 +83,116 @@ export function ProductPurchasePanel({
   }
 
   return (
-    <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-      <label className="grid gap-2 text-sm font-bold text-slate-950">
-        Selecciona una variante
-        <select
-          value={selectedVariantId}
-          onChange={(event) => selectVariant(event.target.value)}
-          className="h-12 rounded-xl border border-slate-300 bg-white px-3 font-normal"
+    <div className="border-line mt-8 border-t pt-7">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="font-display text-foreground text-3xl font-black tracking-[-0.04em]">
+            {formatCurrency(selectedVariant.priceInCop)}
+          </p>
+          {selectedVariant.compareAtPriceInCop ? (
+            <p className="text-muted mt-1 text-sm font-bold line-through">
+              {formatCurrency(selectedVariant.compareAtPriceInCop)}
+            </p>
+          ) : null}
+        </div>
+        <p
+          className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black ${canAdd ? "text-success bg-[#e4f5ee]" : "bg-surface-muted text-muted"}`}
         >
-          {variants.map((variant) => (
-            <option key={variant.id} value={variant.id}>
-              {variant.name} · {formatCurrency(variant.priceInCop)}
-              {variant.availableQuantity < 1 ? " · Agotado" : ""}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <div className="mt-5 flex items-end gap-3">
-        <label className="grid w-24 gap-2 text-sm font-bold text-slate-950">
-          Cantidad
-          <input
-            type="number"
-            min={1}
-            max={Math.max(selectedVariant.availableQuantity, 1)}
-            value={quantity}
-            disabled={!canAdd}
-            onChange={(event) =>
-              setQuantity(
-                clampCartQuantity(
-                  Number(event.target.value),
-                  selectedVariant.availableQuantity,
-                ),
-              )
-            }
-            className="h-12 rounded-xl border border-slate-300 bg-white px-3 text-center font-normal disabled:bg-slate-100"
+          <span
+            aria-hidden="true"
+            className={`size-2 rounded-full ${canAdd ? "bg-success" : "bg-muted"}`}
           />
-        </label>
+          {canAdd
+            ? `${selectedVariant.availableQuantity} disponibles`
+            : "Agotado"}
+        </p>
+      </div>
+
+      <fieldset className="mt-7">
+        <legend className="text-foreground text-xs font-black tracking-[0.12em] uppercase">
+          Elige una opción
+        </legend>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {variants.map((variant) => {
+            const isSelected = variant.id === selectedVariantId;
+
+            return (
+              <button
+                key={variant.id}
+                type="button"
+                aria-pressed={isSelected}
+                onClick={() => selectVariant(variant.id)}
+                className={`rounded-full border px-4 py-2.5 text-sm font-black transition ${
+                  isSelected
+                    ? "border-brand bg-brand text-white"
+                    : "border-line bg-surface text-foreground hover:border-brand"
+                } ${variant.availableQuantity < 1 ? "opacity-45" : ""}`}
+              >
+                {variant.name}
+                {variant.availableQuantity < 1 ? " · Agotado" : ""}
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-[130px_1fr]">
+        <div className="border-line bg-surface flex h-13 items-center justify-between rounded-full border px-2">
+          <button
+            type="button"
+            onClick={() => changeQuantity(-1)}
+            disabled={!canAdd || quantity <= 1}
+            aria-label="Disminuir cantidad"
+            className="hover:bg-surface-muted grid size-9 place-items-center rounded-full text-lg font-black transition disabled:opacity-30"
+          >
+            −
+          </button>
+          <span
+            className="min-w-6 text-center text-sm font-black"
+            aria-live="polite"
+          >
+            {quantity}
+          </span>
+          <button
+            type="button"
+            onClick={() => changeQuantity(1)}
+            disabled={!canAdd || quantity >= selectedVariant.availableQuantity}
+            aria-label="Aumentar cantidad"
+            className="hover:bg-surface-muted grid size-9 place-items-center rounded-full text-lg font-black transition disabled:opacity-30"
+          >
+            +
+          </button>
+        </div>
         <button
           type="button"
           disabled={!canAdd}
           onClick={addSelectedVariant}
-          className="h-12 flex-1 rounded-xl bg-cyan-500 px-5 text-sm font-bold text-slate-950 transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600"
+          className="bg-accent disabled:bg-surface-muted disabled:text-muted h-13 rounded-full px-6 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#e95725] disabled:cursor-not-allowed"
         >
           {canAdd ? "Agregar al carrito" : "Producto agotado"}
         </button>
       </div>
-      <p className="mt-3 text-xs text-slate-500">
-        {canAdd
-          ? `${selectedVariant.availableQuantity} unidades disponibles`
-          : "Esta variante no tiene existencias."}
-      </p>
+
       <p
         aria-live="polite"
-        className="mt-3 text-sm font-semibold text-emerald-700"
+        className="text-success mt-4 min-h-5 text-sm font-black"
       >
         {confirmation}
       </p>
+      <div className="text-muted mt-5 grid gap-2 text-xs font-bold sm:grid-cols-2">
+        <p className="flex items-center gap-2">
+          <span aria-hidden="true" className="text-brand">
+            ✓
+          </span>
+          Pago manual confirmado contigo
+        </p>
+        <p className="flex items-center gap-2">
+          <span aria-hidden="true" className="text-brand">
+            ✓
+          </span>
+          Entrega coordinada después de comprar
+        </p>
+      </div>
     </div>
   );
 }

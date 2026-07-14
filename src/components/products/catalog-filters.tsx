@@ -14,9 +14,9 @@ export function CatalogFiltersForm({
   return (
     <form
       action="/catalogo"
-      className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-[1fr_220px_220px_auto] lg:items-end"
+      className="border-line bg-surface shadow-soft grid gap-4 rounded-[1.5rem] border p-4 sm:grid-cols-2 lg:grid-cols-[1fr_220px_220px_auto] lg:items-end lg:p-5"
     >
-      <label className="grid gap-2 text-sm font-semibold text-slate-800">
+      <label className="text-foreground grid gap-2 text-xs font-black tracking-wide uppercase">
         Buscar
         <input
           type="search"
@@ -24,15 +24,15 @@ export function CatalogFiltersForm({
           defaultValue={filters.search}
           placeholder="Audífonos, cables, cargadores…"
           maxLength={100}
-          className="h-11 rounded-xl border border-slate-300 px-3 font-normal"
+          className="border-line bg-background placeholder:text-muted/70 focus:border-brand h-12 rounded-[0.9rem] border px-4 text-sm font-medium tracking-normal normal-case"
         />
       </label>
-      <label className="grid gap-2 text-sm font-semibold text-slate-800">
+      <label className="text-foreground grid gap-2 text-xs font-black tracking-wide uppercase">
         Categoría
         <select
           name="category"
           defaultValue={filters.category ?? ""}
-          className="h-11 rounded-xl border border-slate-300 bg-white px-3 font-normal"
+          className="border-line bg-background focus:border-brand h-12 rounded-[0.9rem] border px-4 text-sm font-medium tracking-normal normal-case"
         >
           <option value="">Todas</option>
           {categories.map((category) => (
@@ -42,12 +42,12 @@ export function CatalogFiltersForm({
           ))}
         </select>
       </label>
-      <label className="grid gap-2 text-sm font-semibold text-slate-800">
+      <label className="text-foreground grid gap-2 text-xs font-black tracking-wide uppercase">
         Ordenar
         <select
           name="sort"
           defaultValue={filters.sort}
-          className="h-11 rounded-xl border border-slate-300 bg-white px-3 font-normal"
+          className="border-line bg-background focus:border-brand h-12 rounded-[0.9rem] border px-4 text-sm font-medium tracking-normal normal-case"
         >
           <option value="featured">Destacados</option>
           <option value="newest">Más recientes</option>
@@ -58,13 +58,13 @@ export function CatalogFiltersForm({
       <div className="flex gap-2">
         <button
           type="submit"
-          className="h-11 flex-1 rounded-xl bg-slate-950 px-5 text-sm font-semibold text-white hover:bg-cyan-900"
+          className="bg-brand hover:bg-brand-dark h-12 flex-1 rounded-full px-5 text-sm font-black text-white transition"
         >
           Aplicar
         </button>
         <Link
           href="/catalogo"
-          className="flex h-11 items-center rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          className="border-line text-muted hover:border-foreground hover:text-foreground flex h-12 items-center rounded-full border px-4 text-sm font-black transition"
         >
           Limpiar
         </Link>
