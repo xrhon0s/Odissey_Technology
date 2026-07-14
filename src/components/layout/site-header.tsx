@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { CartStatusLink } from "@/components/cart/cart-status-link";
+
 export function SiteHeader() {
   return (
     <header className="border-b border-slate-200 bg-white">
@@ -27,6 +29,9 @@ export function SiteHeader() {
               >
                 Catálogo
               </Link>
+            </li>
+            <li>
+              <CartStatusLink />
             </li>
           </ul>
         </nav>

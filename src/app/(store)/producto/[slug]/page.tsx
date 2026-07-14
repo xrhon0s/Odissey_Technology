@@ -3,9 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ProductPurchasePanel } from "@/components/products/product-purchase-panel";
 import { productSlugSchema } from "@/features/catalog/catalog-filters";
 import { catalogService } from "@/features/catalog/catalog-service";
-import { formatCurrency } from "@/lib/format-currency";
 
 export const metadata: Metadata = { title: "Producto" };
 
@@ -68,38 +68,13 @@ export default async function ProductPage({
               {product.description}
             </p>
 
-            <h2 className="mt-8 text-sm font-bold text-slate-950">
-              Variantes disponibles
-            </h2>
-            <ul className="mt-3 grid gap-3">
-              {product.variants.map((variant) => (
-                <li
-                  key={variant.id}
-                  className="rounded-2xl border border-slate-200 p-4"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="font-semibold text-slate-950">
-                        {variant.name}
-                      </p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        SKU: {variant.sku}
-                      </p>
-                    </div>
-                    <p className="font-bold text-slate-950">
-                      {formatCurrency(variant.priceInCop)}
-                    </p>
-                  </div>
-                  <p
-                    className={`mt-3 text-xs font-semibold ${variant.availableQuantity > 0 ? "text-emerald-700" : "text-slate-500"}`}
-                  >
-                    {variant.availableQuantity > 0
-                      ? `${variant.availableQuantity} disponibles`
-                      : "Agotado"}
-                  </p>
-                </li>
-              ))}
-            </ul>
+            <ProductPurchasePanel
+              productName={product.name}
+              productSlug={product.slug}
+              imageUrl={mainImage?.url ?? null}
+              imageAlt={mainImage?.altText ?? null}
+              variants={product.variants}
+            />
 
             {product.compatibility ? (
               <div className="mt-7">
