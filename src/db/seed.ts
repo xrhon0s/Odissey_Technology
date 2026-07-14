@@ -3,7 +3,13 @@ import postgres from "postgres";
 
 import { getServerEnv } from "@/config/env";
 
-import { categories, inventory, products, productVariants } from "./schema";
+import {
+  categories,
+  inventory,
+  products,
+  productVariants,
+  shippingMethods,
+} from "./schema";
 
 if (
   process.env.NODE_ENV === "production" ||
@@ -139,6 +145,28 @@ const variantRows = [
   },
 ] as const;
 
+const shippingMethodRows = [
+  {
+    id: "40000000-0000-4000-8000-000000000001",
+    code: "envio-nacional",
+    name: "Envío nacional",
+    description: "Entrega estimada de 2 a 5 días hábiles.",
+    priceInCop: 12900,
+    requiresAddress: true,
+    sortOrder: 1,
+  },
+  {
+    id: "40000000-0000-4000-8000-000000000002",
+    code: "recogida-local",
+    name: "Recogida acordada",
+    description:
+      "Coordinaremos el lugar y horario después de confirmar el pedido.",
+    priceInCop: 0,
+    requiresAddress: false,
+    sortOrder: 2,
+  },
+] as const;
+
 async function seedDemoCatalog() {
   const client = postgres(getServerEnv().DATABASE_URL, { max: 1 });
   const database = drizzle(client);
@@ -180,6 +208,16 @@ async function seedDemoCatalog() {
           .onConflictDoUpdate({
             target: inventory.variantId,
             set: { quantity: 12, reservedQuantity: 0, lowStockThreshold: 3 },
+          });
+      }
+
+      for (const shippingMethod of shippingMethodRows) {
+        await transaction
+          .insert(shippingMethods)
+          .values(shippingMethod)
+          .onConflictDoUpdate({
+            target: shippingMethods.id,
+            set: { ...shippingMethod, updatedAt: new Date() },
           });
       }
     });
