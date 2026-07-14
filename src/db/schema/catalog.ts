@@ -85,7 +85,7 @@ export const productImages = pgTable(
     productId: uuid("product_id")
       .notNull()
       .references(() => products.id, { onDelete: "cascade" }),
-    cloudinaryPublicId: varchar("cloudinary_public_id", {
+    storagePath: varchar("storage_path", {
       length: 255,
     }).notNull(),
     url: text("url").notNull(),
@@ -96,9 +96,7 @@ export const productImages = pgTable(
       .notNull(),
   },
   (table) => [
-    uniqueIndex("product_images_cloudinary_id_unique").on(
-      table.cloudinaryPublicId,
-    ),
+    uniqueIndex("product_images_storage_path_unique").on(table.storagePath),
     index("product_images_product_sort_idx").on(
       table.productId,
       table.sortOrder,

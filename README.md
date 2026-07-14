@@ -4,11 +4,11 @@ Ecommerce colombiano de accesorios tecnológicos. El MVP reúne tienda pública,
 
 ## Stack
 
-Next.js (App Router), React, TypeScript estricto, Tailwind CSS y pnpm. La arquitectura incorpora PostgreSQL/Supabase, Drizzle, Zod, Cloudinary, Resend, Sentry, GA4, Vitest y Playwright conforme se implementen sus dominios. El MVP comienza con transferencias verificadas manualmente; una pasarela podrá incorporarse después de validar el negocio.
+Next.js (App Router), React, TypeScript estricto, Tailwind CSS y pnpm. La arquitectura incorpora PostgreSQL, Supabase Auth y Storage, Drizzle, Zod, Resend, Sentry, GA4, Vitest y Playwright conforme se implementen sus dominios. El MVP comienza con transferencias verificadas manualmente; una pasarela podrá incorporarse después de validar el negocio.
 
 ## Requisitos
 
-- Node.js 20.9 o superior
+- Node.js 22 o superior
 - pnpm 10.28.1
 - PostgreSQL o un proyecto de Supabase (cuando se habilite persistencia)
 
@@ -92,6 +92,18 @@ Para habilitar el primer propietario:
 4. Ejecuta `pnpm db:bootstrap-admin` y vuelve a dejar `BOOTSTRAP_ADMIN=false`.
 
 No habilites registro público de administradores. Las acciones del panel verifican la sesión y la fila activa del administrador en el servidor, incluso si la ruta ya pasó por el proxy de sesión.
+
+## Imágenes de productos
+
+Las imágenes se guardan en Supabase Storage para evitar un proveedor y costo adicional. El panel acepta JPG, PNG, WebP y AVIF de máximo 3 MB; la lectura es pública y las operaciones de escritura se autorizan contra `admin_users` mediante RLS. Este límite conserva margen frente al máximo de carga de las funciones de Vercel.
+
+Después de aplicar las migraciones en el proyecto de Supabase:
+
+1. Abre el SQL Editor.
+2. Ejecuta `supabase/product-images.sql` una sola vez. El script también puede repetirse para reparar la configuración.
+3. Inicia sesión como administrador y usa la sección de imágenes dentro de cada producto.
+
+No configures una llave de servicio en el navegador. Las subidas usan la sesión administrativa y la llave publicable, con las políticas de Storage como frontera de autorización.
 
 ## Pruebas
 

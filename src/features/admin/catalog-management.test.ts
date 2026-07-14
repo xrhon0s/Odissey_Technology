@@ -43,22 +43,24 @@ describe("variantInputSchema", () => {
 });
 
 describe("productImageInputSchema", () => {
-  it("acepta imágenes HTTPS alojadas en Cloudinary", () => {
+  it("acepta una imagen almacenada por el servidor", () => {
     expect(
       productImageInputSchema.safeParse({
         altText: "Cargador visto de frente",
         sortOrder: "0",
-        url: "https://res.cloudinary.com/demo/image/upload/cargador.jpg",
+        storagePath: "producto/imagen.webp",
+        url: "https://demo.supabase.co/storage/v1/object/public/product-images/producto/imagen.webp",
       }).success,
     ).toBe(true);
   });
 
-  it("rechaza hosts externos que Next Image no tiene autorizados", () => {
+  it("rechaza URLs sin HTTPS", () => {
     expect(
       productImageInputSchema.safeParse({
         altText: "Imagen externa",
         sortOrder: 0,
-        url: "https://example.com/producto.jpg",
+        storagePath: "producto/imagen.jpg",
+        url: "http://demo.supabase.co/imagen.jpg",
       }).success,
     ).toBe(false);
   });

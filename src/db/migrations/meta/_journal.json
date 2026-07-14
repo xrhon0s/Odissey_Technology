@@ -50,6 +50,13 @@
       "when": 1784001474012,
       "tag": "0006_huge_serpent_society",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1784048026366,
+      "tag": "0007_melodic_fallen_one",
+      "breakpoints": true
     }
   ]
 }

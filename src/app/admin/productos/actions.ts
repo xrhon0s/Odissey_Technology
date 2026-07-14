@@ -12,7 +12,7 @@ import {
   createProduct,
   createProductInputSchema,
   createVariant,
-  productImageInputSchema,
+  productImageMetadataSchema,
   productInputSchema,
   removeProductImage,
   updateCategory,
@@ -22,6 +22,11 @@ import {
   variantInputSchema,
 } from "@/features/admin/catalog-management";
 import { requireAdmin } from "@/features/admin/admin-access";
+import {
+  deleteProductImageFile,
+  ProductImageStorageError,
+  uploadProductImage,
+} from "@/features/admin/product-image-storage";
 
 export type CatalogActionState = { error?: string; success?: string };
 
@@ -57,7 +62,8 @@ function variantFormValues(formData: FormData, includeQuantity = true) {
 }
 
 function actionError(error: unknown) {
-  return error instanceof CatalogManagementError
+  return error instanceof CatalogManagementError ||
+    error instanceof ProductImageStorageError
     ? error.message
     : "No fue posible guardar los cambios del catálogo.";
 }
@@ -232,7 +238,6 @@ function imageFormValues(formData: FormData) {
   return {
     altText: formData.get("altText"),
     sortOrder: formData.get("sortOrder"),
-    url: formData.get("url"),
   };
 }
 
@@ -242,20 +247,31 @@ export async function addProductImageAction(
 ): Promise<CatalogActionState> {
   const admin = await requireAdmin();
   const productId = idSchema.safeParse(formData.get("productId"));
-  const input = productImageInputSchema.safeParse(imageFormValues(formData));
-  if (!productId.success || !input.success) {
+  const metadata = productImageMetadataSchema.safeParse(
+    imageFormValues(formData),
+  );
+  const file = formData.get("image");
+  if (!productId.success || !metadata.success || !(file instanceof File)) {
     return {
       error:
-        input.error?.issues[0]?.message ?? "Revisa los datos de la imagen.",
+        metadata.error?.issues[0]?.message ?? "Selecciona una imagen válida.",
     };
   }
+  let uploaded: Awaited<ReturnType<typeof uploadProductImage>> | undefined;
   try {
-    await addProductImage(admin.id, productId.data, input.data);
+    uploaded = await uploadProductImage(productId.data, file);
+    await addProductImage(admin.id, productId.data, {
+      ...metadata.data,
+      ...uploaded,
+    });
     revalidatePath("/admin/productos");
     revalidatePath(`/admin/productos/${productId.data}`);
     revalidatePath("/catalogo");
     return { success: "Imagen agregada al producto." };
   } catch (error) {
+    if (uploaded) {
+      await deleteProductImageFile(uploaded.storagePath).catch(() => undefined);
+    }
     return { error: actionError(error) };
   }
 }
@@ -267,7 +283,7 @@ export async function updateProductImageAction(
   const admin = await requireAdmin();
   const productId = idSchema.safeParse(formData.get("productId"));
   const imageId = idSchema.safeParse(formData.get("imageId"));
-  const input = productImageInputSchema.safeParse(imageFormValues(formData));
+  const input = productImageMetadataSchema.safeParse(imageFormValues(formData));
   if (!productId.success || !imageId.success || !input.success) {
     return {
       error:
@@ -295,13 +311,23 @@ export async function removeProductImageAction(
   if (!productId.success || !imageId.success) {
     return { error: "La imagen seleccionada no es válida." };
   }
+  let removed: Awaited<ReturnType<typeof removeProductImage>>;
   try {
-    await removeProductImage(admin.id, imageId.data);
+    removed = await removeProductImage(admin.id, imageId.data);
     revalidatePath("/admin/productos");
     revalidatePath(`/admin/productos/${productId.data}`);
     revalidatePath("/catalogo");
-    return { success: "Imagen retirada del catálogo." };
   } catch (error) {
     return { error: actionError(error) };
+  }
+
+  try {
+    await deleteProductImageFile(removed.storagePath);
+    return { success: "Imagen retirada del catálogo y del almacenamiento." };
+  } catch {
+    return {
+      success:
+        "Imagen retirada del catálogo. El archivo pendiente puede limpiarse después.",
+    };
   }
 }

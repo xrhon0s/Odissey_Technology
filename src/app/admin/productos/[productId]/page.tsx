@@ -49,8 +49,8 @@ export default async function AdminProductDetailPage({
           <div>
             <h2 className="text-2xl font-bold text-slate-950">Imágenes</h2>
             <p className="mt-1 text-sm text-slate-600">
-              La imagen con el orden más bajo será la portada. Por ahora copia
-              aquí la URL HTTPS entregada por Cloudinary.
+              La imagen con el orden más bajo será la portada. Los archivos se
+              guardan en Supabase Storage.
             </p>
           </div>
           {product.images.map((image) => (

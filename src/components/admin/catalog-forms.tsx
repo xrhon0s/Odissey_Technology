@@ -497,20 +497,9 @@ type ProductImageValue = {
   url: string;
 };
 
-function ImageFields({ image }: { image?: ProductImageValue }) {
+function ImageMetadataFields({ image }: { image?: ProductImageValue }) {
   return (
     <div className="grid flex-1 gap-3">
-      <label className={labelClass}>
-        URL HTTPS de Cloudinary
-        <input
-          name="url"
-          type="url"
-          required
-          defaultValue={image?.url}
-          placeholder="https://res.cloudinary.com/..."
-          className={inputClass}
-        />
-      </label>
       <div className="grid gap-3 sm:grid-cols-[1fr_100px]">
         <label className={labelClass}>
           Texto alternativo
@@ -552,8 +541,21 @@ export function ProductImageCreateForm({ productId }: { productId: string }) {
     >
       <input type="hidden" name="productId" value={productId} />
       <h3 className="font-bold text-slate-950">Agregar imagen</h3>
-      <ImageFields />
-      <SubmitButton pending={pending} text="Agregar imagen" />
+      <label className={labelClass}>
+        Archivo
+        <input
+          name="image"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/avif"
+          required
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:font-semibold"
+        />
+        <span className="text-xs font-normal text-slate-500">
+          JPG, PNG, WebP o AVIF; máximo 3 MB.
+        </span>
+      </label>
+      <ImageMetadataFields />
+      <SubmitButton pending={pending} text="Subir imagen" />
       <Result state={state} />
     </form>
   );
@@ -589,7 +591,7 @@ export function ProductImageEditForm({
         <form action={updateAction} className="grid gap-4">
           <input type="hidden" name="productId" value={productId} />
           <input type="hidden" name="imageId" value={image.id} />
-          <ImageFields image={image} />
+          <ImageMetadataFields image={image} />
           <SubmitButton pending={updating} text="Guardar imagen" />
           <Result state={updateState} />
         </form>

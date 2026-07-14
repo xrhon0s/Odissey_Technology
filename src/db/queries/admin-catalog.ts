@@ -87,6 +87,7 @@ export async function getAdminProduct(productId: string) {
         altText: productImages.altText,
         id: productImages.id,
         sortOrder: productImages.sortOrder,
+        storagePath: productImages.storagePath,
         url: productImages.url,
       })
       .from(productImages)
