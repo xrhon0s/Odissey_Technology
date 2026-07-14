@@ -24,10 +24,10 @@ export function InventoryAdjustmentForm({
   return (
     <form
       action={formAction}
-      className="mt-4 grid gap-3 sm:grid-cols-[120px_1fr_auto]"
+      className="border-line mt-5 grid gap-3 border-t pt-5 sm:grid-cols-[140px_1fr_auto]"
     >
       <input type="hidden" name="variantId" value={variantId} />
-      <label className="grid gap-1 text-xs font-semibold text-slate-600">
+      <label className="text-muted grid gap-1.5 text-xs font-semibold">
         Existencia total
         <input
           name="targetQuantity"
@@ -36,23 +36,23 @@ export function InventoryAdjustmentForm({
           max={1_000_000}
           defaultValue={currentQuantity}
           required
-          className="h-10 rounded-lg border border-slate-300 px-3 text-sm text-slate-950"
+          className="border-line bg-surface text-foreground focus:border-brand h-11 rounded-xl border px-3 text-sm outline-none"
         />
       </label>
-      <label className="grid gap-1 text-xs font-semibold text-slate-600">
+      <label className="text-muted grid gap-1.5 text-xs font-semibold">
         Motivo del ajuste
         <input
           name="reason"
           maxLength={300}
           placeholder="Compra, conteo físico, corrección…"
           required
-          className="h-10 rounded-lg border border-slate-300 px-3 text-sm text-slate-950"
+          className="border-line bg-surface text-foreground focus:border-brand h-11 rounded-xl border px-3 text-sm outline-none"
         />
       </label>
       <button
         type="submit"
         disabled={isPending}
-        className="h-10 self-end rounded-lg bg-slate-950 px-4 text-xs font-bold text-white hover:bg-slate-800 disabled:bg-slate-400"
+        className="bg-foreground hover:bg-brand-dark h-11 self-end rounded-xl px-5 text-xs font-extrabold text-white transition disabled:bg-slate-400"
       >
         {isPending ? "Guardando…" : "Ajustar"}
       </button>

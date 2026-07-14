@@ -18,10 +18,10 @@ import {
 
 const initialState: CatalogActionState = {};
 const inputClass =
-  "h-11 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-950";
+  "h-11 rounded-xl border border-line bg-surface px-3 text-sm text-foreground outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/10";
 const textareaClass =
-  "min-h-28 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950";
-const labelClass = "grid gap-1 text-sm font-semibold text-slate-700";
+  "min-h-28 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/10";
+const labelClass = "grid gap-1.5 text-sm font-semibold text-foreground";
 
 function Result({ state }: { state: CatalogActionState }) {
   if (!state.error && !state.success) return null;
@@ -40,7 +40,7 @@ function SubmitButton({ pending, text }: { pending: boolean; text: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg bg-slate-950 px-4 py-3 text-sm font-bold text-white hover:bg-slate-800 disabled:bg-slate-400"
+      className="bg-foreground hover:bg-brand-dark rounded-xl px-4 py-3 text-sm font-extrabold text-white transition disabled:bg-slate-400"
     >
       {pending ? "Guardando…" : text}
     </button>
@@ -55,9 +55,11 @@ export function CategoryCreateForm() {
   return (
     <form
       action={action}
-      className="grid gap-4 rounded-xl border border-slate-200 bg-white p-5"
+      className="border-line bg-surface grid gap-4 rounded-2xl border p-5"
     >
-      <h2 className="text-lg font-bold text-slate-950">Nueva categoría</h2>
+      <h2 className="font-display text-foreground text-lg font-extrabold">
+        Nueva categoría
+      </h2>
       <label className={labelClass}>
         Nombre
         <input name="name" required maxLength={120} className={inputClass} />
@@ -120,7 +122,7 @@ export function CategoryEditForm({
   return (
     <form
       action={action}
-      className="grid gap-3 rounded-lg border border-slate-200 p-4"
+      className="border-line grid gap-3 rounded-xl border p-4"
     >
       <input type="hidden" name="categoryId" value={category.id} />
       <div className="grid gap-3 sm:grid-cols-[1fr_1fr_90px]">
@@ -396,12 +398,16 @@ export function ProductCreateForm({
   return (
     <form
       action={action}
-      className="grid gap-5 rounded-xl border border-slate-200 bg-white p-5"
+      className="border-line bg-surface grid gap-5 rounded-2xl border p-5 sm:p-6"
     >
-      <h2 className="text-xl font-bold text-slate-950">Nuevo producto</h2>
+      <h2 className="font-display text-foreground text-xl font-extrabold">
+        Nuevo producto
+      </h2>
       <ProductFields categories={categories} />
-      <div className="border-t border-slate-200 pt-5">
-        <h3 className="mb-4 font-bold text-slate-950">Primera variante</h3>
+      <div className="border-line border-t pt-5">
+        <h3 className="font-display text-foreground mb-4 font-extrabold">
+          Primera variante
+        </h3>
         <VariantFields includeQuantity />
       </div>
       <SubmitButton pending={pending} text="Crear producto" />
@@ -424,10 +430,12 @@ export function ProductEditForm({
   return (
     <form
       action={action}
-      className="grid gap-5 rounded-xl border border-slate-200 bg-white p-5"
+      className="border-line bg-surface grid gap-5 rounded-2xl border p-5 sm:p-6"
     >
       <input type="hidden" name="productId" value={product.id} />
-      <h2 className="text-xl font-bold text-slate-950">Información general</h2>
+      <h2 className="font-display text-foreground text-xl font-extrabold">
+        Información general
+      </h2>
       <ProductFields categories={categories} product={product} />
       <SubmitButton pending={pending} text="Guardar producto" />
       <Result state={state} />
@@ -443,10 +451,12 @@ export function VariantCreateForm({ productId }: { productId: string }) {
   return (
     <form
       action={action}
-      className="grid gap-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5"
+      className="border-line bg-canvas grid gap-5 rounded-2xl border border-dashed p-5"
     >
       <input type="hidden" name="productId" value={productId} />
-      <h3 className="font-bold text-slate-950">Agregar variante</h3>
+      <h3 className="font-display text-foreground font-extrabold">
+        Agregar variante
+      </h3>
       <VariantFields includeQuantity />
       <SubmitButton pending={pending} text="Crear variante" />
       <Result state={state} />
@@ -472,13 +482,15 @@ export function VariantEditForm({
   return (
     <form
       action={action}
-      className="grid gap-4 rounded-xl border border-slate-200 bg-white p-5"
+      className="border-line bg-surface grid gap-4 rounded-2xl border p-5"
     >
       <input type="hidden" name="productId" value={productId} />
       <input type="hidden" name="variantId" value={variant.id} />
       <div>
-        <h3 className="font-bold text-slate-950">{variant.name}</h3>
-        <p className="mt-1 text-xs text-slate-500">
+        <h3 className="font-display text-foreground font-extrabold">
+          {variant.name}
+        </h3>
+        <p className="text-muted mt-1 text-xs">
           Existencia: {variant.quantity} · Reservadas:{" "}
           {variant.reservedQuantity}
         </p>
@@ -537,10 +549,12 @@ export function ProductImageCreateForm({ productId }: { productId: string }) {
   return (
     <form
       action={action}
-      className="grid gap-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5"
+      className="border-line bg-canvas grid gap-4 rounded-2xl border border-dashed p-5"
     >
       <input type="hidden" name="productId" value={productId} />
-      <h3 className="font-bold text-slate-950">Agregar imagen</h3>
+      <h3 className="font-display text-foreground font-extrabold">
+        Agregar imagen
+      </h3>
       <label className={labelClass}>
         Archivo
         <input
@@ -548,9 +562,9 @@ export function ProductImageCreateForm({ productId }: { productId: string }) {
           type="file"
           accept="image/jpeg,image/png,image/webp,image/avif"
           required
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 file:mr-3 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-2 file:font-semibold"
+          className="border-line bg-surface text-foreground file:bg-canvas rounded-xl border px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:px-3 file:py-2 file:font-semibold"
         />
-        <span className="text-xs font-normal text-slate-500">
+        <span className="text-muted text-xs font-normal">
           JPG, PNG, WebP o AVIF; máximo 3 MB.
         </span>
       </label>
@@ -577,7 +591,7 @@ export function ProductImageEditForm({
     initialState,
   );
   return (
-    <article className="grid gap-4 rounded-xl border border-slate-200 bg-white p-5 md:grid-cols-[180px_1fr]">
+    <article className="border-line bg-surface grid gap-4 rounded-2xl border p-5 md:grid-cols-[180px_1fr]">
       <div className="relative aspect-square overflow-hidden rounded-lg bg-slate-100">
         <Image
           src={image.url}

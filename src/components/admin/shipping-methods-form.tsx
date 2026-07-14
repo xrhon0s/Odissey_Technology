@@ -22,8 +22,8 @@ type ShippingMethod = {
 
 const initialState: ShippingMethodActionState = {};
 const inputClass =
-  "h-11 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-950";
-const labelClass = "grid gap-1 text-sm font-semibold text-slate-700";
+  "h-11 rounded-xl border border-line bg-surface px-3 text-sm text-foreground outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/10";
+const labelClass = "grid gap-1.5 text-sm font-semibold text-foreground";
 
 function ShippingMethodFields({ method }: { method?: ShippingMethod }) {
   return (
@@ -87,7 +87,7 @@ function ShippingMethodFields({ method }: { method?: ShippingMethod }) {
           type="number"
         />
       </label>
-      <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+      <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
         <input
           defaultChecked={method?.requiresAddress ?? true}
           name="requiresAddress"
@@ -95,7 +95,7 @@ function ShippingMethodFields({ method }: { method?: ShippingMethod }) {
         />
         Solicitar dirección
       </label>
-      <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+      <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
         <input
           defaultChecked={method?.isActive ?? true}
           name="isActive"
@@ -116,18 +116,20 @@ function ExistingShippingMethodForm({ method }: { method: ShippingMethod }) {
   return (
     <form
       action={action}
-      className="grid gap-4 rounded-xl border border-slate-200 bg-white p-5 sm:grid-cols-2"
+      className="border-line bg-surface grid gap-4 rounded-2xl border p-5 sm:grid-cols-2"
     >
       <input name="shippingMethodId" type="hidden" value={method.id} />
       <div className="sm:col-span-2">
-        <h3 className="font-bold text-slate-950">{method.name}</h3>
-        <p className="mt-1 text-sm text-slate-500">
+        <h3 className="font-display text-foreground font-extrabold">
+          {method.name}
+        </h3>
+        <p className="text-muted mt-1 text-sm">
           {formatCurrency(method.priceInCop)} · {method.code}
         </p>
       </div>
       <ShippingMethodFields method={method} />
       <button
-        className="rounded-lg bg-slate-950 px-4 py-3 text-sm font-bold text-white disabled:bg-slate-400 sm:col-span-2"
+        className="bg-foreground hover:bg-brand-dark rounded-xl px-4 py-3 text-sm font-extrabold text-white transition disabled:bg-slate-400 sm:col-span-2"
         disabled={pending}
         type="submit"
       >
@@ -152,14 +154,14 @@ function NewShippingMethodForm() {
   );
 
   return (
-    <details className="rounded-xl border border-dashed border-slate-300 bg-white p-5">
-      <summary className="cursor-pointer font-bold text-slate-950">
+    <details className="border-line bg-surface rounded-2xl border border-dashed p-5">
+      <summary className="font-display text-foreground cursor-pointer font-extrabold">
         Agregar método de envío
       </summary>
       <form action={action} className="mt-5 grid gap-4 sm:grid-cols-2">
         <ShippingMethodFields />
         <button
-          className="rounded-lg bg-cyan-700 px-4 py-3 text-sm font-bold text-white disabled:bg-slate-400 sm:col-span-2"
+          className="bg-foreground hover:bg-brand-dark rounded-xl px-4 py-3 text-sm font-extrabold text-white transition disabled:bg-slate-400 sm:col-span-2"
           disabled={pending}
           type="submit"
         >
@@ -184,9 +186,11 @@ export function ShippingMethodsForm({
   methods: ShippingMethod[];
 }) {
   return (
-    <section className="mt-12 max-w-3xl">
-      <h2 className="text-2xl font-bold text-slate-950">Métodos de envío</h2>
-      <p className="mt-2 text-sm text-slate-600">
+    <section className="border-line mt-12 max-w-3xl border-t pt-10">
+      <h2 className="font-display text-foreground text-2xl font-extrabold">
+        Métodos de envío
+      </h2>
+      <p className="text-muted mt-2 text-sm leading-6">
         Define las opciones, precios y orden que verá el comprador durante el
         checkout. Desactiva una opción para ocultarla sin perder su historial.
       </p>

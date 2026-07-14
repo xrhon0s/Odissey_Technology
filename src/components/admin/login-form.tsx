@@ -14,17 +14,17 @@ export function LoginForm() {
 
   return (
     <form action={formAction} className="mt-8 space-y-5">
-      <label className="grid gap-2 text-sm font-semibold text-slate-700">
+      <label className="text-foreground grid gap-2 text-sm font-semibold">
         Correo electrónico
         <input
           name="email"
           type="email"
           autoComplete="email"
           required
-          className="h-11 rounded-xl border border-slate-300 px-3 text-slate-950"
+          className="border-line text-foreground focus:border-brand h-11 rounded-xl border px-3 outline-none"
         />
       </label>
-      <label className="grid gap-2 text-sm font-semibold text-slate-700">
+      <label className="text-foreground grid gap-2 text-sm font-semibold">
         Contraseña
         <input
           name="password"
@@ -32,7 +32,7 @@ export function LoginForm() {
           autoComplete="current-password"
           minLength={8}
           required
-          className="h-11 rounded-xl border border-slate-300 px-3 text-slate-950"
+          className="border-line text-foreground focus:border-brand h-11 rounded-xl border px-3 outline-none"
         />
       </label>
       {state.error && (
@@ -46,7 +46,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="h-12 w-full rounded-xl bg-slate-950 text-sm font-bold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+        className="bg-foreground hover:bg-brand-dark h-12 w-full rounded-xl text-sm font-extrabold text-white transition disabled:cursor-not-allowed disabled:bg-slate-400"
       >
         {isPending ? "Ingresando…" : "Ingresar al panel"}
       </button>

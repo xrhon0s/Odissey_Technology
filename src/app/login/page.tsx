@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { LoginForm } from "@/components/admin/login-form";
+import { BrandMark } from "@/components/ui/brand-mark";
 import { getSupabasePublicConfig } from "@/config/supabase";
 
 export const metadata: Metadata = { title: "Acceso administrativo" };
@@ -10,16 +11,17 @@ export default function LoginPage() {
   const isConfigured = getSupabasePublicConfig() !== null;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-12">
-      <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl sm:p-8">
-        <p className="text-sm font-bold tracking-widest text-cyan-700 uppercase">
-          Odissey Technology
+    <main className="bg-brand-navy flex min-h-screen items-center justify-center px-4 py-12">
+      <section className="bg-surface w-full max-w-md rounded-3xl p-6 shadow-2xl sm:p-8">
+        <BrandMark />
+        <p className="text-brand-dark mt-8 text-xs font-extrabold tracking-[0.16em] uppercase">
+          Acceso seguro
         </p>
-        <h1 className="mt-2 text-3xl font-bold text-slate-950">
+        <h1 className="font-display text-foreground mt-2 text-3xl font-extrabold">
           Panel administrativo
         </h1>
-        <p className="mt-3 text-sm leading-6 text-slate-600">
-          Acceso exclusivo para administradores autorizados.
+        <p className="text-muted mt-3 text-sm leading-6">
+          Ingresa con tu cuenta para gestionar pedidos, productos e inventario.
         </p>
         {isConfigured ? (
           <LoginForm />

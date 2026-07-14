@@ -31,22 +31,24 @@ export default async function AdminProductDetailPage({
   ]);
   if (!product) notFound();
   return (
-    <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
       <Link
         href="/admin/productos"
-        className="text-sm font-bold text-cyan-700 hover:text-cyan-900"
+        className="text-brand-dark text-sm font-extrabold hover:underline"
       >
         ← Volver a productos
       </Link>
-      <h1 className="mt-4 text-3xl font-bold text-slate-950">{product.name}</h1>
-      <p className="mt-2 text-sm text-slate-500">
+      <h1 className="font-display text-foreground mt-4 text-3xl font-extrabold sm:text-4xl">
+        {product.name}
+      </h1>
+      <p className="text-muted mt-2 text-sm">
         Edita la publicación y sus variantes. Los cambios de existencia se hacen
         desde Inventario.
       </p>
       {product.status === "active" &&
         (!product.categoryIsActive ||
           product.variants.every((variant) => !variant.isActive)) && (
-          <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+          <div className="border-brand-yellow bg-brand-yellow/20 mt-5 rounded-2xl border p-4 text-sm text-amber-950">
             <p className="font-bold">Este producto todavía no es visible.</p>
             <p className="mt-1">
               {!product.categoryIsActive
@@ -59,8 +61,10 @@ export default async function AdminProductDetailPage({
         <ProductEditForm categories={categories} product={product} />
         <section className="grid gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-slate-950">Imágenes</h2>
-            <p className="mt-1 text-sm text-slate-600">
+            <h2 className="font-display text-foreground text-2xl font-extrabold">
+              Imágenes
+            </h2>
+            <p className="text-muted mt-1 text-sm">
               La imagen con el orden más bajo será la portada. Los archivos se
               guardan en Supabase Storage.
             </p>
@@ -76,8 +80,10 @@ export default async function AdminProductDetailPage({
         </section>
         <section className="grid gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-slate-950">Variantes</h2>
-            <p className="mt-1 text-sm text-slate-600">
+            <h2 className="font-display text-foreground text-2xl font-extrabold">
+              Variantes
+            </h2>
+            <p className="text-muted mt-1 text-sm">
               Precios, SKU, disponibilidad y alerta de stock.
             </p>
           </div>

@@ -30,8 +30,9 @@ export function OrderActionButton({
   const toneClass = {
     danger: "border-red-300 text-red-800 hover:bg-red-50",
     primary:
-      "border-emerald-700 bg-emerald-700 text-white hover:bg-emerald-600",
-    secondary: "border-slate-300 text-slate-800 hover:bg-slate-50",
+      "border-brand bg-brand text-foreground hover:border-white hover:bg-white",
+    secondary:
+      "border-line text-foreground hover:border-brand hover:bg-brand/5",
   }[tone];
 
   return (
@@ -41,7 +42,7 @@ export function OrderActionButton({
       <button
         type="submit"
         disabled={isPending}
-        className={`h-10 w-full rounded-lg border px-3 text-xs font-bold disabled:cursor-not-allowed disabled:opacity-50 ${toneClass}`}
+        className={`h-10 w-full rounded-xl border px-3 text-xs font-extrabold transition disabled:cursor-not-allowed disabled:opacity-50 ${toneClass}`}
       >
         {isPending ? "Procesando…" : label}
       </button>

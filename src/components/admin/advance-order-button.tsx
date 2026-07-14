@@ -27,7 +27,7 @@ export function AdvanceOrderButton({
       <button
         type="submit"
         disabled={isPending}
-        className="h-11 rounded-xl bg-cyan-700 px-4 text-sm font-bold text-white hover:bg-cyan-600 disabled:cursor-not-allowed disabled:bg-slate-400"
+        className="bg-brand text-foreground h-11 rounded-xl px-5 text-sm font-extrabold transition hover:bg-white disabled:cursor-not-allowed disabled:bg-slate-400"
       >
         {isPending ? "Actualizando…" : label}
       </button>

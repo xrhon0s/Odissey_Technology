@@ -56,49 +56,51 @@ export default async function AdminOrderDetailPage({
   const advanceLabel = advanceLabels[order.status];
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
       <Link
         href="/admin/pedidos"
-        className="text-sm font-semibold text-cyan-800"
+        className="text-brand-dark text-sm font-extrabold hover:underline"
       >
         ← Volver a pedidos
       </Link>
       <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="font-mono text-sm font-bold text-cyan-800">
+          <p className="text-brand-dark font-mono text-sm font-bold">
             {order.reference}
           </p>
-          <h1 className="mt-1 text-3xl font-bold text-slate-950">
+          <h1 className="font-display text-foreground mt-1 text-3xl font-extrabold sm:text-4xl">
             {order.customerName}
           </h1>
-          <p className="mt-2 text-slate-600">
+          <p className="text-muted mt-2">
             {order.customerEmail} · {order.customerPhone}
           </p>
         </div>
-        <p className="text-2xl font-bold text-slate-950">
+        <p className="font-display text-foreground text-2xl font-extrabold">
           {formatCurrency(order.totalInCop)}
         </p>
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="space-y-6">
-          <section className="rounded-2xl border border-slate-200 bg-white p-5">
-            <h2 className="text-lg font-bold text-slate-950">Productos</h2>
-            <div className="mt-4 divide-y divide-slate-100">
+          <section className="border-line bg-surface rounded-2xl border p-5">
+            <h2 className="font-display text-foreground text-lg font-extrabold">
+              Productos
+            </h2>
+            <div className="divide-line mt-4 divide-y">
               {order.items.map((item) => (
                 <div
                   key={item.id}
                   className="flex justify-between gap-4 py-4 text-sm"
                 >
                   <div>
-                    <p className="font-semibold text-slate-950">
+                    <p className="text-foreground font-semibold">
                       {item.quantity} × {item.productName}
                     </p>
-                    <p className="mt-1 text-slate-500">
+                    <p className="text-muted mt-1">
                       {item.variantName} · {item.sku}
                     </p>
                   </div>
-                  <p className="font-semibold text-slate-950">
+                  <p className="text-foreground font-semibold">
                     {formatCurrency(item.lineTotalInCop)}
                   </p>
                 </div>
@@ -106,15 +108,17 @@ export default async function AdminOrderDetailPage({
             </div>
           </section>
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-5">
-            <h2 className="text-lg font-bold text-slate-950">Historial</h2>
-            <ol className="mt-4 space-y-4 border-l-2 border-slate-200 pl-4">
+          <section className="border-line bg-surface rounded-2xl border p-5">
+            <h2 className="font-display text-foreground text-lg font-extrabold">
+              Historial
+            </h2>
+            <ol className="border-brand/30 mt-4 space-y-4 border-l-2 pl-4">
               {order.orderHistory.map((event) => (
                 <li key={event.id}>
-                  <p className="text-sm font-semibold text-slate-950">
+                  <p className="text-foreground text-sm font-semibold">
                     {statusLabels[event.toStatus] ?? event.toStatus}
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="text-muted mt-1 text-xs">
                     {event.createdAt.toLocaleString("es-CO")}
                     {event.actorName ? ` · ${event.actorName}` : " · Sistema"}
                   </p>
@@ -125,25 +129,25 @@ export default async function AdminOrderDetailPage({
         </div>
 
         <aside className="space-y-6">
-          <section className="rounded-2xl bg-slate-950 p-5 text-white">
-            <h2 className="font-bold">Estado y acciones</h2>
+          <section className="bg-brand-navy rounded-2xl p-5 text-white">
+            <h2 className="font-display font-extrabold">Estado y acciones</h2>
             <dl className="mt-4 space-y-3 text-sm">
               <div className="flex justify-between gap-4">
-                <dt className="text-slate-400">Pedido</dt>
+                <dt className="text-white/55">Pedido</dt>
                 <dd>{statusLabels[order.status] ?? order.status}</dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-slate-400">Pago</dt>
+                <dt className="text-white/55">Pago</dt>
                 <dd>
                   {statusLabels[order.paymentStatus] ?? order.paymentStatus}
                 </dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-slate-400">Método</dt>
+                <dt className="text-white/55">Método</dt>
                 <dd className="text-right">{paymentName}</dd>
               </div>
             </dl>
-            <div className="mt-5 flex flex-wrap gap-3 border-t border-slate-700 pt-5">
+            <div className="mt-5 flex flex-wrap gap-3 border-t border-white/15 pt-5">
               {canProcessPending && !isCash && (
                 <OrderActionButton
                   action="approve_transfer"
@@ -182,13 +186,15 @@ export default async function AdminOrderDetailPage({
             </div>
           </section>
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-5">
-            <h2 className="font-bold text-slate-950">Entrega</h2>
-            <p className="mt-3 text-sm text-slate-700">
+          <section className="border-line bg-surface rounded-2xl border p-5">
+            <h2 className="font-display text-foreground font-extrabold">
+              Entrega
+            </h2>
+            <p className="text-foreground mt-3 text-sm">
               {order.shippingMethodName}
             </p>
             {address ? (
-              <address className="mt-3 text-sm leading-6 text-slate-600 not-italic">
+              <address className="text-muted mt-3 text-sm leading-6 not-italic">
                 {address.addressLine1}
                 {address.addressLine2 ? `, ${address.addressLine2}` : ""}
                 <br />
@@ -196,14 +202,16 @@ export default async function AdminOrderDetailPage({
                 {address.city}, {address.department}
               </address>
             ) : (
-              <p className="mt-3 text-sm text-slate-600">
+              <p className="text-muted mt-3 text-sm">
                 Recogida coordinada con el cliente.
               </p>
             )}
           </section>
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-5">
-            <h2 className="font-bold text-slate-950">Totales</h2>
+          <section className="border-line bg-surface rounded-2xl border p-5">
+            <h2 className="font-display text-foreground font-extrabold">
+              Totales
+            </h2>
             <dl className="mt-3 space-y-2 text-sm">
               <div className="flex justify-between">
                 <dt>Productos</dt>
@@ -213,7 +221,7 @@ export default async function AdminOrderDetailPage({
                 <dt>Envío</dt>
                 <dd>{formatCurrency(order.shippingInCop)}</dd>
               </div>
-              <div className="flex justify-between border-t border-slate-200 pt-2 font-bold">
+              <div className="border-line flex justify-between border-t pt-2 font-bold">
                 <dt>Total</dt>
                 <dd>{formatCurrency(order.totalInCop)}</dd>
               </div>

@@ -6,6 +6,7 @@ import {
   CategoryEditForm,
   ProductCreateForm,
 } from "@/components/admin/catalog-forms";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import {
   listAdminCategories,
   listAdminProducts,
@@ -43,44 +44,56 @@ export default async function AdminProductsPage() {
     listAdminProducts(),
   ]);
   return (
-    <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-      <p className="text-sm font-bold tracking-widest text-cyan-700 uppercase">
-        Catálogo
-      </p>
-      <h1 className="mt-2 text-3xl font-bold text-slate-950">
-        Productos y categorías
-      </h1>
-      <p className="mt-3 max-w-2xl text-slate-600">
-        Crea productos con su primera variante, define precios y controla qué se
-        publica en la tienda.
-      </p>
+    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+      <AdminPageHeader
+        action={
+          <a
+            href="#nuevo-producto"
+            className="bg-foreground hover:bg-brand-dark inline-flex h-11 items-center rounded-xl px-5 text-sm font-extrabold text-white transition"
+          >
+            + Nuevo producto
+          </a>
+        }
+        description="Publica productos, administra sus variantes y organiza las categorías del catálogo."
+        eyebrow="Catálogo"
+        title="Productos"
+      />
 
-      <section className="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white">
-        <div className="border-b border-slate-200 px-5 py-4">
-          <h2 className="font-bold text-slate-950">Productos actuales</h2>
+      <section className="border-line bg-surface mt-7 overflow-hidden rounded-2xl border">
+        <div className="border-line flex items-center justify-between border-b px-5 py-4">
+          <div>
+            <h2 className="font-display text-foreground font-extrabold">
+              Productos actuales
+            </h2>
+            <p className="text-muted mt-1 text-xs">
+              {products.length} producto(s) registrado(s)
+            </p>
+          </div>
         </div>
         {products.length === 0 ? (
-          <p className="p-5 text-sm text-slate-600">
-            Todavía no hay productos.
+          <p className="text-muted p-8 text-center text-sm">
+            Todavía no hay productos. Crea el primero en el formulario de abajo.
           </p>
         ) : (
-          <div className="divide-y divide-slate-200">
+          <div className="divide-line divide-y">
             {products.map((product) => {
               const publication = publicationState(product);
               return (
                 <Link
                   key={product.id}
                   href={`/admin/productos/${product.id}`}
-                  className="grid gap-2 p-5 hover:bg-slate-50 sm:grid-cols-[1fr_auto_auto] sm:items-center"
+                  className="hover:bg-brand/5 grid gap-3 p-5 transition sm:grid-cols-[1fr_auto_auto] sm:items-center"
                 >
                   <div>
-                    <p className="font-bold text-slate-950">{product.name}</p>
-                    <p className="text-sm text-slate-500">
+                    <p className="font-display text-foreground font-extrabold">
+                      {product.name}
+                    </p>
+                    <p className="text-muted text-sm">
                       {product.categoryName} · {product.variantCount}{" "}
                       variante(s)
                     </p>
                   </div>
-                  <span className="text-sm text-slate-700">
+                  <span className="text-foreground text-sm font-semibold">
                     {product.minimumPriceInCop === null
                       ? "Sin precio"
                       : `Desde ${formatCurrency(product.minimumPriceInCop)}`}
@@ -97,19 +110,24 @@ export default async function AdminProductsPage() {
         )}
       </section>
 
-      <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1fr_320px]">
+      <div
+        id="nuevo-producto"
+        className="mt-8 grid scroll-mt-6 items-start gap-8 lg:grid-cols-[1fr_340px]"
+      >
         {categories.length > 0 ? (
           <ProductCreateForm categories={categories} />
         ) : (
-          <p className="rounded-xl bg-amber-50 p-5 text-sm text-amber-900">
+          <p className="bg-brand-yellow/20 rounded-2xl p-5 text-sm text-amber-900">
             Crea primero una categoría para poder agregar productos.
           </p>
         )}
         <CategoryCreateForm />
       </div>
-      <section className="mt-8 rounded-xl border border-slate-200 bg-white p-5">
-        <h2 className="text-xl font-bold text-slate-950">Editar categorías</h2>
-        <p className="mt-1 text-sm text-slate-600">
+      <section className="border-line bg-surface mt-8 rounded-2xl border p-5 sm:p-6">
+        <h2 className="font-display text-foreground text-xl font-extrabold">
+          Editar categorías
+        </h2>
+        <p className="text-muted mt-1 text-sm">
           Cambia su visibilidad, orden y descripción en el catálogo.
         </p>
         <div className="mt-5 grid gap-4">

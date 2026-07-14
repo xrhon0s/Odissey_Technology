@@ -10,8 +10,8 @@ import type { PublicStoreSettings } from "@/features/store/store-settings";
 
 const initialState: StoreSettingsActionState = {};
 const inputClass =
-  "h-11 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-950";
-const labelClass = "grid gap-1 text-sm font-semibold text-slate-700";
+  "h-11 rounded-xl border border-line bg-surface px-3 text-sm text-foreground outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/10";
+const labelClass = "grid gap-1.5 text-sm font-semibold text-foreground";
 
 export function StoreSettingsForm({
   settings,
@@ -26,7 +26,7 @@ export function StoreSettingsForm({
   return (
     <form
       action={action}
-      className="mt-8 grid max-w-3xl gap-5 rounded-xl border border-slate-200 bg-white p-5"
+      className="border-line bg-surface mt-8 grid max-w-3xl gap-5 rounded-2xl border p-5 sm:p-6"
     >
       <label className={labelClass}>
         Nombre de la tienda
@@ -60,10 +60,13 @@ export function StoreSettingsForm({
           className={inputClass}
         />
       </label>
-      <div className="border-t border-slate-200 pt-5">
-        <h2 className="font-bold text-slate-950">Identificación comercial</h2>
-        <p className="mt-1 text-sm text-slate-600">
-          Estos datos se mostrarán públicamente en los documentos legales.
+      <div className="border-line border-t pt-5">
+        <h2 className="font-display text-foreground font-extrabold">
+          Información opcional del negocio
+        </h2>
+        <p className="text-muted mt-1 text-sm">
+          Puedes completar estos datos cuando los tengas. Dejarlos vacíos no
+          impide operar la tienda.
         </p>
       </div>
       <label className={labelClass}>
@@ -113,11 +116,11 @@ export function StoreSettingsForm({
           placeholder="573001234567"
           className={inputClass}
         />
-        <span className="font-normal text-slate-500">
+        <span className="text-muted font-normal">
           Incluye el código de país. Para Colombia comienza con 57.
         </span>
       </label>
-      <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+      <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
         <input
           name="whatsappEnabled"
           type="checkbox"
@@ -128,7 +131,7 @@ export function StoreSettingsForm({
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg bg-slate-950 px-4 py-3 text-sm font-bold text-white hover:bg-slate-800 disabled:bg-slate-400"
+        className="bg-foreground hover:bg-brand-dark rounded-xl px-4 py-3 text-sm font-extrabold text-white transition disabled:bg-slate-400"
       >
         {pending ? "Guardando…" : "Guardar configuración"}
       </button>
