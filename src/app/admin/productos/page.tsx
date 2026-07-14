@@ -16,6 +16,26 @@ import { formatCurrency } from "@/lib/format-currency";
 export const metadata: Metadata = { title: "Productos | Administración" };
 export const dynamic = "force-dynamic";
 
+function publicationState(product: {
+  activeVariantCount: number;
+  categoryIsActive: boolean;
+  status: "draft" | "active" | "archived";
+}) {
+  if (product.status === "draft") {
+    return { label: "Borrador", visible: false };
+  }
+  if (product.status === "archived") {
+    return { label: "Archivado", visible: false };
+  }
+  if (!product.categoryIsActive) {
+    return { label: "Oculto: categoría inactiva", visible: false };
+  }
+  if (product.activeVariantCount === 0) {
+    return { label: "Oculto: variante inactiva", visible: false };
+  }
+  return { label: "Visible", visible: true };
+}
+
 export default async function AdminProductsPage() {
   await requireAdmin();
   const [categories, products] = await Promise.all([
@@ -45,34 +65,34 @@ export default async function AdminProductsPage() {
           </p>
         ) : (
           <div className="divide-y divide-slate-200">
-            {products.map((product) => (
-              <Link
-                key={product.id}
-                href={`/admin/productos/${product.id}`}
-                className="grid gap-2 p-5 hover:bg-slate-50 sm:grid-cols-[1fr_auto_auto] sm:items-center"
-              >
-                <div>
-                  <p className="font-bold text-slate-950">{product.name}</p>
-                  <p className="text-sm text-slate-500">
-                    {product.categoryName} · {product.variantCount} variante(s)
-                  </p>
-                </div>
-                <span className="text-sm text-slate-700">
-                  {product.minimumPriceInCop === null
-                    ? "Sin precio"
-                    : `Desde ${formatCurrency(product.minimumPriceInCop)}`}
-                </span>
-                <span
-                  className={`w-fit rounded-full px-2.5 py-1 text-xs font-bold ${product.status === "active" ? "bg-emerald-100 text-emerald-800" : "bg-slate-100 text-slate-700"}`}
+            {products.map((product) => {
+              const publication = publicationState(product);
+              return (
+                <Link
+                  key={product.id}
+                  href={`/admin/productos/${product.id}`}
+                  className="grid gap-2 p-5 hover:bg-slate-50 sm:grid-cols-[1fr_auto_auto] sm:items-center"
                 >
-                  {product.status === "active"
-                    ? "Activo"
-                    : product.status === "draft"
-                      ? "Borrador"
-                      : "Archivado"}
-                </span>
-              </Link>
-            ))}
+                  <div>
+                    <p className="font-bold text-slate-950">{product.name}</p>
+                    <p className="text-sm text-slate-500">
+                      {product.categoryName} · {product.variantCount}{" "}
+                      variante(s)
+                    </p>
+                  </div>
+                  <span className="text-sm text-slate-700">
+                    {product.minimumPriceInCop === null
+                      ? "Sin precio"
+                      : `Desde ${formatCurrency(product.minimumPriceInCop)}`}
+                  </span>
+                  <span
+                    className={`w-fit rounded-full px-2.5 py-1 text-xs font-bold ${publication.visible ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-900"}`}
+                  >
+                    {publication.label}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         )}
       </section>

@@ -26,6 +26,8 @@ export async function listAdminCategories() {
 export async function listAdminProducts() {
   return getDb()
     .select({
+      activeVariantCount: sql<number>`count(${productVariants.id}) filter (where ${productVariants.isActive} = true)::integer`,
+      categoryIsActive: categories.isActive,
       categoryName: categories.name,
       id: products.id,
       isFeatured: products.isFeatured,
@@ -38,7 +40,7 @@ export async function listAdminProducts() {
     .from(products)
     .innerJoin(categories, eq(products.categoryId, categories.id))
     .leftJoin(productVariants, eq(productVariants.productId, products.id))
-    .groupBy(products.id, categories.name)
+    .groupBy(products.id, categories.name, categories.isActive)
     .orderBy(asc(products.name));
 }
 
@@ -47,6 +49,7 @@ export async function getAdminProduct(productId: string) {
   const [product] = await db
     .select({
       categoryId: products.categoryId,
+      categoryIsActive: categories.isActive,
       categoryName: categories.name,
       compatibility: products.compatibility,
       description: products.description,

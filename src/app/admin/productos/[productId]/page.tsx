@@ -43,6 +43,18 @@ export default async function AdminProductDetailPage({
         Edita la publicación y sus variantes. Los cambios de existencia se hacen
         desde Inventario.
       </p>
+      {product.status === "active" &&
+        (!product.categoryIsActive ||
+          product.variants.every((variant) => !variant.isActive)) && (
+          <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+            <p className="font-bold">Este producto todavía no es visible.</p>
+            <p className="mt-1">
+              {!product.categoryIsActive
+                ? "Activa su categoría para publicarlo en el catálogo."
+                : "Activa al menos una variante marcando “Variante disponible” y guarda los cambios."}
+            </p>
+          </div>
+        )}
       <div className="mt-8 grid gap-8">
         <ProductEditForm categories={categories} product={product} />
         <section className="grid gap-4">
