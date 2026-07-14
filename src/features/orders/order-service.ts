@@ -7,6 +7,8 @@ import {
   inventory,
   orderItems,
   orders,
+  paymentEvents,
+  payments,
   products,
   productVariants,
   shippingMethods,
@@ -22,6 +24,8 @@ const RESERVATION_DURATION_IN_MINUTES = 30;
 
 export type PendingOrderResult = {
   id: string;
+  paymentMethod: "manual_transfer";
+  paymentStatus: "pending";
   reference: string;
   reservationExpiresAt: Date;
   reused: boolean;
@@ -146,6 +150,8 @@ export async function createPendingOrder(
 
       return {
         id: existingOrder.id,
+        paymentMethod: "manual_transfer",
+        paymentStatus: "pending",
         reference: existingOrder.reference,
         reservationExpiresAt: existingOrder.reservationExpiresAt,
         reused: true,
@@ -245,6 +251,25 @@ export async function createPendingOrder(
       })),
     );
 
+    const [createdPayment] = await transaction
+      .insert(payments)
+      .values({
+        amountInCop: quote.totalInCop,
+        orderId: createdOrder.id,
+        reference: `PM-${createdOrder.reference}`,
+      })
+      .returning({ id: payments.id });
+
+    if (!createdPayment) {
+      throw new Error("Payment insert did not return a record");
+    }
+
+    await transaction.insert(paymentEvents).values({
+      eventType: "created",
+      paymentId: createdPayment.id,
+      payload: { method: "manual_transfer", status: "pending" },
+    });
+
     for (const item of quote.items) {
       await transaction
         .update(inventory)
@@ -257,6 +282,8 @@ export async function createPendingOrder(
 
     return {
       id: createdOrder.id,
+      paymentMethod: "manual_transfer",
+      paymentStatus: "pending",
       reference: createdOrder.reference,
       reservationExpiresAt,
       reused: false,
