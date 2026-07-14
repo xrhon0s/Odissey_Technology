@@ -1,6 +1,10 @@
 import { z } from "zod";
 
 import { manualPaymentMethodSchema } from "@/features/payments/payment-methods";
+import {
+  PRIVACY_POLICY_VERSION,
+  TERMS_VERSION,
+} from "@/features/legal/legal-documents";
 
 const checkoutLineSchema = z.object({
   quantity: z.number().int().min(1).max(10),
@@ -26,6 +30,9 @@ export const checkoutCustomerSchema = z.object({
 });
 
 export const checkoutFormSchema = z.object({
+  acceptedTerms: z.boolean().refine((value) => value, {
+    message: "Debes aceptar los términos y la política de privacidad.",
+  }),
   address: checkoutAddressSchema.optional(),
   customer: checkoutCustomerSchema,
   paymentMethod: manualPaymentMethodSchema,
@@ -34,16 +41,19 @@ export const checkoutFormSchema = z.object({
 
 export const checkoutQuoteRequestSchema = z
   .object({
+    acceptedTerms: z.literal(true),
     address: checkoutAddressSchema.optional(),
     customer: checkoutCustomerSchema,
     items: z.array(checkoutLineSchema).min(1).max(50),
     paymentMethod: manualPaymentMethodSchema,
+    privacyPolicyVersion: z.literal(PRIVACY_POLICY_VERSION),
     shippingMethodCode: z
       .string()
       .trim()
       .min(1)
       .max(60)
       .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    termsVersion: z.literal(TERMS_VERSION),
   })
   .superRefine(({ items }, context) => {
     const variantIds = new Set<string>();

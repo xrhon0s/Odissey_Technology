@@ -10,6 +10,13 @@ const optionalEmail = z.preprocess(
   z.email("Escribe un correo válido.").max(254).nullable(),
 );
 
+const optionalShortText = (maxLength: number) =>
+  z.preprocess(
+    (value) =>
+      typeof value === "string" && value.trim() === "" ? null : value,
+    z.string().trim().min(2).max(maxLength).nullable(),
+  );
+
 const optionalWhatsApp = z.preprocess(
   (value) => {
     if (typeof value !== "string") return value;
@@ -28,8 +35,12 @@ const optionalWhatsApp = z.preprocess(
 export const storeSettingsInputSchema = z
   .object({
     announcement: z.string().trim().min(3).max(180),
+    businessCity: optionalShortText(120),
+    legalName: optionalShortText(160),
+    notificationAddress: optionalShortText(240),
     storeName: z.string().trim().min(2).max(120),
     supportEmail: optionalEmail,
+    taxId: optionalShortText(30),
     whatsappEnabled: z.boolean(),
     whatsappNumber: optionalWhatsApp,
   })

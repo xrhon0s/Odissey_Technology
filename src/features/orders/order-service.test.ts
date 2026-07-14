@@ -5,6 +5,7 @@ import { createOrderRequestFingerprint } from "./order-service";
 
 const request: CreateOrderRequest = {
   checkout: {
+    acceptedTerms: true,
     customer: {
       email: "cliente@example.com",
       fullName: "Ada Lovelace",
@@ -21,7 +22,9 @@ const request: CreateOrderRequest = {
       },
     ],
     paymentMethod: "nequi",
+    privacyPolicyVersion: "2026-07-14",
     shippingMethodCode: "recogida-local",
+    termsVersion: "2026-07-14",
   },
   checkoutAttemptId: "50000000-0000-4000-8000-000000000001",
 };

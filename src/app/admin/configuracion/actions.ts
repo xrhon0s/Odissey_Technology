@@ -21,8 +21,12 @@ export async function updateStoreSettingsAction(
   const admin = await requireAdmin();
   const input = storeSettingsInputSchema.safeParse({
     announcement: formData.get("announcement"),
+    businessCity: formData.get("businessCity"),
+    legalName: formData.get("legalName"),
+    notificationAddress: formData.get("notificationAddress"),
     storeName: formData.get("storeName"),
     supportEmail: formData.get("supportEmail"),
+    taxId: formData.get("taxId"),
     whatsappEnabled: formData.get("whatsappEnabled") === "on",
     whatsappNumber: formData.get("whatsappNumber"),
   });

@@ -8,6 +8,7 @@ import {
 } from "./checkout-service";
 
 const request: CheckoutQuoteRequest = {
+  acceptedTerms: true,
   address: {
     addressLine1: "Calle 1 # 2-3",
     city: "Bogotá",
@@ -25,7 +26,9 @@ const request: CheckoutQuoteRequest = {
     },
   ],
   paymentMethod: "nequi",
+  privacyPolicyVersion: "2026-07-14",
   shippingMethodCode: "envio-nacional",
+  termsVersion: "2026-07-14",
 };
 
 function createRepository(availableQuantity = 5): CheckoutQuoteRepository {

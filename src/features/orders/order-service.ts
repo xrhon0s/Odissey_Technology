@@ -46,9 +46,18 @@ export class OrderCreationError extends Error {
 }
 
 export function createOrderRequestFingerprint(input: CreateOrderRequest) {
-  const { address, customer, items, paymentMethod, shippingMethodCode } =
-    input.checkout;
+  const {
+    acceptedTerms,
+    address,
+    customer,
+    items,
+    paymentMethod,
+    privacyPolicyVersion,
+    shippingMethodCode,
+    termsVersion,
+  } = input.checkout;
   const canonicalPayload = {
+    acceptedTerms,
     address: address
       ? {
           addressLine1: address.addressLine1,
@@ -68,7 +77,9 @@ export function createOrderRequestFingerprint(input: CreateOrderRequest) {
       .sort((left, right) => left.variantId.localeCompare(right.variantId))
       .map(({ quantity, variantId }) => ({ quantity, variantId })),
     paymentMethod,
+    privacyPolicyVersion,
     shippingMethodCode,
+    termsVersion,
   };
 
   return createHash("sha256")
@@ -269,6 +280,7 @@ export async function createPendingOrder(
         customerEmail: input.checkout.customer.email,
         customerName: input.checkout.customer.fullName,
         customerPhone: input.checkout.customer.phone,
+        privacyPolicyVersion: input.checkout.privacyPolicyVersion,
         reference: createOrderReference(),
         requestFingerprint,
         reservationExpiresAt,
@@ -276,6 +288,8 @@ export async function createPendingOrder(
         shippingMethodCode: quote.shippingMethod.code,
         shippingMethodName: quote.shippingMethod.name,
         subtotalInCop: quote.subtotalInCop,
+        termsAcceptedAt: now,
+        termsVersion: input.checkout.termsVersion,
         totalInCop: quote.totalInCop,
       })
       .returning({ id: orders.id, reference: orders.reference });

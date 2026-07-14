@@ -16,8 +16,12 @@ export const getPublicStoreSettings = cache(
     const [settings] = await getDb()
       .select({
         announcement: storeSettings.announcement,
+        businessCity: storeSettings.businessCity,
+        legalName: storeSettings.legalName,
+        notificationAddress: storeSettings.notificationAddress,
         storeName: storeSettings.storeName,
         supportEmail: storeSettings.supportEmail,
+        taxId: storeSettings.taxId,
         whatsappEnabled: storeSettings.whatsappEnabled,
         whatsappNumber: storeSettings.whatsappNumber,
       })

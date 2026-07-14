@@ -1,15 +1,23 @@
 export const DEFAULT_STORE_SETTINGS = {
   announcement: "Envíos a toda Colombia",
+  businessCity: null,
+  legalName: null,
+  notificationAddress: null,
   storeName: "Odissey Technology",
   supportEmail: null,
+  taxId: null,
   whatsappEnabled: false,
   whatsappNumber: null,
 } as const;
 
 export type PublicStoreSettings = {
   announcement: string;
+  businessCity: string | null;
+  legalName: string | null;
+  notificationAddress: string | null;
   storeName: string;
   supportEmail: string | null;
+  taxId: string | null;
   whatsappEnabled: boolean;
   whatsappNumber: string | null;
 };

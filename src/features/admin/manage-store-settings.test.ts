@@ -4,8 +4,12 @@ import { storeSettingsInputSchema } from "./manage-store-settings";
 
 const validInput = {
   announcement: "Envíos a toda Colombia",
+  businessCity: "Medellín, Colombia",
+  legalName: "Odissey Technology S.A.S.",
+  notificationAddress: "Calle 1 # 2-3",
   storeName: "Odissey Technology",
   supportEmail: "ventas@example.com",
+  taxId: "900123456-7",
   whatsappEnabled: true,
   whatsappNumber: "+57 300 123 4567",
 };

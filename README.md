@@ -105,6 +105,20 @@ Después de aplicar las migraciones en el proyecto de Supabase:
 
 No configures una llave de servicio en el navegador. Las subidas usan la sesión administrativa y la llave publicable, con las políticas de Storage como frontera de autorización.
 
+## Información legal y datos comerciales
+
+La tienda publica términos y condiciones, política de tratamiento de datos, política de envíos e información sobre cambios, garantías y retracto. El checkout exige aceptación expresa y cada pedido nuevo conserva la fecha y las versiones aceptadas.
+
+Antes de abrir la tienda al público, completa en `/admin/configuracion`:
+
+- Nombre o razón social.
+- NIT o documento de identificación.
+- Dirección de notificación.
+- Ciudad y país.
+- Correo y teléfono de atención.
+
+El pie de página incluye un enlace visible a la Superintendencia de Industria y Comercio. Los textos incluidos son una base operativa preparada con referencia al Estatuto del Consumidor y al régimen colombiano de protección de datos; deben revisarse con asesoría jurídica usando la información real del comercio antes del lanzamiento.
+
 ## Pruebas
 
 Ejecuta antes de entregar una unidad de trabajo:

@@ -46,6 +46,9 @@ export const orders = pgTable(
     customerName: varchar("customer_name", { length: 120 }).notNull(),
     customerEmail: varchar("customer_email", { length: 254 }).notNull(),
     customerPhone: varchar("customer_phone", { length: 20 }).notNull(),
+    termsAcceptedAt: timestamp("terms_accepted_at", { withTimezone: true }),
+    termsVersion: varchar("terms_version", { length: 20 }),
+    privacyPolicyVersion: varchar("privacy_policy_version", { length: 20 }),
     addressSnapshot: jsonb("address_snapshot").$type<OrderAddressSnapshot>(),
     shippingMethodCode: varchar("shipping_method_code", {
       length: 60,

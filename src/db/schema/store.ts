@@ -16,6 +16,10 @@ export const storeSettings = pgTable("store_settings", {
   announcement: varchar("announcement", { length: 180 })
     .default("Envíos a toda Colombia")
     .notNull(),
+  legalName: varchar("legal_name", { length: 160 }),
+  taxId: varchar("tax_id", { length: 30 }),
+  notificationAddress: varchar("notification_address", { length: 240 }),
+  businessCity: varchar("business_city", { length: 120 }),
   supportEmail: varchar("support_email", { length: 254 }),
   whatsappNumber: varchar("whatsapp_number", { length: 15 }),
   whatsappEnabled: boolean("whatsapp_enabled").default(false).notNull(),

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { checkoutQuoteRequestSchema } from "./checkout-schema";
 
 const validRequest = {
+  acceptedTerms: true,
   customer: {
     email: "cliente@example.com",
     fullName: "Ada Lovelace",
@@ -15,7 +16,9 @@ const validRequest = {
     },
   ],
   paymentMethod: "nequi",
+  privacyPolicyVersion: "2026-07-14",
   shippingMethodCode: "envio-nacional",
+  termsVersion: "2026-07-14",
 };
 
 describe("checkoutQuoteRequestSchema", () => {
@@ -42,5 +45,20 @@ describe("checkoutQuoteRequestSchema", () => {
     });
 
     expect(result.success).toBe(false);
+  });
+
+  it("requires current legal document acceptance", () => {
+    expect(
+      checkoutQuoteRequestSchema.safeParse({
+        ...validRequest,
+        acceptedTerms: false,
+      }).success,
+    ).toBe(false);
+    expect(
+      checkoutQuoteRequestSchema.safeParse({
+        ...validRequest,
+        termsVersion: "old-version",
+      }).success,
+    ).toBe(false);
   });
 });

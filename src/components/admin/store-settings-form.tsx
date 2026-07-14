@@ -60,6 +60,49 @@ export function StoreSettingsForm({
           className={inputClass}
         />
       </label>
+      <div className="border-t border-slate-200 pt-5">
+        <h2 className="font-bold text-slate-950">Identificación comercial</h2>
+        <p className="mt-1 text-sm text-slate-600">
+          Estos datos se mostrarán públicamente en los documentos legales.
+        </p>
+      </div>
+      <label className={labelClass}>
+        Nombre o razón social
+        <input
+          name="legalName"
+          maxLength={160}
+          defaultValue={settings.legalName ?? ""}
+          className={inputClass}
+        />
+      </label>
+      <label className={labelClass}>
+        NIT o documento de identificación
+        <input
+          name="taxId"
+          maxLength={30}
+          defaultValue={settings.taxId ?? ""}
+          className={inputClass}
+        />
+      </label>
+      <label className={labelClass}>
+        Dirección de notificación
+        <input
+          name="notificationAddress"
+          maxLength={240}
+          defaultValue={settings.notificationAddress ?? ""}
+          className={inputClass}
+        />
+      </label>
+      <label className={labelClass}>
+        Ciudad y país
+        <input
+          name="businessCity"
+          maxLength={120}
+          defaultValue={settings.businessCity ?? ""}
+          placeholder="Medellín, Antioquia, Colombia"
+          className={inputClass}
+        />
+      </label>
       <label className={labelClass}>
         Número de WhatsApp
         <input

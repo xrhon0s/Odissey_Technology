@@ -18,6 +18,10 @@ import {
   manualPaymentMethods,
   type ManualPaymentMethod,
 } from "@/features/payments/payment-methods";
+import {
+  PRIVACY_POLICY_VERSION,
+  TERMS_VERSION,
+} from "@/features/legal/legal-documents";
 import { formatCurrency } from "@/lib/format-currency";
 import { useCartStore } from "@/stores/cart-store";
 
@@ -71,6 +75,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
     register,
   } = useForm<CheckoutFormValues>({
     defaultValues: {
+      acceptedTerms: false,
       address: {
         addressLine1: "",
         addressLine2: "",
@@ -202,6 +207,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
     setCheckoutAttemptId(null);
 
     const checkout: CheckoutQuoteRequest = {
+      acceptedTerms: true,
       address: selectedShippingMethod?.requiresAddress
         ? values.address
         : undefined,
@@ -211,7 +217,9 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
         variantId: item.variantId,
       })),
       paymentMethod: values.paymentMethod,
+      privacyPolicyVersion: PRIVACY_POLICY_VERSION,
       shippingMethodCode: values.shippingMethodCode,
+      termsVersion: TERMS_VERSION,
     };
 
     try {
@@ -434,6 +442,40 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
               </label>
             ))}
           </div>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+          <label className="flex items-start gap-3 text-sm leading-6 text-slate-700">
+            <input
+              type="checkbox"
+              className="mt-1 size-4 shrink-0 accent-cyan-700"
+              {...register("acceptedTerms")}
+            />
+            <span>
+              Acepto los{" "}
+              <Link
+                href="/terminos-y-condiciones"
+                target="_blank"
+                className="font-semibold text-cyan-800 hover:underline"
+              >
+                términos y condiciones
+              </Link>{" "}
+              y la{" "}
+              <Link
+                href="/politica-de-privacidad"
+                target="_blank"
+                className="font-semibold text-cyan-800 hover:underline"
+              >
+                política de tratamiento de datos
+              </Link>
+              .
+            </span>
+          </label>
+          {errors.acceptedTerms ? (
+            <p className="mt-2 text-sm text-red-700">
+              {errors.acceptedTerms.message}
+            </p>
+          ) : null}
         </section>
       </div>
 
