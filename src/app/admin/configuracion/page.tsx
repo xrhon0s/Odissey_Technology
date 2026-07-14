@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
 import { StoreSettingsForm } from "@/components/admin/store-settings-form";
+import { ShippingMethodsForm } from "@/components/admin/shipping-methods-form";
+import { listAdminShippingMethods } from "@/db/queries/admin-shipping";
 import { getPublicStoreSettings } from "@/db/queries/store-settings";
 import { requireAdmin } from "@/features/admin/admin-access";
 
@@ -9,7 +11,10 @@ export const dynamic = "force-dynamic";
 
 export default async function StoreSettingsPage() {
   await requireAdmin();
-  const settings = await getPublicStoreSettings();
+  const [settings, shippingMethods] = await Promise.all([
+    getPublicStoreSettings(),
+    listAdminShippingMethods(),
+  ]);
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
@@ -24,6 +29,7 @@ export default async function StoreSettingsPage() {
         pagos se configurarán en una sección separada.
       </p>
       <StoreSettingsForm settings={settings} />
+      <ShippingMethodsForm methods={shippingMethods} />
     </main>
   );
 }
