@@ -2,40 +2,49 @@ import Link from "next/link";
 
 import { getPublicStoreSettings } from "@/db/queries/store-settings";
 import { buildWhatsAppUrl } from "@/features/store/store-settings";
+import { BrandMark } from "@/components/ui/brand-mark";
 
 export async function SiteFooter() {
   const settings = await getPublicStoreSettings();
   const whatsappUrl = buildWhatsAppUrl(settings);
 
   return (
-    <footer className="mt-auto border-t border-slate-200 bg-white px-6 py-10 text-sm text-slate-600">
-      <div className="mx-auto grid max-w-6xl gap-8 sm:grid-cols-3">
+    <footer className="bg-foreground mt-auto px-6 pt-14 pb-8 text-sm text-slate-300">
+      <div className="mx-auto grid max-w-7xl gap-10 sm:grid-cols-[1.2fr_0.8fr_1fr]">
         <div>
-          <p className="font-bold text-slate-950">{settings.storeName}</p>
-          <p className="mt-2">Accesorios tecnológicos en Colombia.</p>
+          <div className="text-white">
+            <BrandMark inverse />
+          </div>
+          <p className="mt-5 max-w-xs leading-6 text-slate-400">
+            Tecnología útil, atención cercana y entregas coordinadas desde
+            Medellín para toda Colombia.
+          </p>
           {settings.supportEmail ? (
             <a
               href={`mailto:${settings.supportEmail}`}
-              className="mt-2 inline-flex font-semibold text-cyan-800 hover:underline"
+              className="mt-4 inline-flex font-bold text-white hover:text-blue-200"
             >
               {settings.supportEmail}
             </a>
           ) : null}
         </div>
-        <nav aria-label="Enlaces del pie de página" className="sm:text-right">
-          <ul className="grid gap-2">
+        <nav aria-label="Enlaces del pie de página">
+          <p className="mb-4 text-xs font-black tracking-[0.18em] text-white uppercase">
+            Explora
+          </p>
+          <ul className="grid gap-3">
             <li>
-              <Link href="/catalogo" className="hover:text-cyan-800">
+              <Link href="/catalogo" className="hover:text-white">
                 Catálogo
               </Link>
             </li>
             <li>
-              <Link href="/carrito" className="hover:text-cyan-800">
+              <Link href="/carrito" className="hover:text-white">
                 Carrito
               </Link>
             </li>
             <li>
-              <Link href="/pedido" className="hover:text-cyan-800">
+              <Link href="/pedido" className="hover:text-white">
                 Consultar pedido
               </Link>
             </li>
@@ -45,7 +54,7 @@ export async function SiteFooter() {
                   href={whatsappUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:text-cyan-800"
+                  className="hover:text-white"
                 >
                   Contactar por WhatsApp
                 </a>
@@ -53,34 +62,31 @@ export async function SiteFooter() {
             ) : null}
           </ul>
         </nav>
-        <nav aria-label="Información legal" className="sm:text-right">
-          <ul className="grid gap-2">
+        <nav aria-label="Información legal">
+          <p className="mb-4 text-xs font-black tracking-[0.18em] text-white uppercase">
+            Información
+          </p>
+          <ul className="grid gap-3">
             <li>
-              <Link
-                href="/terminos-y-condiciones"
-                className="hover:text-cyan-800"
-              >
+              <Link href="/terminos-y-condiciones" className="hover:text-white">
                 Términos y condiciones
               </Link>
             </li>
             <li>
-              <Link
-                href="/politica-de-privacidad"
-                className="hover:text-cyan-800"
-              >
+              <Link href="/politica-de-privacidad" className="hover:text-white">
                 Política de privacidad
               </Link>
             </li>
             <li>
               <Link
                 href="/cambios-garantias-y-retracto"
-                className="hover:text-cyan-800"
+                className="hover:text-white"
               >
                 Cambios, garantías y retracto
               </Link>
             </li>
             <li>
-              <Link href="/envios-y-entregas" className="hover:text-cyan-800">
+              <Link href="/envios-y-entregas" className="hover:text-white">
                 Envíos y entregas
               </Link>
             </li>
@@ -89,7 +95,7 @@ export async function SiteFooter() {
                 href="https://www.sic.gov.co/"
                 target="_blank"
                 rel="noreferrer"
-                className="font-semibold text-cyan-800 hover:underline"
+                className="font-semibold text-blue-200 hover:text-white"
               >
                 Superintendencia de Industria y Comercio
               </a>
@@ -97,7 +103,7 @@ export async function SiteFooter() {
           </ul>
         </nav>
       </div>
-      <p className="mx-auto mt-8 max-w-6xl border-t border-slate-200 pt-5 text-xs">
+      <p className="mx-auto mt-10 max-w-7xl border-t border-slate-700 pt-6 text-xs text-slate-500">
         © {new Date().getFullYear()} {settings.storeName}
       </p>
       {whatsappUrl ? (
@@ -106,8 +112,9 @@ export async function SiteFooter() {
           target="_blank"
           rel="noreferrer"
           aria-label={`Contactar a ${settings.storeName} por WhatsApp`}
-          className="fixed right-4 bottom-4 z-40 rounded-full bg-emerald-600 px-4 py-3 font-bold text-white shadow-lg transition hover:bg-emerald-700"
+          className="fixed right-4 bottom-4 z-40 inline-flex items-center gap-2 rounded-full bg-[#20b86a] px-4 py-3 font-black text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#159957]"
         >
+          <span aria-hidden="true" className="size-2 rounded-full bg-white" />
           WhatsApp
         </a>
       ) : null}

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 import { ProductCard } from "@/components/products/product-card";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { catalogService } from "@/features/catalog/catalog-service";
 
 export const metadata: Metadata = {
@@ -14,20 +16,29 @@ export const dynamic = "force-dynamic";
 
 const purchaseBenefits = [
   {
+    number: "01",
     title: "Compra acompañada",
     description:
-      "Revisamos cada pedido y te contactamos para coordinar el pago y la entrega.",
+      "Te ayudamos a confirmar compatibilidad, pago y entrega sin respuestas automáticas.",
   },
   {
-    title: "Pagos flexibles",
+    number: "02",
+    title: "Pagas como prefieras",
     description:
-      "Puedes pagar por Nequi, DaviPlata, Bancolombia o contraentrega donde esté disponible.",
+      "Nequi, DaviPlata, Bancolombia o efectivo contraentrega donde esté disponible.",
   },
   {
-    title: "Envíos en Colombia",
+    number: "03",
+    title: "Medellín y toda Colombia",
     description:
-      "Despachamos a nivel nacional y ofrecemos opciones locales en el Valle de Aburrá.",
+      "Entrega local en el Valle de Aburrá y despachos nacionales coordinados.",
   },
+] as const;
+
+const categoryStyles = [
+  "bg-brand-soft text-brand-dark",
+  "bg-accent-soft text-[#9f3512]",
+  "bg-[#e4f5ee] text-[#10664a]",
 ] as const;
 
 export default async function Home() {
@@ -35,61 +46,78 @@ export default async function Home() {
     catalogService.listCategories(),
     catalogService.listProducts({ page: 1, pageSize: 4, sort: "featured" }),
   ]);
-
   return (
-    <main className="flex-1 bg-white">
-      <section className="relative isolate overflow-hidden bg-slate-950 text-white">
+    <main className="flex-1 overflow-hidden">
+      <section className="bg-foreground relative isolate text-white">
         <div
           aria-hidden="true"
-          className="absolute inset-y-0 right-0 -z-10 w-2/3 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.22),_transparent_62%)]"
+          className="border-brand/60 absolute -top-24 -right-32 -z-10 size-[28rem] rounded-full border-[72px] sm:size-[38rem]"
         />
-        <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-[1fr_360px] lg:items-center">
-          <div>
-            <p className="text-sm font-bold tracking-[0.24em] text-cyan-300 uppercase">
-              Odissey Technology
+        <div
+          aria-hidden="true"
+          className="bg-accent absolute right-[28%] bottom-14 -z-10 size-6 rounded-full"
+        />
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_0.8fr] lg:items-center lg:py-24">
+          <div className="relative z-10">
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-black tracking-[0.16em] text-blue-200 uppercase">
+              <span
+                className="bg-accent size-2 rounded-full"
+                aria-hidden="true"
+              />
+              Tecnología para todos los días
             </p>
-            <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-tight text-balance sm:text-6xl">
-              Tecnología útil para acompañar tu día.
+            <h1 className="font-display mt-6 max-w-3xl text-[clamp(2.8rem,8vw,5.7rem)] leading-[0.96] font-black tracking-[-0.055em] text-balance">
+              Lo útil también puede verse
+              <span className="text-[#8ca8ff]"> increíble.</span>
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-              Accesorios seleccionados, precios claros y atención cercana para
-              comprar desde cualquier lugar de Colombia.
+            <p className="mt-6 max-w-xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
+              Accesorios confiables para cargar, conectar y disfrutar tus
+              dispositivos. Seleccionados en Medellín, listos para acompañarte.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/catalogo"
-                className="inline-flex rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-300"
+                className="bg-brand inline-flex min-h-12 items-center gap-2 rounded-full px-6 py-3 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#416cff]"
               >
-                Explorar catálogo
+                Explorar productos
+                <span aria-hidden="true">→</span>
               </Link>
               <Link
-                href="/catalogo?sort=newest"
-                className="inline-flex rounded-xl border border-slate-600 px-5 py-3 text-sm font-bold text-white transition hover:border-cyan-300 hover:text-cyan-200"
+                href="/pedido"
+                className="inline-flex min-h-12 items-center rounded-full border border-white/25 px-6 py-3 text-sm font-black text-white transition hover:border-white hover:bg-white/5"
               >
-                Ver novedades
+                Consultar pedido
               </Link>
+            </div>
+            <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 border-t border-white/10 pt-6 text-xs font-bold text-slate-300">
+              <span>✓ Compra sin registro</span>
+              <span>✓ Atención por WhatsApp</span>
+              <span>✓ Precios en COP</span>
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-700 bg-slate-900/80 p-6 shadow-2xl shadow-cyan-950/40 backdrop-blur">
-            <p className="text-xs font-bold tracking-widest text-cyan-300 uppercase">
-              Compra fácil
-            </p>
-            <p className="mt-3 text-2xl font-bold">Elige, confirma y recibe.</p>
-            <ol className="mt-6 grid gap-4 text-sm text-slate-300">
-              <li className="flex gap-3">
-                <span className="font-black text-cyan-300">01</span>
-                Agrega tus productos al carrito.
-              </li>
-              <li className="flex gap-3">
-                <span className="font-black text-cyan-300">02</span>
-                Completa los datos de entrega y pago.
-              </li>
-              <li className="flex gap-3">
-                <span className="font-black text-cyan-300">03</span>
-                Coordinamos contigo la confirmación del pedido.
-              </li>
-            </ol>
+          <div className="relative mx-auto w-full max-w-[34rem] lg:mr-0">
+            <div
+              aria-hidden="true"
+              className="border-accent/90 absolute top-[18%] left-[2%] size-20 rounded-full border-[18px]"
+            />
+            <div
+              aria-hidden="true"
+              className="bg-brand absolute right-[2%] bottom-[14%] size-5 rounded-full"
+            />
+            <div className="relative aspect-[4/4.7] overflow-hidden rounded-[2.5rem]">
+              <Image
+                src="/images/hero-wireless-earbuds.webp"
+                alt="Audífonos inalámbricos blancos flotando sobre su estuche de carga abierto"
+                fill
+                priority
+                sizes="(min-width: 1024px) 44vw, 95vw"
+                className="object-cover object-center drop-shadow-2xl"
+              />
+              <span className="bg-foreground/75 absolute right-4 bottom-5 rounded-full border border-white/15 px-3 py-1.5 text-[10px] font-black tracking-[0.12em] text-blue-200 uppercase backdrop-blur">
+                Sonido sin límites
+              </span>
+            </div>
           </div>
         </div>
       </section>
@@ -97,43 +125,42 @@ export default async function Home() {
       {categories.length > 0 ? (
         <section
           aria-labelledby="categories-title"
-          className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-18"
+          className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20"
         >
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="text-sm font-bold tracking-widest text-cyan-700 uppercase">
-                Encuentra lo que buscas
-              </p>
-              <h2
-                id="categories-title"
-                className="mt-2 text-3xl font-bold tracking-tight text-slate-950"
+          <SectionHeading
+            eyebrow="Encuentra tu accesorio"
+            id="categories-title"
+            title="¿Qué necesitas hoy?"
+            description="Explora por tipo de producto y encuentra rápidamente lo que funciona con tus dispositivos."
+            action={
+              <Link
+                href="/catalogo"
+                className="text-brand hover:text-brand-dark inline-flex items-center gap-2 text-sm font-black"
               >
-                Compra por categoría
-              </h2>
-            </div>
-            <Link
-              href="/catalogo"
-              className="text-sm font-bold text-cyan-800 hover:underline"
-            >
-              Ver todas
-            </Link>
-          </div>
-          <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                Ver todo <span aria-hidden="true">→</span>
+              </Link>
+            }
+          />
+          <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {categories.map((category, index) => (
               <Link
                 key={category.id}
                 href={`/catalogo?category=${category.slug}`}
-                className="group rounded-2xl border border-slate-200 bg-slate-50 p-6 transition hover:-translate-y-0.5 hover:border-cyan-300 hover:bg-cyan-50"
+                className={`group relative min-h-48 overflow-hidden rounded-[1.75rem] p-6 transition hover:-translate-y-1 ${categoryStyles[index % categoryStyles.length]}`}
               >
-                <span className="text-xs font-black tracking-widest text-cyan-700">
+                <span className="text-xs font-black tracking-[0.16em] opacity-65">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <h3 className="mt-5 text-xl font-bold text-slate-950 group-hover:text-cyan-900">
+                <h3 className="font-display mt-12 max-w-[80%] text-2xl font-black tracking-[-0.035em]">
                   {category.name}
                 </h3>
-                <p className="mt-2 text-sm font-semibold text-slate-500 group-hover:text-cyan-800">
-                  Explorar productos →
-                </p>
+                <span className="absolute right-5 bottom-5 grid size-11 place-items-center rounded-full bg-white text-xl font-black shadow-sm transition group-hover:translate-x-1">
+                  →
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="absolute -top-12 -right-12 size-36 rounded-full border-[28px] border-current opacity-10"
+                />
               </Link>
             ))}
           </div>
@@ -143,29 +170,24 @@ export default async function Home() {
       {catalog.items.length > 0 ? (
         <section
           aria-labelledby="featured-title"
-          className="border-y border-slate-200 bg-slate-50"
+          className="border-line bg-surface border-y"
         >
-          <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-18">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="text-sm font-bold tracking-widest text-cyan-700 uppercase">
-                  Selección Odissey
-                </p>
-                <h2
-                  id="featured-title"
-                  className="mt-2 text-3xl font-bold tracking-tight text-slate-950"
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20">
+            <SectionHeading
+              eyebrow="Selección Odissey"
+              id="featured-title"
+              title="Productos que resuelven"
+              description="Una selección corta y práctica para mejorar tu rutina tecnológica sin complicarte."
+              action={
+                <Link
+                  href="/catalogo"
+                  className="text-brand hover:text-brand-dark inline-flex items-center gap-2 text-sm font-black"
                 >
-                  Productos para comenzar
-                </h2>
-              </div>
-              <Link
-                href="/catalogo"
-                className="text-sm font-bold text-cyan-800 hover:underline"
-              >
-                Ver catálogo completo
-              </Link>
-            </div>
-            <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                  Catálogo completo <span aria-hidden="true">→</span>
+                </Link>
+              }
+            />
+            <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {catalog.items.map((product) => (
                 <ProductCard
                   key={product.id}
@@ -180,33 +202,50 @@ export default async function Home() {
 
       <section
         aria-labelledby="benefits-title"
-        className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-18"
+        className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20"
       >
-        <div className="max-w-2xl">
-          <p className="text-sm font-bold tracking-widest text-cyan-700 uppercase">
-            Compra con tranquilidad
-          </p>
-          <h2
-            id="benefits-title"
-            className="mt-2 text-3xl font-bold tracking-tight text-slate-950"
-          >
-            Una experiencia clara de principio a fin
-          </h2>
-        </div>
-        <div className="mt-7 grid gap-5 md:grid-cols-3">
+        <SectionHeading
+          eyebrow="Así de simple"
+          id="benefits-title"
+          title="Tecnología con trato humano"
+          description="Comprar por internet no debería sentirse distante. Te acompañamos antes y después del pedido."
+        />
+        <div className="border-line mt-10 grid border-t md:grid-cols-3">
           {purchaseBenefits.map((benefit) => (
             <article
               key={benefit.title}
-              className="rounded-2xl border border-slate-200 p-6"
+              className="border-line border-b py-7 md:border-r md:px-7 md:first:pl-0 md:last:border-r-0"
             >
-              <h3 className="text-lg font-bold text-slate-950">
+              <span className="font-display text-brand/25 text-4xl font-black">
+                {benefit.number}
+              </span>
+              <h3 className="text-foreground mt-5 text-lg font-black">
                 {benefit.title}
               </h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
+              <p className="text-muted mt-2 text-sm leading-6">
                 {benefit.description}
               </p>
             </article>
           ))}
+        </div>
+      </section>
+
+      <section className="bg-accent text-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-xs font-black tracking-[0.16em] uppercase opacity-80">
+              ¿Tienes dudas?
+            </p>
+            <h2 className="font-display mt-2 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
+              Te ayudamos a elegir bien.
+            </h2>
+          </div>
+          <Link
+            href="/catalogo"
+            className="text-foreground inline-flex min-h-12 w-fit items-center rounded-full bg-white px-6 py-3 text-sm font-black transition hover:-translate-y-0.5"
+          >
+            Empezar a explorar →
+          </Link>
         </div>
       </section>
     </main>
