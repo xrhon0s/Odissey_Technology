@@ -14,6 +14,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { orders } from "./orders";
+import { adminUsers } from "./admin";
 
 export const paymentStatus = pgEnum("payment_status", [
   "pending",
@@ -73,6 +74,9 @@ export const paymentEvents = pgTable(
       .references(() => payments.id, { onDelete: "restrict" }),
     eventType: varchar("event_type", { length: 60 }).notNull(),
     externalEventId: varchar("external_event_id", { length: 160 }),
+    actorAdminId: uuid("actor_admin_id").references(() => adminUsers.id, {
+      onDelete: "restrict",
+    }),
     payload: jsonb("payload")
       .$type<Record<string, unknown>>()
       .default({})

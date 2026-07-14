@@ -11,6 +11,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
+import { adminUsers } from "./admin";
 import { inventoryMovementType, productVariants } from "./catalog";
 
 export const inventory = pgTable(
@@ -58,7 +59,9 @@ export const inventoryMovements = pgTable(
     reason: text("reason").notNull(),
     referenceType: varchar("reference_type", { length: 60 }),
     referenceId: uuid("reference_id"),
-    actorAdminId: uuid("actor_admin_id"),
+    actorAdminId: uuid("actor_admin_id").references(() => adminUsers.id, {
+      onDelete: "restrict",
+    }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
