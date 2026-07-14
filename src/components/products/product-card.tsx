@@ -4,7 +4,15 @@ import Link from "next/link";
 import type { CatalogProductSummary } from "@/db/queries/catalog";
 import { formatCurrency } from "@/lib/format-currency";
 
-export function ProductCard({ product }: { product: CatalogProductSummary }) {
+export function ProductCard({
+  headingLevel = "h2",
+  product,
+}: {
+  headingLevel?: "h2" | "h3";
+  product: CatalogProductSummary;
+}) {
+  const Heading = headingLevel;
+
   return (
     <article className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-0.5 hover:border-cyan-300">
       <Link href={`/producto/${product.slug}`} className="block">
@@ -32,9 +40,9 @@ export function ProductCard({ product }: { product: CatalogProductSummary }) {
           <p className="text-xs font-medium text-cyan-700">
             {product.categoryName}
           </p>
-          <h2 className="mt-1 min-h-12 font-semibold text-slate-950 group-hover:text-cyan-800">
+          <Heading className="mt-1 min-h-12 font-semibold text-slate-950 group-hover:text-cyan-800">
             {product.name}
-          </h2>
+          </Heading>
           <p className="mt-3 text-lg font-bold text-slate-950">
             Desde {formatCurrency(product.minimumPriceInCop)}
           </p>
