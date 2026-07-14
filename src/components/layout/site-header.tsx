@@ -1,19 +1,23 @@
 import Link from "next/link";
 
 import { CartStatusLink } from "@/components/cart/cart-status-link";
+import { getPublicStoreSettings } from "@/db/queries/store-settings";
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const settings = await getPublicStoreSettings();
+
   return (
     <header className="border-b border-slate-200 bg-white">
       <div className="bg-slate-950 px-4 py-2 text-center text-xs font-medium text-cyan-100">
-        Envíos a toda Colombia
+        {settings.announcement}
       </div>
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link
           href="/"
           className="text-lg font-black tracking-tight text-slate-950"
         >
-          ODISSEY<span className="text-cyan-600">.</span>
+          {settings.storeName.toUpperCase()}
+          <span className="text-cyan-600">.</span>
         </Link>
         <nav aria-label="Navegación principal">
           <ul className="flex items-center gap-5 text-sm font-semibold text-slate-700">
