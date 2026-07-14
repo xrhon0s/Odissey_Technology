@@ -1,5 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { z } from "zod";
 
 import { getDb } from "@/db";
@@ -17,7 +18,7 @@ export type AdminAccess =
   | { status: "authenticated"; admin: AuthenticatedAdmin }
   | { status: "unauthenticated" | "unauthorized" | "unconfigured" };
 
-export async function getAdminAccess(): Promise<AdminAccess> {
+export const getAdminAccess = cache(async (): Promise<AdminAccess> => {
   const supabase = await createSupabaseServerClient();
   if (!supabase) return { status: "unconfigured" };
 
@@ -40,7 +41,7 @@ export async function getAdminAccess(): Promise<AdminAccess> {
   return admin
     ? { admin, status: "authenticated" }
     : { status: "unauthorized" };
-}
+});
 
 export async function requireAdmin() {
   const access = await getAdminAccess();
