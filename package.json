@@ -17,12 +17,15 @@
     "db:check": "drizzle-kit check",
     "db:migrate": "tsx --env-file=.env.local src/db/migrate.ts",
     "db:seed": "tsx --env-file=.env.local src/db/seed.ts",
+    "db:bootstrap-admin": "tsx --env-file=.env.local src/db/bootstrap-admin.ts",
     "db:studio": "drizzle-kit studio",
     "db:start": "docker compose up -d postgres",
     "db:stop": "docker compose stop postgres"
   },
   "dependencies": {
     "@hookform/resolvers": "5.4.0",
+    "@supabase/ssr": "0.12.1",
+    "@supabase/supabase-js": "2.110.3",
     "drizzle-orm": "0.45.2",
     "next": "16.2.10",
     "postgres": "3.4.9",

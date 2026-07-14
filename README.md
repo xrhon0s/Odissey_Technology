@@ -24,24 +24,25 @@ La aplicación estará disponible en `http://localhost:3000`.
 
 ## Scripts
 
-| Comando             | Uso                             |
-| ------------------- | ------------------------------- |
-| `pnpm dev`          | Servidor local                  |
-| `pnpm build`        | Build de producción             |
-| `pnpm start`        | Ejecutar el build               |
-| `pnpm lint`         | ESLint                          |
-| `pnpm typecheck`    | TypeScript sin emitir archivos  |
-| `pnpm test`         | Pruebas unitarias               |
-| `pnpm test:watch`   | Vitest interactivo              |
-| `pnpm format:check` | Verificar formato               |
-| `pnpm format`       | Aplicar formato                 |
-| `pnpm db:generate`  | Generar migraciones             |
-| `pnpm db:check`     | Validar migraciones             |
-| `pnpm db:migrate`   | Aplicar migraciones localmente  |
-| `pnpm db:seed`      | Cargar catálogo de demostración |
-| `pnpm db:studio`    | Abrir Drizzle Studio            |
-| `pnpm db:start`     | Iniciar PostgreSQL con Docker   |
-| `pnpm db:stop`      | Detener PostgreSQL local        |
+| Comando                   | Uso                                          |
+| ------------------------- | -------------------------------------------- |
+| `pnpm dev`                | Servidor local                               |
+| `pnpm build`              | Build de producción                          |
+| `pnpm start`              | Ejecutar el build                            |
+| `pnpm lint`               | ESLint                                       |
+| `pnpm typecheck`          | TypeScript sin emitir archivos               |
+| `pnpm test`               | Pruebas unitarias                            |
+| `pnpm test:watch`         | Vitest interactivo                           |
+| `pnpm format:check`       | Verificar formato                            |
+| `pnpm format`             | Aplicar formato                              |
+| `pnpm db:generate`        | Generar migraciones                          |
+| `pnpm db:check`           | Validar migraciones                          |
+| `pnpm db:migrate`         | Aplicar migraciones localmente               |
+| `pnpm db:seed`            | Cargar catálogo de demostración              |
+| `pnpm db:bootstrap-admin` | Vincular el primer administrador de Supabase |
+| `pnpm db:studio`          | Abrir Drizzle Studio                         |
+| `pnpm db:start`           | Iniciar PostgreSQL con Docker                |
+| `pnpm db:stop`            | Detener PostgreSQL local                     |
 
 ## Variables de entorno
 
@@ -78,6 +79,19 @@ El volumen `postgres_data` conserva la información entre reinicios. Eliminar es
 El checkout permite seleccionar Nequi, DaviPlata, transferencia Bancolombia o efectivo contraentrega. Los tres medios electrónicos quedan pendientes de revisión manual; los datos reales de las cuentas no se guardan en el repositorio.
 
 El efectivo contraentrega se valida en el servidor y solo se acepta para recogida local o entregas en los diez municipios del Valle de Aburrá: Medellín, Barbosa, Girardota, Copacabana, Bello, Itagüí, Envigado, Sabaneta, La Estrella y Caldas.
+
+## Acceso administrativo
+
+El panel usa Supabase Auth con sesión por cookies y vuelve a verificar en PostgreSQL que el usuario pertenezca a `admin_users` y esté activo. Sin configuración, `/admin` permanece cerrado y `/login` explica qué falta.
+
+Para habilitar el primer propietario:
+
+1. Crea el usuario en Supabase Auth y copia su UUID.
+2. Configura `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+3. Define `ADMIN_AUTH_USER_ID`, `ADMIN_EMAIL`, `ADMIN_FULL_NAME` y establece temporalmente `BOOTSTRAP_ADMIN=true`.
+4. Ejecuta `pnpm db:bootstrap-admin` y vuelve a dejar `BOOTSTRAP_ADMIN=false`.
+
+No habilites registro público de administradores. Las acciones del panel verifican la sesión y la fila activa del administrador en el servidor, incluso si la ruta ya pasó por el proxy de sesión.
 
 ## Pruebas
 
