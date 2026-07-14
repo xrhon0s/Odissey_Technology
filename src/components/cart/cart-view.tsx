@@ -113,13 +113,12 @@ export function CartView() {
         <p className="mt-3 text-xs leading-5 text-slate-400">
           Envío y disponibilidad final se confirmarán durante el checkout.
         </p>
-        <button
-          type="button"
-          disabled
-          className="mt-6 h-12 w-full cursor-not-allowed rounded-xl bg-slate-700 text-sm font-semibold text-slate-300"
+        <Link
+          href="/checkout"
+          className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-cyan-500 text-sm font-bold text-slate-950 hover:bg-cyan-400"
         >
-          Checkout próximamente
-        </button>
+          Continuar al checkout
+        </Link>
         <button
           type="button"
           onClick={clear}

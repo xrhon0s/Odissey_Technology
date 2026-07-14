@@ -1,0 +1,348 @@
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+
+import {
+  checkoutFormSchema,
+  type CheckoutFormValues,
+} from "@/features/checkout/checkout-schema";
+import type {
+  CheckoutQuote,
+  CheckoutShippingMethod,
+} from "@/features/checkout/checkout-service";
+import { formatCurrency } from "@/lib/format-currency";
+import { useCartStore } from "@/stores/cart-store";
+
+type QuoteResponse =
+  | { ok: true; quote: CheckoutQuote }
+  | { code: string; message: string; ok: false };
+
+type CheckoutFormProps = {
+  shippingMethods: CheckoutShippingMethod[];
+};
+
+const inputClassName =
+  "h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-950 shadow-sm focus:border-cyan-600";
+
+export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
+  const hasHydrated = useCartStore((state) => state.hasHydrated);
+  const items = useCartStore((state) => state.items);
+  const [quote, setQuote] = useState<CheckoutQuote | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const defaultShippingMethod = shippingMethods[0]?.code ?? "";
+  const {
+    control,
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    register,
+  } = useForm<CheckoutFormValues>({
+    defaultValues: {
+      address: {
+        addressLine1: "",
+        addressLine2: "",
+        city: "",
+        deliveryNotes: "",
+        department: "",
+        neighborhood: "",
+      },
+      customer: { email: "", fullName: "", phone: "" },
+      shippingMethodCode: defaultShippingMethod,
+    },
+    resolver: zodResolver(checkoutFormSchema),
+    shouldUnregister: true,
+  });
+  const selectedShippingCode = useWatch({
+    control,
+    name: "shippingMethodCode",
+  });
+  const selectedShippingMethod = shippingMethods.find(
+    (shippingMethod) => shippingMethod.code === selectedShippingCode,
+  );
+
+  if (!hasHydrated) {
+    return (
+      <div aria-busy="true" className="grid animate-pulse gap-6 lg:grid-cols-2">
+        <div className="h-96 rounded-2xl bg-slate-200" />
+        <div className="h-72 rounded-2xl bg-slate-200" />
+      </div>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
+        <h2 className="text-xl font-bold text-slate-950">
+          No hay productos para cotizar
+        </h2>
+        <p className="mt-2 text-slate-600">
+          Agrega productos al carrito antes de continuar.
+        </p>
+        <Link
+          href="/catalogo"
+          className="mt-6 inline-flex rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white"
+        >
+          Ver catálogo
+        </Link>
+      </div>
+    );
+  }
+
+  async function submitCheckout(values: CheckoutFormValues) {
+    setQuote(null);
+    setServerError(null);
+
+    try {
+      const response = await fetch("/api/checkout/quote", {
+        body: JSON.stringify({
+          address: selectedShippingMethod?.requiresAddress
+            ? values.address
+            : undefined,
+          customer: values.customer,
+          items: items.map((item) => ({
+            quantity: item.quantity,
+            variantId: item.variantId,
+          })),
+          shippingMethodCode: values.shippingMethodCode,
+        }),
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+      });
+      const result = (await response.json()) as QuoteResponse;
+
+      if (!result.ok) {
+        setServerError(result.message);
+        return;
+      }
+
+      setQuote(result.quote);
+    } catch {
+      setServerError(
+        "No pudimos conectar con el servidor. Inténtalo nuevamente.",
+      );
+    }
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit(submitCheckout)}
+      className="grid gap-8 lg:grid-cols-[1fr_380px] lg:items-start"
+    >
+      <div className="space-y-6">
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+          <h2 className="text-xl font-bold text-slate-950">Tus datos</h2>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <Field
+              label="Nombre completo"
+              error={errors.customer?.fullName?.message}
+            >
+              <input
+                autoComplete="name"
+                className={inputClassName}
+                {...register("customer.fullName")}
+              />
+            </Field>
+            <Field label="Celular" error={errors.customer?.phone?.message}>
+              <input
+                autoComplete="tel"
+                inputMode="tel"
+                placeholder="3001234567"
+                className={inputClassName}
+                {...register("customer.phone")}
+              />
+            </Field>
+            <Field
+              label="Correo electrónico"
+              error={errors.customer?.email?.message}
+              className="sm:col-span-2"
+            >
+              <input
+                autoComplete="email"
+                inputMode="email"
+                type="email"
+                className={inputClassName}
+                {...register("customer.email")}
+              />
+            </Field>
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+          <h2 className="text-xl font-bold text-slate-950">Entrega</h2>
+          <div className="mt-5 space-y-3">
+            {shippingMethods.map((method) => (
+              <label
+                key={method.code}
+                className="flex cursor-pointer gap-3 rounded-xl border border-slate-200 p-4 has-checked:border-cyan-600 has-checked:bg-cyan-50"
+              >
+                <input
+                  type="radio"
+                  value={method.code}
+                  className="mt-1 size-4 accent-cyan-700"
+                  {...register("shippingMethodCode")}
+                />
+                <span className="flex-1">
+                  <span className="flex justify-between gap-3 font-semibold text-slate-950">
+                    {method.name}
+                    <span>{formatCurrency(method.priceInCop)}</span>
+                  </span>
+                  <span className="mt-1 block text-sm text-slate-600">
+                    {method.description}
+                  </span>
+                </span>
+              </label>
+            ))}
+            {errors.shippingMethodCode && (
+              <p className="text-sm text-red-700">
+                {errors.shippingMethodCode.message}
+              </p>
+            )}
+          </div>
+
+          {selectedShippingMethod?.requiresAddress && (
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <Field
+                label="Departamento"
+                error={errors.address?.department?.message}
+              >
+                <input
+                  autoComplete="address-level1"
+                  className={inputClassName}
+                  {...register("address.department")}
+                />
+              </Field>
+              <Field label="Ciudad" error={errors.address?.city?.message}>
+                <input
+                  autoComplete="address-level2"
+                  className={inputClassName}
+                  {...register("address.city")}
+                />
+              </Field>
+              <Field
+                label="Dirección"
+                error={errors.address?.addressLine1?.message}
+                className="sm:col-span-2"
+              >
+                <input
+                  autoComplete="street-address"
+                  className={inputClassName}
+                  {...register("address.addressLine1")}
+                />
+              </Field>
+              <Field label="Complemento (opcional)">
+                <input
+                  className={inputClassName}
+                  {...register("address.addressLine2")}
+                />
+              </Field>
+              <Field label="Barrio (opcional)">
+                <input
+                  className={inputClassName}
+                  {...register("address.neighborhood")}
+                />
+              </Field>
+              <Field label="Indicaciones (opcional)" className="sm:col-span-2">
+                <textarea
+                  rows={3}
+                  className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 shadow-sm focus:border-cyan-600"
+                  {...register("address.deliveryNotes")}
+                />
+              </Field>
+            </div>
+          )}
+        </section>
+      </div>
+
+      <aside className="rounded-2xl bg-slate-950 p-6 text-white lg:sticky lg:top-6">
+        <h2 className="text-lg font-bold">Revisión segura</h2>
+        <p className="mt-2 text-sm leading-6 text-slate-300">
+          Validaremos precios, disponibilidad y envío directamente en el
+          servidor.
+        </p>
+        <div className="mt-5 space-y-3 border-t border-slate-700 pt-5 text-sm">
+          {items.map((item) => (
+            <div key={item.variantId} className="flex justify-between gap-4">
+              <span className="text-slate-300">
+                {item.quantity} × {item.productName}
+              </span>
+              <span>{formatCurrency(item.unitPriceInCop * item.quantity)}</span>
+            </div>
+          ))}
+        </div>
+
+        {serverError && (
+          <p
+            role="alert"
+            className="mt-5 rounded-xl bg-red-950 p-3 text-sm text-red-100"
+          >
+            {serverError}
+          </p>
+        )}
+
+        {quote && (
+          <div
+            className="mt-5 rounded-xl bg-emerald-950 p-4"
+            aria-live="polite"
+          >
+            <p className="font-semibold text-emerald-100">
+              Cotización validada
+            </p>
+            <dl className="mt-3 space-y-2 text-sm text-emerald-50">
+              <div className="flex justify-between">
+                <dt>Productos</dt>
+                <dd>{formatCurrency(quote.subtotalInCop)}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt>Envío</dt>
+                <dd>{formatCurrency(quote.shippingInCop)}</dd>
+              </div>
+              <div className="flex justify-between border-t border-emerald-800 pt-2 font-bold">
+                <dt>Total</dt>
+                <dd>{formatCurrency(quote.totalInCop)}</dd>
+              </div>
+            </dl>
+            <p className="mt-3 text-xs leading-5 text-emerald-200">
+              La creación del pedido y el pago se habilitarán en la siguiente
+              etapa.
+            </p>
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={isSubmitting || shippingMethods.length === 0}
+          className="mt-6 h-12 w-full rounded-xl bg-cyan-500 text-sm font-bold text-slate-950 hover:bg-cyan-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-300"
+        >
+          {isSubmitting ? "Validando…" : "Validar compra"}
+        </button>
+        <Link
+          href="/carrito"
+          className="mt-4 block text-center text-sm font-semibold text-slate-300 hover:text-white"
+        >
+          Volver al carrito
+        </Link>
+      </aside>
+    </form>
+  );
+}
+
+type FieldProps = {
+  children: React.ReactNode;
+  className?: string;
+  error?: string;
+  label: string;
+};
+
+function Field({ children, className = "", error, label }: FieldProps) {
+  return (
+    <label
+      className={`grid gap-1.5 text-sm font-semibold text-slate-700 ${className}`}
+    >
+      {label}
+      {children}
+      {error && <span className="text-xs text-red-700">{error}</span>}
+    </label>
+  );
+}

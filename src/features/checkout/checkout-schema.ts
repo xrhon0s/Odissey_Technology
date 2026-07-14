@@ -23,6 +23,12 @@ export const checkoutCustomerSchema = z.object({
     .regex(/^(?:\+?57)?3\d{9}$/, "Ingresa un celular colombiano válido"),
 });
 
+export const checkoutFormSchema = z.object({
+  address: checkoutAddressSchema.optional(),
+  customer: checkoutCustomerSchema,
+  shippingMethodCode: z.string().trim().min(1, "Selecciona una opción"),
+});
+
 export const checkoutQuoteRequestSchema = z
   .object({
     address: checkoutAddressSchema.optional(),
@@ -52,3 +58,4 @@ export const checkoutQuoteRequestSchema = z
   });
 
 export type CheckoutQuoteRequest = z.infer<typeof checkoutQuoteRequestSchema>;
+export type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;
