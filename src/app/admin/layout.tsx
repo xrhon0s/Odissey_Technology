@@ -42,6 +42,12 @@ export default async function AdminLayout({
               >
                 Inventario
               </Link>
+              <Link
+                href="/admin/productos"
+                className="text-sm text-slate-300 hover:text-white"
+              >
+                Productos
+              </Link>
             </nav>
           </div>
           <form action={logoutAction}>
@@ -71,6 +77,12 @@ export default async function AdminLayout({
             className="whitespace-nowrap text-slate-300"
           >
             Inventario
+          </Link>
+          <Link
+            href="/admin/productos"
+            className="whitespace-nowrap text-slate-300"
+          >
+            Productos
           </Link>
         </nav>
       </header>
