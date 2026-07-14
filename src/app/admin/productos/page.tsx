@@ -48,10 +48,10 @@ export default async function AdminProductsPage() {
       <AdminPageHeader
         action={
           <a
-            href="#nuevo-producto"
+            href="#acciones-catalogo"
             className="bg-foreground hover:bg-brand-dark inline-flex h-11 items-center rounded-xl px-5 text-sm font-extrabold text-white transition"
           >
-            + Nuevo producto
+            + Agregar
           </a>
         }
         description="Publica productos, administra sus variantes y organiza las categorías del catálogo."
@@ -110,30 +110,50 @@ export default async function AdminProductsPage() {
         )}
       </section>
 
-      <div
-        id="nuevo-producto"
-        className="mt-8 grid scroll-mt-6 items-start gap-8 lg:grid-cols-[1fr_340px]"
-      >
-        {categories.length > 0 ? (
-          <ProductCreateForm categories={categories} />
-        ) : (
-          <p className="bg-brand-yellow/20 rounded-2xl p-5 text-sm text-amber-900">
-            Crea primero una categoría para poder agregar productos.
+      <section id="acciones-catalogo" className="mt-8 scroll-mt-24">
+        <div className="mb-4">
+          <h2 className="font-display text-foreground text-xl font-extrabold">
+            Agregar al catálogo
+          </h2>
+          <p className="text-muted mt-1 text-sm">
+            Abre únicamente la acción que necesites realizar.
           </p>
-        )}
-        <CategoryCreateForm />
-      </div>
+        </div>
+        <div className="grid min-w-0 items-start gap-4 lg:grid-cols-2">
+          {categories.length > 0 ? (
+            <ProductCreateForm categories={categories} />
+          ) : (
+            <p className="bg-brand-yellow/20 rounded-2xl p-5 text-sm text-amber-900">
+              Crea primero una categoría para poder agregar productos.
+            </p>
+          )}
+          <CategoryCreateForm />
+        </div>
+      </section>
       <section className="border-line bg-surface mt-8 rounded-2xl border p-5 sm:p-6">
-        <h2 className="font-display text-foreground text-xl font-extrabold">
-          Editar categorías
-        </h2>
-        <p className="text-muted mt-1 text-sm">
-          Cambia su visibilidad, orden y descripción en el catálogo.
-        </p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="font-display text-foreground text-xl font-extrabold">
+              Categorías
+            </h2>
+            <p className="text-muted mt-1 text-sm">
+              Abre una categoría para cambiar sus datos o visibilidad.
+            </p>
+          </div>
+          <span className="bg-canvas text-muted rounded-full px-3 py-1 text-xs font-bold">
+            {categories.length} categoría(s)
+          </span>
+        </div>
         <div className="mt-5 grid gap-4">
-          {categories.map((category) => (
-            <CategoryEditForm key={category.id} category={category} />
-          ))}
+          {categories.length > 0 ? (
+            categories.map((category) => (
+              <CategoryEditForm key={category.id} category={category} />
+            ))
+          ) : (
+            <p className="text-muted py-4 text-sm">
+              Todavía no hay categorías creadas.
+            </p>
+          )}
         </div>
       </section>
     </main>

@@ -18,10 +18,10 @@ import {
 
 const initialState: CatalogActionState = {};
 const inputClass =
-  "h-11 rounded-xl border border-line bg-surface px-3 text-sm text-foreground outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/10";
+  "h-11 w-full min-w-0 max-w-full rounded-xl border border-line bg-surface px-3 text-sm text-foreground outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/10";
 const textareaClass =
-  "min-h-28 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/10";
-const labelClass = "grid gap-1.5 text-sm font-semibold text-foreground";
+  "min-h-28 w-full min-w-0 max-w-full resize-y rounded-xl border border-line bg-surface px-3 py-2 text-sm text-foreground outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/10";
+const labelClass = "grid min-w-0 gap-1.5 text-sm font-semibold text-foreground";
 
 function Result({ state }: { state: CatalogActionState }) {
   if (!state.error && !state.success) return null;
@@ -40,7 +40,7 @@ function SubmitButton({ pending, text }: { pending: boolean; text: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="bg-foreground hover:bg-brand-dark rounded-xl px-4 py-3 text-sm font-extrabold text-white transition disabled:bg-slate-400"
+      className="bg-foreground hover:bg-brand-dark w-fit min-w-40 justify-self-start rounded-xl px-5 py-3 text-sm font-extrabold text-white transition disabled:bg-slate-400"
     >
       {pending ? "Guardando…" : text}
     </button>
@@ -53,53 +53,62 @@ export function CategoryCreateForm() {
     initialState,
   );
   return (
-    <form
-      action={action}
-      className="border-line bg-surface grid gap-4 rounded-2xl border p-5"
-    >
-      <h2 className="font-display text-foreground text-lg font-extrabold">
-        Nueva categoría
-      </h2>
-      <label className={labelClass}>
-        Nombre
-        <input name="name" required maxLength={120} className={inputClass} />
-      </label>
-      <label className={labelClass}>
-        Slug
-        <input
-          name="slug"
-          required
-          maxLength={140}
-          placeholder="cables-y-adaptadores"
-          className={inputClass}
-        />
-      </label>
-      <label className={labelClass}>
-        Descripción
-        <textarea
-          name="description"
-          maxLength={500}
-          className={textareaClass}
-        />
-      </label>
-      <label className={labelClass}>
-        Orden
-        <input
-          name="sortOrder"
-          type="number"
-          min={0}
-          defaultValue={0}
-          required
-          className={inputClass}
-        />
-      </label>
-      <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-        <input name="isActive" type="checkbox" defaultChecked /> Activa en la
-        tienda
-      </label>
-      <SubmitButton pending={pending} text="Crear categoría" />
-      <Result state={state} />
-    </form>
+    <details className="group border-line bg-surface overflow-hidden rounded-2xl border">
+      <summary className="hover:bg-brand/5 flex cursor-pointer list-none items-center justify-between gap-4 p-5 transition [&::-webkit-details-marker]:hidden">
+        <div>
+          <h2 className="font-display text-foreground font-extrabold">
+            Nueva categoría
+          </h2>
+          <p className="text-muted mt-1 text-sm">
+            Crea una nueva sección para organizar productos.
+          </p>
+        </div>
+        <span className="bg-canvas group-open:bg-brand/15 grid size-9 shrink-0 place-items-center rounded-full text-xl transition group-open:rotate-45">
+          +
+        </span>
+      </summary>
+      <form action={action} className="border-line grid gap-4 border-t p-5">
+        <label className={labelClass}>
+          Nombre
+          <input name="name" required maxLength={120} className={inputClass} />
+        </label>
+        <label className={labelClass}>
+          Slug
+          <input
+            name="slug"
+            required
+            maxLength={140}
+            placeholder="cables-y-adaptadores"
+            className={inputClass}
+          />
+        </label>
+        <label className={labelClass}>
+          Descripción
+          <textarea
+            name="description"
+            maxLength={500}
+            className={textareaClass}
+          />
+        </label>
+        <label className={labelClass}>
+          Orden
+          <input
+            name="sortOrder"
+            type="number"
+            min={0}
+            defaultValue={0}
+            required
+            className={inputClass}
+          />
+        </label>
+        <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
+          <input name="isActive" type="checkbox" defaultChecked /> Activa en la
+          tienda
+        </label>
+        <SubmitButton pending={pending} text="Crear categoría" />
+        <Result state={state} />
+      </form>
+    </details>
   );
 }
 
@@ -120,62 +129,75 @@ export function CategoryEditForm({
     initialState,
   );
   return (
-    <form
-      action={action}
-      className="border-line grid gap-3 rounded-xl border p-4"
-    >
-      <input type="hidden" name="categoryId" value={category.id} />
-      <div className="grid gap-3 sm:grid-cols-[1fr_1fr_90px]">
+    <details className="group border-line overflow-hidden rounded-xl border">
+      <summary className="hover:bg-brand/5 flex cursor-pointer list-none items-center justify-between gap-4 p-4 transition [&::-webkit-details-marker]:hidden">
+        <div className="min-w-0">
+          <p className="text-foreground truncate font-bold">{category.name}</p>
+          <p className="text-muted mt-1 truncate text-xs">/{category.slug}</p>
+        </div>
+        <div className="flex shrink-0 items-center gap-3">
+          <span
+            className={`rounded-full px-2.5 py-1 text-xs font-bold ${category.isActive ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-700"}`}
+          >
+            {category.isActive ? "Visible" : "Oculta"}
+          </span>
+          <span className="text-muted transition group-open:rotate-180">⌄</span>
+        </div>
+      </summary>
+      <form action={action} className="border-line grid gap-4 border-t p-4">
+        <input type="hidden" name="categoryId" value={category.id} />
+        <div className="grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_90px]">
+          <label className={labelClass}>
+            Nombre
+            <input
+              name="name"
+              required
+              defaultValue={category.name}
+              className={inputClass}
+            />
+          </label>
+          <label className={labelClass}>
+            Slug
+            <input
+              name="slug"
+              required
+              defaultValue={category.slug}
+              className={inputClass}
+            />
+          </label>
+          <label className={labelClass}>
+            Orden
+            <input
+              name="sortOrder"
+              type="number"
+              min={0}
+              required
+              defaultValue={category.sortOrder}
+              className={inputClass}
+            />
+          </label>
+        </div>
         <label className={labelClass}>
-          Nombre
-          <input
-            name="name"
-            required
-            defaultValue={category.name}
-            className={inputClass}
+          Descripción
+          <textarea
+            name="description"
+            maxLength={500}
+            defaultValue={category.description ?? ""}
+            className={textareaClass}
           />
         </label>
-        <label className={labelClass}>
-          Slug
+        <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
           <input
-            name="slug"
-            required
-            defaultValue={category.slug}
-            className={inputClass}
+            name="isActive"
+            type="checkbox"
+            defaultChecked={category.isActive}
           />
+          Visible en la tienda
         </label>
-        <label className={labelClass}>
-          Orden
-          <input
-            name="sortOrder"
-            type="number"
-            min={0}
-            required
-            defaultValue={category.sortOrder}
-            className={inputClass}
-          />
-        </label>
-      </div>
-      <label className={labelClass}>
-        Descripción
-        <textarea
-          name="description"
-          maxLength={500}
-          defaultValue={category.description ?? ""}
-          className={textareaClass}
-        />
-      </label>
-      <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-        <input
-          name="isActive"
-          type="checkbox"
-          defaultChecked={category.isActive}
-        />
-        Visible en la tienda
-      </label>
-      <SubmitButton pending={pending} text="Guardar categoría" />
-      <Result state={state} />
-    </form>
+        <SubmitButton pending={pending} text="Guardar categoría" />
+        <Result state={state} />
+      </form>
+    </details>
   );
 }
 
@@ -260,27 +282,35 @@ function ProductFields({
           className={textareaClass}
         />
       </label>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className={labelClass}>
-          Compatibilidad
-          <textarea
-            name="compatibility"
-            maxLength={500}
-            defaultValue={product?.compatibility ?? ""}
-            className={textareaClass}
-          />
-        </label>
-        <label className={labelClass}>
-          Garantía
-          <textarea
-            name="warranty"
-            maxLength={500}
-            defaultValue={product?.warranty ?? ""}
-            className={textareaClass}
-          />
-        </label>
-      </div>
-      <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+      <details className="border-line rounded-xl border border-dashed">
+        <summary className="text-foreground cursor-pointer px-4 py-3 text-sm font-bold">
+          Información opcional
+          <span className="text-muted ml-2 font-normal">
+            Compatibilidad y garantía
+          </span>
+        </summary>
+        <div className="border-line grid gap-4 border-t p-4 sm:grid-cols-2">
+          <label className={labelClass}>
+            Compatibilidad
+            <textarea
+              name="compatibility"
+              maxLength={500}
+              defaultValue={product?.compatibility ?? ""}
+              className={textareaClass}
+            />
+          </label>
+          <label className={labelClass}>
+            Garantía
+            <textarea
+              name="warranty"
+              maxLength={500}
+              defaultValue={product?.warranty ?? ""}
+              className={textareaClass}
+            />
+          </label>
+        </div>
+      </details>
+      <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
         <input
           name="isFeatured"
           type="checkbox"
@@ -374,7 +404,7 @@ function VariantFields({
           className={inputClass}
         />
       </label>
-      <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+      <label className="text-foreground flex min-w-0 items-center gap-2 text-sm font-semibold">
         <input
           name="isActive"
           type="checkbox"
@@ -396,23 +426,38 @@ export function ProductCreateForm({
     initialState,
   );
   return (
-    <form
-      action={action}
-      className="border-line bg-surface grid gap-5 rounded-2xl border p-5 sm:p-6"
+    <details
+      id="nuevo-producto"
+      className="group border-line bg-surface scroll-mt-24 overflow-hidden rounded-2xl border"
     >
-      <h2 className="font-display text-foreground text-xl font-extrabold">
-        Nuevo producto
-      </h2>
-      <ProductFields categories={categories} />
-      <div className="border-line border-t pt-5">
-        <h3 className="font-display text-foreground mb-4 font-extrabold">
-          Primera variante
-        </h3>
-        <VariantFields includeQuantity />
-      </div>
-      <SubmitButton pending={pending} text="Crear producto" />
-      <Result state={state} />
-    </form>
+      <summary className="hover:bg-brand/5 flex cursor-pointer list-none items-center justify-between gap-4 p-5 transition sm:p-6 [&::-webkit-details-marker]:hidden">
+        <div>
+          <h2 className="font-display text-foreground text-lg font-extrabold">
+            Crear un producto
+          </h2>
+          <p className="text-muted mt-1 text-sm">
+            Completa la información principal y su primera variante.
+          </p>
+        </div>
+        <span className="bg-foreground grid h-10 shrink-0 place-items-center rounded-xl px-4 text-sm font-extrabold text-white">
+          Abrir
+        </span>
+      </summary>
+      <form
+        action={action}
+        className="border-line grid min-w-0 gap-5 border-t p-5 sm:p-6"
+      >
+        <ProductFields categories={categories} />
+        <div className="border-line border-t pt-5">
+          <h3 className="font-display text-foreground mb-4 font-extrabold">
+            Primera variante
+          </h3>
+          <VariantFields includeQuantity />
+        </div>
+        <SubmitButton pending={pending} text="Crear producto" />
+        <Result state={state} />
+      </form>
+    </details>
   );
 }
 
@@ -449,18 +494,25 @@ export function VariantCreateForm({ productId }: { productId: string }) {
     initialState,
   );
   return (
-    <form
-      action={action}
-      className="border-line bg-canvas grid gap-5 rounded-2xl border border-dashed p-5"
-    >
-      <input type="hidden" name="productId" value={productId} />
-      <h3 className="font-display text-foreground font-extrabold">
-        Agregar variante
-      </h3>
-      <VariantFields includeQuantity />
-      <SubmitButton pending={pending} text="Crear variante" />
-      <Result state={state} />
-    </form>
+    <details className="group border-line bg-canvas overflow-hidden rounded-2xl border border-dashed">
+      <summary className="hover:bg-brand/5 flex cursor-pointer list-none items-center justify-between p-5 [&::-webkit-details-marker]:hidden">
+        <div>
+          <h3 className="font-display text-foreground font-extrabold">
+            Agregar variante
+          </h3>
+          <p className="text-muted mt-1 text-sm">
+            Crea otro color, tamaño o presentación.
+          </p>
+        </div>
+        <span className="text-foreground text-xl">+</span>
+      </summary>
+      <form action={action} className="border-line grid gap-5 border-t p-5">
+        <input type="hidden" name="productId" value={productId} />
+        <VariantFields includeQuantity />
+        <SubmitButton pending={pending} text="Crear variante" />
+        <Result state={state} />
+      </form>
+    </details>
   );
 }
 
@@ -480,25 +532,34 @@ export function VariantEditForm({
     initialState,
   );
   return (
-    <form
-      action={action}
-      className="border-line bg-surface grid gap-4 rounded-2xl border p-5"
-    >
-      <input type="hidden" name="productId" value={productId} />
-      <input type="hidden" name="variantId" value={variant.id} />
-      <div>
-        <h3 className="font-display text-foreground font-extrabold">
-          {variant.name}
-        </h3>
-        <p className="text-muted mt-1 text-xs">
-          Existencia: {variant.quantity} · Reservadas:{" "}
-          {variant.reservedQuantity}
-        </p>
-      </div>
-      <VariantFields includeQuantity={false} variant={variant} />
-      <SubmitButton pending={pending} text="Guardar variante" />
-      <Result state={state} />
-    </form>
+    <details className="group border-line bg-surface overflow-hidden rounded-2xl border">
+      <summary className="hover:bg-brand/5 flex cursor-pointer list-none items-center justify-between gap-4 p-5 [&::-webkit-details-marker]:hidden">
+        <div className="min-w-0">
+          <h3 className="font-display text-foreground truncate font-extrabold">
+            {variant.name}
+          </h3>
+          <p className="text-muted mt-1 text-xs">
+            Existencia: {variant.quantity} · Reservadas:{" "}
+            {variant.reservedQuantity}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-3">
+          <span
+            className={`rounded-full px-2.5 py-1 text-xs font-bold ${variant.isActive ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-700"}`}
+          >
+            {variant.isActive ? "Disponible" : "Inactiva"}
+          </span>
+          <span className="text-muted transition group-open:rotate-180">⌄</span>
+        </div>
+      </summary>
+      <form action={action} className="border-line grid gap-4 border-t p-5">
+        <input type="hidden" name="productId" value={productId} />
+        <input type="hidden" name="variantId" value={variant.id} />
+        <VariantFields includeQuantity={false} variant={variant} />
+        <SubmitButton pending={pending} text="Guardar variante" />
+        <Result state={state} />
+      </form>
+    </details>
   );
 }
 
@@ -547,31 +608,38 @@ export function ProductImageCreateForm({ productId }: { productId: string }) {
     initialState,
   );
   return (
-    <form
-      action={action}
-      className="border-line bg-canvas grid gap-4 rounded-2xl border border-dashed p-5"
-    >
-      <input type="hidden" name="productId" value={productId} />
-      <h3 className="font-display text-foreground font-extrabold">
-        Agregar imagen
-      </h3>
-      <label className={labelClass}>
-        Archivo
-        <input
-          name="image"
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/avif"
-          required
-          className="border-line bg-surface text-foreground file:bg-canvas rounded-xl border px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:px-3 file:py-2 file:font-semibold"
-        />
-        <span className="text-muted text-xs font-normal">
-          JPG, PNG, WebP o AVIF; máximo 3 MB.
-        </span>
-      </label>
-      <ImageMetadataFields />
-      <SubmitButton pending={pending} text="Subir imagen" />
-      <Result state={state} />
-    </form>
+    <details className="group border-line bg-canvas overflow-hidden rounded-2xl border border-dashed">
+      <summary className="hover:bg-brand/5 flex cursor-pointer list-none items-center justify-between p-5 [&::-webkit-details-marker]:hidden">
+        <div>
+          <h3 className="font-display text-foreground font-extrabold">
+            Agregar imagen
+          </h3>
+          <p className="text-muted mt-1 text-sm">
+            Sube otra vista del producto.
+          </p>
+        </div>
+        <span className="text-foreground text-xl">+</span>
+      </summary>
+      <form action={action} className="border-line grid gap-4 border-t p-5">
+        <input type="hidden" name="productId" value={productId} />
+        <label className={labelClass}>
+          Archivo
+          <input
+            name="image"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/avif"
+            required
+            className="border-line bg-surface text-foreground file:bg-canvas w-full max-w-full min-w-0 rounded-xl border px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:px-3 file:py-2 file:font-semibold"
+          />
+          <span className="text-muted text-xs font-normal">
+            JPG, PNG, WebP o AVIF; máximo 3 MB.
+          </span>
+        </label>
+        <ImageMetadataFields />
+        <SubmitButton pending={pending} text="Subir imagen" />
+        <Result state={state} />
+      </form>
+    </details>
   );
 }
 
