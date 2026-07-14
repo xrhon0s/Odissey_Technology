@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { OrderActionButton } from "./order-action-button";
 
 import { formatCurrency } from "@/lib/format-currency";
@@ -69,7 +71,12 @@ export function OrderList({ orders }: { orders: AdminOrder[] }) {
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="font-mono text-sm font-bold text-cyan-800">
-                  {order.reference}
+                  <Link
+                    href={`/admin/pedidos/${order.orderId}`}
+                    className="hover:underline"
+                  >
+                    {order.reference}
+                  </Link>
                 </p>
                 <h2 className="mt-1 text-lg font-bold text-slate-950">
                   {order.customerName}
