@@ -8,6 +8,7 @@ import { useForm, useWatch } from "react-hook-form";
 import {
   checkoutFormSchema,
   type CheckoutFormValues,
+  type CheckoutQuoteRequest,
 } from "@/features/checkout/checkout-schema";
 import type {
   CheckoutQuote,
@@ -20,6 +21,20 @@ type QuoteResponse =
   | { ok: true; quote: CheckoutQuote }
   | { code: string; message: string; ok: false };
 
+type OrderResponse =
+  | {
+      ok: true;
+      order: {
+        id: string;
+        reference: string;
+        reservationExpiresAt: string;
+        reused: boolean;
+        status: "pending";
+        totalInCop: number;
+      };
+    }
+  | { code: string; message: string; ok: false };
+
 type CheckoutFormProps = {
   shippingMethods: CheckoutShippingMethod[];
 };
@@ -28,10 +43,20 @@ const inputClassName =
   "h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-950 shadow-sm focus:border-cyan-600";
 
 export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
+  const clearCart = useCartStore((state) => state.clear);
   const hasHydrated = useCartStore((state) => state.hasHydrated);
   const items = useCartStore((state) => state.items);
   const [quote, setQuote] = useState<CheckoutQuote | null>(null);
+  const [quotedCheckout, setQuotedCheckout] =
+    useState<CheckoutQuoteRequest | null>(null);
+  const [order, setOrder] = useState<
+    Extract<OrderResponse, { ok: true }>["order"] | null
+  >(null);
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [checkoutAttemptId, setCheckoutAttemptId] = useState<string | null>(
+    null,
+  );
   const defaultShippingMethod = shippingMethods[0]?.code ?? "";
   const {
     control,
@@ -71,6 +96,54 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
     );
   }
 
+  if (order) {
+    return (
+      <section className="mx-auto max-w-2xl rounded-2xl border border-emerald-200 bg-white p-6 text-center shadow-sm sm:p-10">
+        <p className="text-sm font-bold tracking-widest text-emerald-700 uppercase">
+          Pedido creado
+        </p>
+        <h2 className="mt-3 text-2xl font-bold text-slate-950 sm:text-3xl">
+          Referencia {order.reference}
+        </h2>
+        <p className="mt-4 text-slate-600">
+          El pedido está pendiente y reservamos tus productos mientras completas
+          el pago.
+        </p>
+        <dl className="mx-auto mt-6 max-w-sm space-y-3 rounded-xl bg-slate-50 p-5 text-left">
+          <div className="flex justify-between gap-4">
+            <dt className="text-slate-600">Estado</dt>
+            <dd className="font-semibold text-slate-950">Pendiente</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-slate-600">Total</dt>
+            <dd className="font-semibold text-slate-950">
+              {formatCurrency(order.totalInCop)}
+            </dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-slate-600">Reserva hasta</dt>
+            <dd className="text-right font-semibold text-slate-950">
+              {new Date(order.reservationExpiresAt).toLocaleTimeString(
+                "es-CO",
+                { hour: "numeric", minute: "2-digit" },
+              )}
+            </dd>
+          </div>
+        </dl>
+        <p className="mt-6 text-sm leading-6 text-amber-800">
+          La integración de pago se habilitará en la siguiente etapa. Conserva
+          esta referencia.
+        </p>
+        <Link
+          href="/catalogo"
+          className="mt-6 inline-flex rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white"
+        >
+          Volver al catálogo
+        </Link>
+      </section>
+    );
+  }
+
   if (items.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
@@ -92,21 +165,25 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
 
   async function submitCheckout(values: CheckoutFormValues) {
     setQuote(null);
+    setQuotedCheckout(null);
     setServerError(null);
+    setCheckoutAttemptId(null);
+
+    const checkout: CheckoutQuoteRequest = {
+      address: selectedShippingMethod?.requiresAddress
+        ? values.address
+        : undefined,
+      customer: values.customer,
+      items: items.map((item) => ({
+        quantity: item.quantity,
+        variantId: item.variantId,
+      })),
+      shippingMethodCode: values.shippingMethodCode,
+    };
 
     try {
       const response = await fetch("/api/checkout/quote", {
-        body: JSON.stringify({
-          address: selectedShippingMethod?.requiresAddress
-            ? values.address
-            : undefined,
-          customer: values.customer,
-          items: items.map((item) => ({
-            quantity: item.quantity,
-            variantId: item.variantId,
-          })),
-          shippingMethodCode: values.shippingMethodCode,
-        }),
+        body: JSON.stringify(checkout),
         headers: { "Content-Type": "application/json" },
         method: "POST",
       });
@@ -118,10 +195,46 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
       }
 
       setQuote(result.quote);
+      setQuotedCheckout(checkout);
     } catch {
       setServerError(
         "No pudimos conectar con el servidor. Inténtalo nuevamente.",
       );
+    }
+  }
+
+  async function createOrder() {
+    if (!quotedCheckout) return;
+
+    setIsCreatingOrder(true);
+    setServerError(null);
+    const currentCheckoutAttemptId = checkoutAttemptId ?? crypto.randomUUID();
+    setCheckoutAttemptId(currentCheckoutAttemptId);
+
+    try {
+      const response = await fetch("/api/orders", {
+        body: JSON.stringify({
+          checkout: quotedCheckout,
+          checkoutAttemptId: currentCheckoutAttemptId,
+        }),
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+      });
+      const result = (await response.json()) as OrderResponse;
+
+      if (!result.ok) {
+        setServerError(result.message);
+        return;
+      }
+
+      setOrder(result.order);
+      clearCart();
+    } catch {
+      setServerError(
+        "No pudimos conectar con el servidor. Inténtalo nuevamente.",
+      );
+    } finally {
+      setIsCreatingOrder(false);
     }
   }
 
@@ -304,9 +417,16 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
               </div>
             </dl>
             <p className="mt-3 text-xs leading-5 text-emerald-200">
-              La creación del pedido y el pago se habilitarán en la siguiente
-              etapa.
+              Los productos se reservarán por 30 minutos al crear el pedido.
             </p>
+            <button
+              type="button"
+              onClick={createOrder}
+              disabled={isCreatingOrder}
+              className="mt-4 h-11 w-full rounded-xl bg-emerald-400 text-sm font-bold text-emerald-950 hover:bg-emerald-300 disabled:cursor-not-allowed disabled:bg-emerald-900 disabled:text-emerald-300"
+            >
+              {isCreatingOrder ? "Creando pedido…" : "Crear pedido pendiente"}
+            </button>
           </div>
         )}
 
