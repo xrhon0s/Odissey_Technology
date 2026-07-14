@@ -24,6 +24,10 @@ import type { CreateOrderRequest } from "./order-schema";
 
 const RESERVATION_DURATION_IN_MINUTES = 30;
 
+type OrderTransaction = Parameters<
+  Parameters<ReturnType<typeof getDb>["transaction"]>[0]
+>[0];
+
 export type PendingOrderResult = {
   id: string;
   paymentMethod: ManualPaymentMethod;
@@ -94,6 +98,88 @@ function createOrderReference() {
   return `OD-${timestamp}-${randomSuffix}`;
 }
 
+async function releaseExpiredReservations(
+  transaction: OrderTransaction,
+  now: Date,
+) {
+  const expiredOrders = await transaction
+    .select({ id: orders.id })
+    .from(orders)
+    .where(
+      and(eq(orders.status, "pending"), lt(orders.reservationExpiresAt, now)),
+    )
+    .for("update", { skipLocked: true });
+
+  if (expiredOrders.length === 0) return 0;
+
+  const expiredOrderIds = expiredOrders.map((order) => order.id);
+  const expiredItems = await transaction
+    .select({
+      quantity: orderItems.quantity,
+      variantId: orderItems.variantId,
+    })
+    .from(orderItems)
+    .where(inArray(orderItems.orderId, expiredOrderIds));
+
+  for (const item of expiredItems) {
+    await transaction
+      .update(inventory)
+      .set({
+        reservedQuantity: sql`greatest(${inventory.reservedQuantity} - ${item.quantity}, 0)`,
+        updatedAt: now,
+      })
+      .where(eq(inventory.variantId, item.variantId));
+  }
+
+  const expiredPayments = await transaction
+    .select({ id: payments.id })
+    .from(payments)
+    .where(
+      and(
+        inArray(payments.orderId, expiredOrderIds),
+        eq(payments.status, "pending"),
+      ),
+    );
+
+  if (expiredPayments.length > 0) {
+    const expiredPaymentIds = expiredPayments.map((payment) => payment.id);
+
+    await transaction
+      .update(payments)
+      .set({ status: "voided", updatedAt: now })
+      .where(inArray(payments.id, expiredPaymentIds));
+
+    await transaction.insert(paymentEvents).values(
+      expiredPaymentIds.map((paymentId) => ({
+        eventType: "reservation_expired",
+        paymentId,
+        payload: { status: "voided" },
+      })),
+    );
+  }
+
+  await transaction
+    .update(orders)
+    .set({ status: "cancelled", updatedAt: now })
+    .where(inArray(orders.id, expiredOrderIds));
+  await transaction.insert(orderEvents).values(
+    expiredOrderIds.map((orderId) => ({
+      eventType: "reservation_expired",
+      fromStatus: "pending" as const,
+      orderId,
+      toStatus: "cancelled" as const,
+    })),
+  );
+
+  return expiredOrderIds.length;
+}
+
+export function releaseExpiredOrderReservations() {
+  return getDb().transaction((transaction) =>
+    releaseExpiredReservations(transaction, new Date()),
+  );
+}
+
 export async function createPendingOrder(
   input: CreateOrderRequest,
 ): Promise<PendingOrderResult> {
@@ -101,74 +187,7 @@ export async function createPendingOrder(
 
   return getDb().transaction(async (transaction) => {
     const now = new Date();
-    const expiredOrders = await transaction
-      .select({ id: orders.id })
-      .from(orders)
-      .where(
-        and(eq(orders.status, "pending"), lt(orders.reservationExpiresAt, now)),
-      )
-      .for("update", { skipLocked: true });
-
-    if (expiredOrders.length > 0) {
-      const expiredOrderIds = expiredOrders.map((order) => order.id);
-      const expiredItems = await transaction
-        .select({
-          quantity: orderItems.quantity,
-          variantId: orderItems.variantId,
-        })
-        .from(orderItems)
-        .where(inArray(orderItems.orderId, expiredOrderIds));
-
-      for (const item of expiredItems) {
-        await transaction
-          .update(inventory)
-          .set({
-            reservedQuantity: sql`${inventory.reservedQuantity} - ${item.quantity}`,
-            updatedAt: now,
-          })
-          .where(eq(inventory.variantId, item.variantId));
-      }
-
-      const expiredPayments = await transaction
-        .select({ id: payments.id })
-        .from(payments)
-        .where(
-          and(
-            inArray(payments.orderId, expiredOrderIds),
-            eq(payments.status, "pending"),
-          ),
-        );
-
-      if (expiredPayments.length > 0) {
-        const expiredPaymentIds = expiredPayments.map((payment) => payment.id);
-
-        await transaction
-          .update(payments)
-          .set({ status: "voided", updatedAt: now })
-          .where(inArray(payments.id, expiredPaymentIds));
-
-        await transaction.insert(paymentEvents).values(
-          expiredPaymentIds.map((paymentId) => ({
-            eventType: "reservation_expired",
-            paymentId,
-            payload: { status: "voided" },
-          })),
-        );
-      }
-
-      await transaction
-        .update(orders)
-        .set({ status: "cancelled", updatedAt: now })
-        .where(inArray(orders.id, expiredOrderIds));
-      await transaction.insert(orderEvents).values(
-        expiredOrderIds.map((orderId) => ({
-          eventType: "reservation_expired",
-          fromStatus: "pending" as const,
-          orderId,
-          toStatus: "cancelled" as const,
-        })),
-      );
-    }
+    await releaseExpiredReservations(transaction, now);
 
     const [existingOrder] = await transaction
       .select({

@@ -6,10 +6,12 @@ import {
   CheckoutQuoteError,
   createCheckoutQuote,
 } from "@/features/checkout/checkout-service";
+import { releaseExpiredOrderReservations } from "@/features/orders/order-service";
 
 export async function POST(request: Request) {
   try {
     const input = checkoutQuoteRequestSchema.parse(await request.json());
+    await releaseExpiredOrderReservations();
     const quote = await createCheckoutQuote(input, checkoutQuoteRepository);
 
     return Response.json({ ok: true, quote });
