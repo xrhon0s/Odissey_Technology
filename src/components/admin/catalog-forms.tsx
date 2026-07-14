@@ -1,12 +1,17 @@
 "use client";
 
+import Image from "next/image";
 import { useActionState } from "react";
 
 import {
+  addProductImageAction,
   createCategoryAction,
   createProductAction,
   createVariantAction,
+  removeProductImageAction,
   type CatalogActionState,
+  updateCategoryAction,
+  updateProductImageAction,
   updateProductAction,
   updateVariantAction,
 } from "@/app/admin/productos/actions";
@@ -68,6 +73,14 @@ export function CategoryCreateForm() {
         />
       </label>
       <label className={labelClass}>
+        Descripción
+        <textarea
+          name="description"
+          maxLength={500}
+          className={textareaClass}
+        />
+      </label>
+      <label className={labelClass}>
         Orden
         <input
           name="sortOrder"
@@ -83,6 +96,82 @@ export function CategoryCreateForm() {
         tienda
       </label>
       <SubmitButton pending={pending} text="Crear categoría" />
+      <Result state={state} />
+    </form>
+  );
+}
+
+export function CategoryEditForm({
+  category,
+}: {
+  category: {
+    description: string | null;
+    id: string;
+    isActive: boolean;
+    name: string;
+    slug: string;
+    sortOrder: number;
+  };
+}) {
+  const [state, action, pending] = useActionState(
+    updateCategoryAction,
+    initialState,
+  );
+  return (
+    <form
+      action={action}
+      className="grid gap-3 rounded-lg border border-slate-200 p-4"
+    >
+      <input type="hidden" name="categoryId" value={category.id} />
+      <div className="grid gap-3 sm:grid-cols-[1fr_1fr_90px]">
+        <label className={labelClass}>
+          Nombre
+          <input
+            name="name"
+            required
+            defaultValue={category.name}
+            className={inputClass}
+          />
+        </label>
+        <label className={labelClass}>
+          Slug
+          <input
+            name="slug"
+            required
+            defaultValue={category.slug}
+            className={inputClass}
+          />
+        </label>
+        <label className={labelClass}>
+          Orden
+          <input
+            name="sortOrder"
+            type="number"
+            min={0}
+            required
+            defaultValue={category.sortOrder}
+            className={inputClass}
+          />
+        </label>
+      </div>
+      <label className={labelClass}>
+        Descripción
+        <textarea
+          name="description"
+          maxLength={500}
+          defaultValue={category.description ?? ""}
+          className={textareaClass}
+        />
+      </label>
+      <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+        <input
+          name="isActive"
+          type="checkbox"
+          defaultChecked={category.isActive}
+        />
+        Visible en la tienda
+      </label>
+      <SubmitButton pending={pending} text="Guardar categoría" />
       <Result state={state} />
     </form>
   );
@@ -398,5 +487,125 @@ export function VariantEditForm({
       <SubmitButton pending={pending} text="Guardar variante" />
       <Result state={state} />
     </form>
+  );
+}
+
+type ProductImageValue = {
+  altText: string;
+  id: string;
+  sortOrder: number;
+  url: string;
+};
+
+function ImageFields({ image }: { image?: ProductImageValue }) {
+  return (
+    <div className="grid flex-1 gap-3">
+      <label className={labelClass}>
+        URL HTTPS de Cloudinary
+        <input
+          name="url"
+          type="url"
+          required
+          defaultValue={image?.url}
+          placeholder="https://res.cloudinary.com/..."
+          className={inputClass}
+        />
+      </label>
+      <div className="grid gap-3 sm:grid-cols-[1fr_100px]">
+        <label className={labelClass}>
+          Texto alternativo
+          <input
+            name="altText"
+            required
+            minLength={3}
+            maxLength={240}
+            defaultValue={image?.altText}
+            placeholder="Vista frontal del producto"
+            className={inputClass}
+          />
+        </label>
+        <label className={labelClass}>
+          Orden
+          <input
+            name="sortOrder"
+            type="number"
+            min={0}
+            required
+            defaultValue={image?.sortOrder ?? 0}
+            className={inputClass}
+          />
+        </label>
+      </div>
+    </div>
+  );
+}
+
+export function ProductImageCreateForm({ productId }: { productId: string }) {
+  const [state, action, pending] = useActionState(
+    addProductImageAction,
+    initialState,
+  );
+  return (
+    <form
+      action={action}
+      className="grid gap-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5"
+    >
+      <input type="hidden" name="productId" value={productId} />
+      <h3 className="font-bold text-slate-950">Agregar imagen</h3>
+      <ImageFields />
+      <SubmitButton pending={pending} text="Agregar imagen" />
+      <Result state={state} />
+    </form>
+  );
+}
+
+export function ProductImageEditForm({
+  image,
+  productId,
+}: {
+  image: ProductImageValue;
+  productId: string;
+}) {
+  const [updateState, updateAction, updating] = useActionState(
+    updateProductImageAction,
+    initialState,
+  );
+  const [removeState, removeAction, removing] = useActionState(
+    removeProductImageAction,
+    initialState,
+  );
+  return (
+    <article className="grid gap-4 rounded-xl border border-slate-200 bg-white p-5 md:grid-cols-[180px_1fr]">
+      <div className="relative aspect-square overflow-hidden rounded-lg bg-slate-100">
+        <Image
+          src={image.url}
+          alt={image.altText}
+          fill
+          sizes="180px"
+          className="object-cover"
+        />
+      </div>
+      <div className="grid gap-3">
+        <form action={updateAction} className="grid gap-4">
+          <input type="hidden" name="productId" value={productId} />
+          <input type="hidden" name="imageId" value={image.id} />
+          <ImageFields image={image} />
+          <SubmitButton pending={updating} text="Guardar imagen" />
+          <Result state={updateState} />
+        </form>
+        <form action={removeAction}>
+          <input type="hidden" name="productId" value={productId} />
+          <input type="hidden" name="imageId" value={image.id} />
+          <button
+            type="submit"
+            disabled={removing}
+            className="text-sm font-bold text-red-700 hover:text-red-900 disabled:text-slate-400"
+          >
+            {removing ? "Retirando…" : "Retirar del catálogo"}
+          </button>
+          <Result state={removeState} />
+        </form>
+      </div>
+    </article>
   );
 }

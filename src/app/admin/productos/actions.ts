@@ -6,13 +6,18 @@ import { z } from "zod";
 
 import {
   CatalogManagementError,
+  addProductImage,
   categoryInputSchema,
   createCategory,
   createProduct,
   createProductInputSchema,
   createVariant,
+  productImageInputSchema,
   productInputSchema,
+  removeProductImage,
+  updateCategory,
   updateProduct,
+  updateProductImage,
   updateVariant,
   variantInputSchema,
 } from "@/features/admin/catalog-management";
@@ -63,6 +68,7 @@ export async function createCategoryAction(
 ): Promise<CatalogActionState> {
   const admin = await requireAdmin();
   const input = categoryInputSchema.safeParse({
+    description: formData.get("description"),
     isActive: checkbox(formData, "isActive"),
     name: formData.get("name"),
     slug: formData.get("slug"),
@@ -74,6 +80,33 @@ export async function createCategoryAction(
     await createCategory(admin.id, input.data);
     revalidatePath("/admin/productos");
     return { success: "Categoría creada correctamente." };
+  } catch (error) {
+    return { error: actionError(error) };
+  }
+}
+
+export async function updateCategoryAction(
+  _state: CatalogActionState,
+  formData: FormData,
+): Promise<CatalogActionState> {
+  const admin = await requireAdmin();
+  const categoryId = idSchema.safeParse(formData.get("categoryId"));
+  const input = categoryInputSchema.safeParse({
+    description: formData.get("description"),
+    isActive: checkbox(formData, "isActive"),
+    name: formData.get("name"),
+    slug: formData.get("slug"),
+    sortOrder: formData.get("sortOrder"),
+  });
+  if (!categoryId.success || !input.success) {
+    return { error: "Revisa los datos de la categoría." };
+  }
+  try {
+    await updateCategory(admin.id, categoryId.data, input.data);
+    revalidatePath("/admin");
+    revalidatePath("/admin/productos");
+    revalidatePath("/catalogo");
+    return { success: "Categoría actualizada correctamente." };
   } catch (error) {
     return { error: actionError(error) };
   }
@@ -190,6 +223,84 @@ export async function updateVariantAction(
     revalidatePath("/admin/productos");
     revalidatePath(`/admin/productos/${productId.data}`);
     return { success: "Variante actualizada correctamente." };
+  } catch (error) {
+    return { error: actionError(error) };
+  }
+}
+
+function imageFormValues(formData: FormData) {
+  return {
+    altText: formData.get("altText"),
+    sortOrder: formData.get("sortOrder"),
+    url: formData.get("url"),
+  };
+}
+
+export async function addProductImageAction(
+  _state: CatalogActionState,
+  formData: FormData,
+): Promise<CatalogActionState> {
+  const admin = await requireAdmin();
+  const productId = idSchema.safeParse(formData.get("productId"));
+  const input = productImageInputSchema.safeParse(imageFormValues(formData));
+  if (!productId.success || !input.success) {
+    return {
+      error:
+        input.error?.issues[0]?.message ?? "Revisa los datos de la imagen.",
+    };
+  }
+  try {
+    await addProductImage(admin.id, productId.data, input.data);
+    revalidatePath("/admin/productos");
+    revalidatePath(`/admin/productos/${productId.data}`);
+    revalidatePath("/catalogo");
+    return { success: "Imagen agregada al producto." };
+  } catch (error) {
+    return { error: actionError(error) };
+  }
+}
+
+export async function updateProductImageAction(
+  _state: CatalogActionState,
+  formData: FormData,
+): Promise<CatalogActionState> {
+  const admin = await requireAdmin();
+  const productId = idSchema.safeParse(formData.get("productId"));
+  const imageId = idSchema.safeParse(formData.get("imageId"));
+  const input = productImageInputSchema.safeParse(imageFormValues(formData));
+  if (!productId.success || !imageId.success || !input.success) {
+    return {
+      error:
+        input.error?.issues[0]?.message ?? "Revisa los datos de la imagen.",
+    };
+  }
+  try {
+    await updateProductImage(admin.id, imageId.data, input.data);
+    revalidatePath("/admin/productos");
+    revalidatePath(`/admin/productos/${productId.data}`);
+    revalidatePath("/catalogo");
+    return { success: "Imagen actualizada correctamente." };
+  } catch (error) {
+    return { error: actionError(error) };
+  }
+}
+
+export async function removeProductImageAction(
+  _state: CatalogActionState,
+  formData: FormData,
+): Promise<CatalogActionState> {
+  const admin = await requireAdmin();
+  const productId = idSchema.safeParse(formData.get("productId"));
+  const imageId = idSchema.safeParse(formData.get("imageId"));
+  if (!productId.success || !imageId.success) {
+    return { error: "La imagen seleccionada no es válida." };
+  }
+  try {
+    await removeProductImage(admin.id, imageId.data);
+    revalidatePath("/admin/productos");
+    revalidatePath(`/admin/productos/${productId.data}`);
+    revalidatePath("/catalogo");
+    return { success: "Imagen retirada del catálogo." };
   } catch (error) {
     return { error: actionError(error) };
   }

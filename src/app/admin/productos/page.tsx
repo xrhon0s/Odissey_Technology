@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import {
   CategoryCreateForm,
+  CategoryEditForm,
   ProductCreateForm,
 } from "@/components/admin/catalog-forms";
 import {
@@ -84,21 +85,19 @@ export default async function AdminProductsPage() {
             Crea primero una categoría para poder agregar productos.
           </p>
         )}
-        <div className="grid gap-4">
-          <CategoryCreateForm />
-          <div className="rounded-xl border border-slate-200 bg-white p-5">
-            <h2 className="font-bold text-slate-950">Categorías</h2>
-            <ul className="mt-3 grid gap-2 text-sm text-slate-600">
-              {categories.map((category) => (
-                <li key={category.id} className="flex justify-between gap-3">
-                  <span>{category.name}</span>
-                  <span>{category.isActive ? "Activa" : "Inactiva"}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <CategoryCreateForm />
       </div>
+      <section className="mt-8 rounded-xl border border-slate-200 bg-white p-5">
+        <h2 className="text-xl font-bold text-slate-950">Editar categorías</h2>
+        <p className="mt-1 text-sm text-slate-600">
+          Cambia su visibilidad, orden y descripción en el catálogo.
+        </p>
+        <div className="mt-5 grid gap-4">
+          {categories.map((category) => (
+            <CategoryEditForm key={category.id} category={category} />
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

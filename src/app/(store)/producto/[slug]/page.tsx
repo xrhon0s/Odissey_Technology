@@ -37,21 +37,44 @@ export default async function ProductPage({
         </nav>
 
         <div className="grid gap-10 lg:grid-cols-2">
-          <div className="relative aspect-square overflow-hidden rounded-3xl bg-slate-100">
-            {mainImage ? (
-              <Image
-                src={mainImage.url}
-                alt={mainImage.altText}
-                fill
-                priority
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                className="object-cover"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center text-slate-500">
-                Imagen próximamente
+          <div>
+            <div className="relative aspect-square overflow-hidden rounded-3xl bg-slate-100">
+              {mainImage ? (
+                <Image
+                  src={mainImage.url}
+                  alt={mainImage.altText}
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-slate-500">
+                  Imagen próximamente
+                </div>
+              )}
+            </div>
+            {product.images.length > 1 ? (
+              <div
+                className="mt-4 grid grid-cols-2 gap-4"
+                aria-label="Imágenes adicionales del producto"
+              >
+                {product.images.slice(1).map((image) => (
+                  <div
+                    key={image.id}
+                    className="relative aspect-square overflow-hidden rounded-2xl bg-slate-100"
+                  >
+                    <Image
+                      src={image.url}
+                      alt={image.altText}
+                      fill
+                      sizes="(min-width: 1024px) 25vw, 50vw"
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
               </div>
-            )}
+            ) : null}
           </div>
 
           <section aria-labelledby="product-title">

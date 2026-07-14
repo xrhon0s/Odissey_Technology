@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 
 import {
   ProductEditForm,
+  ProductImageCreateForm,
+  ProductImageEditForm,
   VariantCreateForm,
   VariantEditForm,
 } from "@/components/admin/catalog-forms";
@@ -43,6 +45,23 @@ export default async function AdminProductDetailPage({
       </p>
       <div className="mt-8 grid gap-8">
         <ProductEditForm categories={categories} product={product} />
+        <section className="grid gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-950">Imágenes</h2>
+            <p className="mt-1 text-sm text-slate-600">
+              La imagen con el orden más bajo será la portada. Por ahora copia
+              aquí la URL HTTPS entregada por Cloudinary.
+            </p>
+          </div>
+          {product.images.map((image) => (
+            <ProductImageEditForm
+              key={image.id}
+              image={image}
+              productId={product.id}
+            />
+          ))}
+          <ProductImageCreateForm productId={product.id} />
+        </section>
         <section className="grid gap-4">
           <div>
             <h2 className="text-2xl font-bold text-slate-950">Variantes</h2>
