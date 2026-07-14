@@ -73,6 +73,12 @@ pnpm db:stop
 
 El volumen `postgres_data` conserva la información entre reinicios. Eliminar ese volumen es una operación destructiva y no forma parte del flujo normal.
 
+## Pagos manuales
+
+El checkout permite seleccionar Nequi, DaviPlata, transferencia Bancolombia o efectivo contraentrega. Los tres medios electrónicos quedan pendientes de revisión manual; los datos reales de las cuentas no se guardan en el repositorio.
+
+El efectivo contraentrega se valida en el servidor y solo se acepta para recogida local o entregas en los diez municipios del Valle de Aburrá: Medellín, Barbosa, Girardota, Copacabana, Bello, Itagüí, Envigado, Sabaneta, La Estrella y Caldas.
+
 ## Pruebas
 
 Ejecuta antes de entregar una unidad de trabajo:

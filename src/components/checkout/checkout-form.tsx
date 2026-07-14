@@ -14,6 +14,10 @@ import type {
   CheckoutQuote,
   CheckoutShippingMethod,
 } from "@/features/checkout/checkout-service";
+import {
+  manualPaymentMethods,
+  type ManualPaymentMethod,
+} from "@/features/payments/payment-methods";
 import { formatCurrency } from "@/lib/format-currency";
 import { useCartStore } from "@/stores/cart-store";
 
@@ -26,7 +30,7 @@ type OrderResponse =
       ok: true;
       order: {
         id: string;
-        paymentMethod: "manual_transfer";
+        paymentMethod: ManualPaymentMethod;
         paymentStatus: "pending";
         reference: string;
         reservationExpiresAt: string;
@@ -76,6 +80,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
         neighborhood: "",
       },
       customer: { email: "", fullName: "", phone: "" },
+      paymentMethod: "nequi",
       shippingMethodCode: defaultShippingMethod,
     },
     resolver: zodResolver(checkoutFormSchema),
@@ -85,8 +90,15 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
     control,
     name: "shippingMethodCode",
   });
+  const selectedPaymentCode = useWatch({
+    control,
+    name: "paymentMethod",
+  });
   const selectedShippingMethod = shippingMethods.find(
     (shippingMethod) => shippingMethod.code === selectedShippingCode,
+  );
+  const selectedPaymentMethod = manualPaymentMethods.find(
+    (paymentMethod) => paymentMethod.code === selectedPaymentCode,
   );
 
   if (!hasHydrated) {
@@ -109,7 +121,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
         </h2>
         <p className="mt-4 text-slate-600">
           El pedido está pendiente y reservamos tus productos mientras
-          coordinamos la transferencia manual.
+          coordinamos la confirmación del pago.
         </p>
         <dl className="mx-auto mt-6 max-w-sm space-y-3 rounded-xl bg-slate-50 p-5 text-left">
           <div className="flex justify-between gap-4">
@@ -119,7 +131,9 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
           <div className="flex justify-between gap-4">
             <dt className="text-slate-600">Forma de pago</dt>
             <dd className="text-right font-semibold text-slate-950">
-              Transferencia manual
+              {manualPaymentMethods.find(
+                (method) => method.code === order.paymentMethod,
+              )?.name ?? "Pago manual"}
             </dd>
           </div>
           <div className="flex justify-between gap-4">
@@ -140,11 +154,18 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
         </dl>
         <div className="mt-6 rounded-xl bg-amber-50 p-4 text-left text-sm leading-6 text-amber-900">
           <p className="font-semibold">Siguiente paso</p>
-          <p className="mt-1">
-            Conserva la referencia del pedido. El equipo te compartirá los datos
-            de transferencia y confirmará el pedido después de revisar el
-            comprobante.
-          </p>
+          {order.paymentMethod === "cash_on_delivery" ? (
+            <p className="mt-1">
+              Conserva la referencia y ten disponible el valor exacto en
+              efectivo. El equipo confirmará la entrega antes de despachar.
+            </p>
+          ) : (
+            <p className="mt-1">
+              Conserva la referencia del pedido. El equipo te compartirá los
+              datos de transferencia y confirmará el pedido después de revisar
+              el comprobante.
+            </p>
+          )}
         </div>
         <Link
           href="/catalogo"
@@ -189,6 +210,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
         quantity: item.quantity,
         variantId: item.variantId,
       })),
+      paymentMethod: values.paymentMethod,
       shippingMethodCode: values.shippingMethodCode,
     };
 
@@ -377,6 +399,42 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
             </div>
           )}
         </section>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+          <h2 className="text-xl font-bold text-slate-950">Forma de pago</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Todos los pagos se verifican manualmente antes de confirmar el
+            pedido.
+          </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {manualPaymentMethods.map((method) => (
+              <label
+                key={method.code}
+                className="flex cursor-pointer gap-3 rounded-xl border border-slate-200 p-4 has-checked:border-cyan-600 has-checked:bg-cyan-50"
+              >
+                <input
+                  type="radio"
+                  value={method.code}
+                  className="mt-1 size-4 accent-cyan-700"
+                  {...register("paymentMethod")}
+                />
+                <span>
+                  <span className="font-semibold text-slate-950">
+                    {method.name}
+                  </span>
+                  <span className="mt-1 block text-sm leading-5 text-slate-600">
+                    {method.description}
+                  </span>
+                  {method.requiresMetropolitanDelivery && (
+                    <span className="mt-2 inline-flex rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-900">
+                      Solo Valle de Aburrá
+                    </span>
+                  )}
+                </span>
+              </label>
+            ))}
+          </div>
+        </section>
       </div>
 
       <aside className="rounded-2xl bg-slate-950 p-6 text-white lg:sticky lg:top-6">
@@ -421,6 +479,12 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
               <div className="flex justify-between">
                 <dt>Envío</dt>
                 <dd>{formatCurrency(quote.shippingInCop)}</dd>
+              </div>
+              <div className="flex justify-between gap-4">
+                <dt>Pago</dt>
+                <dd className="text-right">
+                  {selectedPaymentMethod?.name ?? "Pago manual"}
+                </dd>
               </div>
               <div className="flex justify-between border-t border-emerald-800 pt-2 font-bold">
                 <dt>Total</dt>
