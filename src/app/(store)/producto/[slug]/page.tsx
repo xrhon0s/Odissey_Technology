@@ -70,16 +70,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <div className="text-muted flex h-full flex-col items-center justify-center gap-5">
                   <span
                     aria-hidden="true"
-                    className="border-brand/20 text-brand grid size-32 place-items-center rounded-full border-[22px] text-4xl font-black"
+                    className="border-brand/20 text-brand grid size-32 place-items-center rounded-full border-[22px] text-4xl font-bold"
                   >
                     •
                   </span>
-                  <span className="text-sm font-black">
-                    Imagen próximamente
-                  </span>
+                  <span className="text-sm font-bold">Imagen próximamente</span>
                 </div>
               )}
-              <span className="bg-surface text-foreground absolute top-4 left-4 rounded-full px-3 py-1.5 text-[10px] font-black tracking-wide uppercase shadow-sm">
+              <span className="bg-surface text-foreground absolute top-4 left-4 rounded-full px-3 py-1.5 text-[10px] font-bold tracking-wide uppercase shadow-sm">
                 Disponible en Colombia
               </span>
             </div>
@@ -107,7 +105,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </div>
 
           <section aria-labelledby="product-title" className="py-2 lg:py-6">
-            <p className="text-brand flex items-center gap-2 text-xs font-black tracking-[0.18em] uppercase">
+            <p className="text-brand-dark flex items-center gap-2 text-xs font-semibold tracking-[0.18em] uppercase">
               <span
                 className="bg-accent h-0.5 w-5 rounded-full"
                 aria-hidden="true"
@@ -116,7 +114,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </p>
             <h1
               id="product-title"
-              className="font-display text-foreground mt-4 text-4xl leading-[1.02] font-black tracking-[-0.045em] sm:text-5xl"
+              className="font-display text-foreground mt-4 text-4xl leading-[1.02] font-bold tracking-[-0.045em] sm:text-5xl"
             >
               {product.name}
             </h1>
@@ -135,7 +133,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <div className="divide-line border-line mt-8 divide-y border-y">
               {product.compatibility ? (
                 <div className="grid gap-2 py-5 sm:grid-cols-[150px_1fr]">
-                  <h2 className="text-foreground text-sm font-black">
+                  <h2 className="text-foreground text-sm font-bold">
                     Compatibilidad
                   </h2>
                   <p className="text-muted text-sm leading-6">
@@ -145,7 +143,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               ) : null}
               {product.warranty ? (
                 <div className="grid gap-2 py-5 sm:grid-cols-[150px_1fr]">
-                  <h2 className="text-foreground text-sm font-black">
+                  <h2 className="text-foreground text-sm font-bold">
                     Garantía
                   </h2>
                   <p className="text-muted text-sm leading-6">

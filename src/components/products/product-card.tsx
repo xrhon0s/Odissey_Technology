@@ -40,19 +40,19 @@ export function ProductCard({
             </div>
           )}
           {product.isFeatured ? (
-            <span className="bg-accent absolute top-3 left-3 rounded-full px-3 py-1.5 text-[10px] font-black tracking-wide text-white uppercase">
+            <span className="bg-accent text-foreground absolute top-3 left-3 rounded-full px-3 py-1.5 text-[10px] font-bold tracking-wide uppercase">
               Favorito
             </span>
           ) : null}
         </div>
         <div className="px-2 pt-4 pb-3">
-          <p className="text-brand text-[10px] font-black tracking-[0.14em] uppercase">
+          <p className="text-brand-dark text-[10px] font-semibold tracking-[0.14em] uppercase">
             {product.categoryName}
           </p>
-          <Heading className="text-foreground group-hover:text-brand mt-1.5 min-h-12 text-[15px] leading-6 font-black transition">
+          <Heading className="text-foreground group-hover:text-brand mt-1.5 min-h-12 text-[15px] leading-6 font-bold transition">
             {product.name}
           </Heading>
-          <p className="font-display text-foreground mt-3 text-lg font-black tracking-tight">
+          <p className="font-display text-foreground mt-3 text-lg font-bold tracking-tight">
             Desde {formatCurrency(product.minimumPriceInCop)}
           </p>
           <p

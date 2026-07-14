@@ -22,14 +22,14 @@ export async function SiteFooter() {
           {settings.supportEmail ? (
             <a
               href={`mailto:${settings.supportEmail}`}
-              className="mt-4 inline-flex font-bold text-white hover:text-blue-200"
+              className="hover:text-brand mt-4 inline-flex font-semibold text-white"
             >
               {settings.supportEmail}
             </a>
           ) : null}
         </div>
         <nav aria-label="Enlaces del pie de página">
-          <p className="mb-4 text-xs font-black tracking-[0.18em] text-white uppercase">
+          <p className="mb-4 text-xs font-bold tracking-[0.18em] text-white uppercase">
             Explora
           </p>
           <ul className="grid gap-3">
@@ -63,7 +63,7 @@ export async function SiteFooter() {
           </ul>
         </nav>
         <nav aria-label="Información legal">
-          <p className="mb-4 text-xs font-black tracking-[0.18em] text-white uppercase">
+          <p className="mb-4 text-xs font-bold tracking-[0.18em] text-white uppercase">
             Información
           </p>
           <ul className="grid gap-3">
@@ -95,7 +95,7 @@ export async function SiteFooter() {
                 href="https://www.sic.gov.co/"
                 target="_blank"
                 rel="noreferrer"
-                className="font-semibold text-blue-200 hover:text-white"
+                className="text-brand font-semibold hover:text-white"
               >
                 Superintendencia de Industria y Comercio
               </a>
@@ -112,7 +112,7 @@ export async function SiteFooter() {
           target="_blank"
           rel="noreferrer"
           aria-label={`Contactar a ${settings.storeName} por WhatsApp`}
-          className="fixed right-4 bottom-4 z-40 inline-flex items-center gap-2 rounded-full bg-[#20b86a] px-4 py-3 font-black text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#159957]"
+          className="fixed right-4 bottom-4 z-40 inline-flex items-center gap-2 rounded-full bg-[#20b86a] px-4 py-3 font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#159957]"
         >
           <span aria-hidden="true" className="size-2 rounded-full bg-white" />
           WhatsApp

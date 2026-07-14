@@ -31,6 +31,8 @@
     "db:stop": "docker compose stop postgres"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "5.2.8",
+    "@fontsource-variable/manrope": "5.2.8",
     "@hookform/resolvers": "5.4.0",
     "@supabase/ssr": "0.12.1",
     "@supabase/supabase-js": "2.110.3",

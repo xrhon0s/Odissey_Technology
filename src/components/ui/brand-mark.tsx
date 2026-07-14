@@ -1,28 +1,19 @@
+import Image from "next/image";
+
 export function BrandMark({ inverse = false }: { inverse?: boolean }) {
   return (
     <span
-      className="inline-flex items-center gap-2.5"
-      aria-label="Odissey Technology"
+      className={`inline-flex ${inverse ? "rounded-xl bg-white px-3 py-2" : ""}`}
     >
-      <span
-        aria-hidden="true"
-        className={`relative grid size-9 place-items-center overflow-hidden rounded-[13px] ${inverse ? "bg-white" : "bg-brand"}`}
-      >
-        <span
-          className={`absolute size-5 rounded-full border-[3px] ${inverse ? "border-brand" : "border-white"}`}
-        />
-        <span className="bg-accent absolute right-1.5 bottom-1.5 size-2 rounded-full" />
-      </span>
-      <span className="leading-none">
-        <span className="font-display block text-[15px] font-black tracking-[-0.03em]">
-          ODISSEY
-        </span>
-        <span
-          className={`mt-0.5 block text-[8px] font-black tracking-[0.28em] ${inverse ? "text-blue-200" : "text-muted"}`}
-        >
-          TECHNOLOGY
-        </span>
-      </span>
+      <Image
+        src="/images/odissey-logo.webp"
+        alt="Odissey Technology"
+        width={2157}
+        height={389}
+        priority={!inverse}
+        sizes="(min-width: 640px) 210px, 150px"
+        className="h-auto w-[150px] sm:w-[210px]"
+      />
     </span>
   );
 }

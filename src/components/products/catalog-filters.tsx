@@ -16,7 +16,7 @@ export function CatalogFiltersForm({
       action="/catalogo"
       className="border-line bg-surface shadow-soft grid gap-4 rounded-[1.5rem] border p-4 sm:grid-cols-2 lg:grid-cols-[1fr_220px_220px_auto] lg:items-end lg:p-5"
     >
-      <label className="text-foreground grid gap-2 text-xs font-black tracking-wide uppercase">
+      <label className="text-foreground grid gap-2 text-xs font-bold tracking-wide uppercase">
         Buscar
         <input
           type="search"
@@ -27,7 +27,7 @@ export function CatalogFiltersForm({
           className="border-line bg-background placeholder:text-muted/70 focus:border-brand h-12 rounded-[0.9rem] border px-4 text-sm font-medium tracking-normal normal-case"
         />
       </label>
-      <label className="text-foreground grid gap-2 text-xs font-black tracking-wide uppercase">
+      <label className="text-foreground grid gap-2 text-xs font-bold tracking-wide uppercase">
         Categoría
         <select
           name="category"
@@ -42,7 +42,7 @@ export function CatalogFiltersForm({
           ))}
         </select>
       </label>
-      <label className="text-foreground grid gap-2 text-xs font-black tracking-wide uppercase">
+      <label className="text-foreground grid gap-2 text-xs font-bold tracking-wide uppercase">
         Ordenar
         <select
           name="sort"
@@ -58,13 +58,13 @@ export function CatalogFiltersForm({
       <div className="flex gap-2">
         <button
           type="submit"
-          className="bg-brand hover:bg-brand-dark h-12 flex-1 rounded-full px-5 text-sm font-black text-white transition"
+          className="bg-brand hover:bg-brand-dark h-12 flex-1 rounded-full px-5 text-sm font-bold text-white transition"
         >
           Aplicar
         </button>
         <Link
           href="/catalogo"
-          className="border-line text-muted hover:border-foreground hover:text-foreground flex h-12 items-center rounded-full border px-4 text-sm font-black transition"
+          className="border-line text-muted hover:border-foreground hover:text-foreground flex h-12 items-center rounded-full border px-4 text-sm font-bold transition"
         >
           Limpiar
         </Link>

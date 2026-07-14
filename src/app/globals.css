@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f7f2;
-  --foreground: #101828;
-  --brand: #2457f5;
-  --brand-dark: #1738a8;
-  --brand-soft: #e9eeff;
-  --accent: #ff6b35;
-  --accent-soft: #fff0e9;
+  --background: #f8fafb;
+  --foreground: #071a33;
+  --brand: #12c7c7;
+  --brand-dark: #087f83;
+  --brand-soft: #e3fafa;
+  --accent: #f6c744;
+  --accent-soft: #fff8dc;
   --surface: #ffffff;
-  --surface-muted: #eeefe9;
-  --muted: #5e6878;
-  --line: #dfe2da;
+  --surface-muted: #e7eef2;
+  --muted: #526173;
+  --line: #d6e0e6;
   --success: #16825d;
-  --danger: #c53b35;
+  --danger: #ef3f4d;
   --radius-sm: 0.75rem;
   --radius-md: 1.125rem;
   --radius-lg: 1.75rem;
@@ -34,8 +34,8 @@
   --color-line: var(--line);
   --color-success: var(--success);
   --color-danger: var(--danger);
-  --font-sans: "Avenir Next", Avenir, "Segoe UI", Helvetica, Arial, sans-serif;
-  --font-display: "Arial Rounded MT Bold", "Avenir Next", Avenir, sans-serif;
+  --font-sans: "Inter Variable", Inter, "Segoe UI", sans-serif;
+  --font-display: "Manrope Variable", Manrope, "Segoe UI", sans-serif;
   --shadow-soft: var(--shadow-soft);
 }
 
@@ -50,17 +50,17 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Avenir Next", Avenir, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-family: "Inter Variable", Inter, "Segoe UI", sans-serif;
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
   background: var(--brand);
-  color: white;
+  color: var(--foreground);
 }
 
 :focus-visible {
-  outline: 3px solid var(--accent);
+  outline: 3px solid var(--brand);
   outline-offset: 3px;
 }
 
@@ -72,6 +72,21 @@ textarea {
   -webkit-tap-highlight-color: transparent;
 }
 
+@keyframes hero-product-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-0.6deg);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0) rotate(0.6deg);
+  }
+}
+
+.hero-product-float {
+  animation: hero-product-float 5.5s ease-in-out infinite;
+  will-change: transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -80,5 +95,9 @@ textarea {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .hero-product-float {
+    animation: none;
   }
 }

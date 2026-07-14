@@ -13,7 +13,7 @@ export function CartStatusLink() {
   return (
     <Link
       href="/carrito"
-      className="bg-foreground hover:bg-brand inline-flex items-center gap-2 rounded-full px-3 py-2 text-white transition sm:px-4"
+      className="bg-foreground hover:bg-brand hover:text-foreground inline-flex items-center gap-2 rounded-full px-3 py-2 text-white transition sm:px-4"
       aria-label={`Carrito, ${quantity} ${quantity === 1 ? "producto" : "productos"}`}
     >
       <svg
@@ -29,7 +29,7 @@ export function CartStatusLink() {
         <circle cx="17" cy="20" r="1" />
       </svg>
       <span className="hidden sm:inline">Carrito</span>
-      <span className="text-foreground inline-flex min-w-5 justify-center rounded-full bg-white px-1.5 py-0.5 text-[11px] font-black">
+      <span className="text-foreground inline-flex min-w-5 justify-center rounded-full bg-white px-1.5 py-0.5 text-[11px] font-bold">
         {quantity}
       </span>
     </Link>

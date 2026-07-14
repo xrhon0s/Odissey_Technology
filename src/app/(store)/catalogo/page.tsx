@@ -23,7 +23,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
     return (
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-16 sm:px-6">
         <div className="rounded-[1.75rem] border border-amber-200 bg-amber-50 p-8 text-center">
-          <h1 className="font-display text-foreground text-2xl font-black">
+          <h1 className="font-display text-foreground text-2xl font-bold">
             Filtros no válidos
           </h1>
           <p className="text-muted mt-2">
@@ -31,7 +31,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           </p>
           <Link
             href="/catalogo"
-            className="bg-foreground mt-6 inline-flex rounded-full px-5 py-3 text-sm font-black text-white"
+            className="bg-foreground mt-6 inline-flex rounded-full px-5 py-3 text-sm font-bold text-white"
           >
             Restablecer filtros
           </Link>
@@ -50,14 +50,14 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
     <main className="bg-background flex-1">
       <section className="border-line bg-surface border-b">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
-          <p className="text-brand flex items-center gap-2 text-xs font-black tracking-[0.18em] uppercase">
+          <p className="text-brand-dark flex items-center gap-2 text-xs font-semibold tracking-[0.18em] uppercase">
             <span
               className="bg-accent h-0.5 w-5 rounded-full"
               aria-hidden="true"
             />
             La tienda
           </p>
-          <h1 className="font-display text-foreground mt-3 max-w-3xl text-4xl leading-none font-black tracking-[-0.045em] sm:text-5xl">
+          <h1 className="font-display text-foreground mt-3 max-w-3xl text-4xl leading-none font-bold tracking-[-0.045em] sm:text-5xl">
             Encuentra tu próximo imprescindible.
           </h1>
           <p className="text-muted mt-4 max-w-2xl text-base leading-7">
@@ -85,7 +85,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           </div>
         ) : (
           <div className="border-line bg-surface mt-5 rounded-[1.75rem] border border-dashed px-6 py-16 text-center">
-            <h2 className="font-display text-foreground text-xl font-black">
+            <h2 className="font-display text-foreground text-xl font-bold">
               No encontramos productos
             </h2>
             <p className="text-muted mt-2">
@@ -93,7 +93,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
             </p>
             <Link
               href="/catalogo"
-              className="text-brand hover:text-brand-dark mt-5 inline-flex text-sm font-black"
+              className="text-brand-dark hover:text-foreground mt-5 inline-flex text-sm font-semibold"
             >
               Ver todo el catálogo
             </Link>

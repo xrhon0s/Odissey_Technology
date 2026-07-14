@@ -9,7 +9,7 @@ export async function SiteHeader() {
 
   return (
     <header className="border-line/80 bg-surface/95 sticky top-0 z-50 border-b backdrop-blur-md">
-      <div className="bg-brand px-4 py-2 text-center text-[11px] font-bold tracking-wide text-white sm:text-xs">
+      <div className="bg-brand text-foreground px-4 py-2 text-center text-[11px] font-semibold tracking-wide sm:text-xs">
         {settings.announcement}
       </div>
       <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
@@ -18,7 +18,6 @@ export async function SiteHeader() {
           className="text-foreground shrink-0 transition-opacity hover:opacity-75"
         >
           <BrandMark />
-          <span className="sr-only">{settings.storeName}</span>
         </Link>
         <nav aria-label="Navegación principal" className="min-w-0">
           <ul className="text-foreground flex items-center gap-1 text-sm font-bold sm:gap-2">

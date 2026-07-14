@@ -86,7 +86,7 @@ export function ProductPurchasePanel({
     <div className="border-line mt-8 border-t pt-7">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="font-display text-foreground text-3xl font-black tracking-[-0.04em]">
+          <p className="font-display text-foreground text-3xl font-bold tracking-[-0.04em]">
             {formatCurrency(selectedVariant.priceInCop)}
           </p>
           {selectedVariant.compareAtPriceInCop ? (
@@ -96,7 +96,7 @@ export function ProductPurchasePanel({
           ) : null}
         </div>
         <p
-          className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black ${canAdd ? "text-success bg-[#e4f5ee]" : "bg-surface-muted text-muted"}`}
+          className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold ${canAdd ? "text-success bg-[#e4f5ee]" : "bg-surface-muted text-muted"}`}
         >
           <span
             aria-hidden="true"
@@ -109,7 +109,7 @@ export function ProductPurchasePanel({
       </div>
 
       <fieldset className="mt-7">
-        <legend className="text-foreground text-xs font-black tracking-[0.12em] uppercase">
+        <legend className="text-foreground text-xs font-bold tracking-[0.12em] uppercase">
           Elige una opción
         </legend>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -122,7 +122,7 @@ export function ProductPurchasePanel({
                 type="button"
                 aria-pressed={isSelected}
                 onClick={() => selectVariant(variant.id)}
-                className={`rounded-full border px-4 py-2.5 text-sm font-black transition ${
+                className={`rounded-full border px-4 py-2.5 text-sm font-bold transition ${
                   isSelected
                     ? "border-brand bg-brand text-white"
                     : "border-line bg-surface text-foreground hover:border-brand"
@@ -143,12 +143,12 @@ export function ProductPurchasePanel({
             onClick={() => changeQuantity(-1)}
             disabled={!canAdd || quantity <= 1}
             aria-label="Disminuir cantidad"
-            className="hover:bg-surface-muted grid size-9 place-items-center rounded-full text-lg font-black transition disabled:opacity-30"
+            className="hover:bg-surface-muted grid size-9 place-items-center rounded-full text-lg font-bold transition disabled:opacity-30"
           >
             −
           </button>
           <span
-            className="min-w-6 text-center text-sm font-black"
+            className="min-w-6 text-center text-sm font-bold"
             aria-live="polite"
           >
             {quantity}
@@ -158,7 +158,7 @@ export function ProductPurchasePanel({
             onClick={() => changeQuantity(1)}
             disabled={!canAdd || quantity >= selectedVariant.availableQuantity}
             aria-label="Aumentar cantidad"
-            className="hover:bg-surface-muted grid size-9 place-items-center rounded-full text-lg font-black transition disabled:opacity-30"
+            className="hover:bg-surface-muted grid size-9 place-items-center rounded-full text-lg font-bold transition disabled:opacity-30"
           >
             +
           </button>
@@ -167,7 +167,7 @@ export function ProductPurchasePanel({
           type="button"
           disabled={!canAdd}
           onClick={addSelectedVariant}
-          className="bg-accent disabled:bg-surface-muted disabled:text-muted h-13 rounded-full px-6 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-[#e95725] disabled:cursor-not-allowed"
+          className="bg-brand hover:bg-brand-dark disabled:bg-surface-muted disabled:text-muted text-foreground h-13 rounded-full px-6 text-sm font-semibold transition hover:-translate-y-0.5 hover:text-white disabled:cursor-not-allowed"
         >
           {canAdd ? "Agregar al carrito" : "Producto agotado"}
         </button>
@@ -175,19 +175,19 @@ export function ProductPurchasePanel({
 
       <p
         aria-live="polite"
-        className="text-success mt-4 min-h-5 text-sm font-black"
+        className="text-success mt-4 min-h-5 text-sm font-bold"
       >
         {confirmation}
       </p>
       <div className="text-muted mt-5 grid gap-2 text-xs font-bold sm:grid-cols-2">
         <p className="flex items-center gap-2">
-          <span aria-hidden="true" className="text-brand">
+          <span aria-hidden="true" className="text-brand-dark">
             ✓
           </span>
           Pago manual confirmado contigo
         </p>
         <p className="flex items-center gap-2">
-          <span aria-hidden="true" className="text-brand">
+          <span aria-hidden="true" className="text-brand-dark">
             ✓
           </span>
           Entrega coordinada después de comprar
