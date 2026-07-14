@@ -1,8 +1,5 @@
 import type { Metadata, Viewport } from "next";
 
-import { SiteFooter } from "@/components/layout/site-footer";
-import { SiteHeader } from "@/components/layout/site-header";
-
 import "@fontsource-variable/inter";
 import "@fontsource-variable/manrope";
 import "./globals.css";
@@ -27,11 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es-CO" className="h-full antialiased">
-      <body className="flex min-h-full flex-col">
-        <SiteHeader />
-        {children}
-        <SiteFooter />
-      </body>
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }

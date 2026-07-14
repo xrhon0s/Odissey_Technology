@@ -17,21 +17,21 @@ export const dynamic = "force-dynamic";
 const purchaseBenefits = [
   {
     number: "01",
-    title: "Compra acompañada",
+    title: "Compra en pocos pasos",
     description:
-      "Te ayudamos a confirmar compatibilidad, pago y entrega sin respuestas automáticas.",
+      "Elige tus productos, agrégalos al carrito y confirma tu pedido de forma sencilla.",
   },
   {
     number: "02",
-    title: "Pagas como prefieras",
+    title: "Pagos flexibles",
     description:
-      "Nequi, DaviPlata, Bancolombia o efectivo contraentrega donde esté disponible.",
+      "Paga por Nequi, DaviPlata, Bancolombia o en efectivo contraentrega en el Valle de Aburrá.",
   },
   {
     number: "03",
-    title: "Medellín y toda Colombia",
+    title: "Envíos a toda Colombia",
     description:
-      "Entrega local en el Valle de Aburrá y despachos nacionales coordinados.",
+      "Recibe tus accesorios en cualquier ciudad del país y coordina entregas locales en Medellín y sus alrededores.",
   },
 ] as const;
 
@@ -71,8 +71,8 @@ export default async function Home() {
               <span className="text-brand"> te conecta.</span>
             </h1>
             <p className="mt-6 max-w-xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
-              Cargadores, cables y audífonos confiables, con asesoría para
-              elegir bien y entregas coordinadas desde Medellín.
+              Cargadores, cables y audífonos para acompañar tu día, con pagos
+              flexibles y envíos a toda Colombia.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -91,8 +91,8 @@ export default async function Home() {
             </div>
             <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 border-t border-white/10 pt-6 text-xs font-bold text-slate-300">
               <span>✓ Garantía por funcionamiento</span>
-              <span>✓ Asesoría de compatibilidad</span>
-              <span>✓ Entregas en Medellín</span>
+              <span>✓ Pagos flexibles</span>
+              <span>✓ Envíos a toda Colombia</span>
             </div>
           </div>
 
@@ -131,7 +131,7 @@ export default async function Home() {
             eyebrow="Encuentra tu accesorio"
             id="categories-title"
             title="¿Qué necesitas hoy?"
-            description="Explora por tipo de producto y encuentra rápidamente lo que funciona con tus dispositivos."
+            description="Explora nuestras categorías y encuentra rápidamente ese accesorio que quieres renovar."
             action={
               <Link
                 href="/catalogo"
@@ -176,8 +176,8 @@ export default async function Home() {
             <SectionHeading
               eyebrow="Selección Odissey"
               id="featured-title"
-              title="Productos que resuelven"
-              description="Una selección corta y práctica para mejorar tu rutina tecnológica sin complicarte."
+              title="Elige tu próximo accesorio"
+              description="Descubre los favoritos de la tienda y lleva hoy lo que necesitas para mantenerte conectado."
               action={
                 <Link
                   href="/catalogo"
@@ -200,15 +200,45 @@ export default async function Home() {
         </section>
       ) : null}
 
+      <section className="bg-brand text-foreground">
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-8 sm:px-6 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-4">
+            <span
+              aria-hidden="true"
+              className="bg-foreground grid size-12 shrink-0 place-items-center rounded-full text-xl text-white"
+            >
+              $
+            </span>
+            <div>
+              <p className="text-xs font-semibold tracking-[0.15em] uppercase opacity-70">
+                Medellín y Valle de Aburrá
+              </p>
+              <h2 className="font-display mt-1 text-2xl font-bold tracking-[-0.03em]">
+                Paga en efectivo cuando recibas tu pedido.
+              </h2>
+              <p className="mt-1 text-sm opacity-75">
+                Selecciona pago contraentrega al finalizar la compra.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/catalogo"
+            className="bg-foreground inline-flex min-h-11 w-fit items-center rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+          >
+            Comprar con contraentrega →
+          </Link>
+        </div>
+      </section>
+
       <section
         aria-labelledby="benefits-title"
         className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20"
       >
         <SectionHeading
-          eyebrow="Así de simple"
+          eyebrow="Compra fácil"
           id="benefits-title"
-          title="Tecnología con trato humano"
-          description="Comprar por internet no debería sentirse distante. Te acompañamos antes y después del pedido."
+          title="Pide hoy. Recibe donde estés."
+          description="Compra tus accesorios, elige cómo pagar y recibe tu pedido en cualquier lugar de Colombia."
         />
         <div className="border-line mt-10 grid border-t md:grid-cols-3">
           {purchaseBenefits.map((benefit) => (
@@ -234,17 +264,17 @@ export default async function Home() {
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs font-bold tracking-[0.16em] uppercase opacity-80">
-              ¿No sabes cuál es compatible?
+              Todo lo que necesitas está aquí
             </p>
             <h2 className="font-display mt-2 text-3xl font-bold tracking-[-0.04em] sm:text-4xl">
-              Te ayudamos a elegir el correcto.
+              Renueva tus accesorios hoy.
             </h2>
           </div>
           <Link
             href="/catalogo"
             className="text-foreground inline-flex min-h-12 w-fit items-center rounded-full bg-white px-6 py-3 text-sm font-bold transition hover:-translate-y-0.5"
           >
-            Empezar a explorar →
+            Ver productos →
           </Link>
         </div>
       </section>
