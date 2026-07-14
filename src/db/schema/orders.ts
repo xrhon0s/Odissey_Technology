@@ -13,6 +13,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { productVariants } from "./catalog";
+import { adminUsers } from "./admin";
 
 export const orderStatus = pgEnum("order_status", [
   "pending",
@@ -118,5 +119,28 @@ export const orderItems = pgTable(
       "order_items_line_total_matches",
       sql`${table.lineTotalInCop} = ${table.unitPriceInCop} * ${table.quantity}`,
     ),
+  ],
+);
+
+export const orderEvents = pgTable(
+  "order_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    orderId: uuid("order_id")
+      .notNull()
+      .references(() => orders.id, { onDelete: "restrict" }),
+    eventType: varchar("event_type", { length: 60 }).notNull(),
+    fromStatus: orderStatus("from_status"),
+    toStatus: orderStatus("to_status").notNull(),
+    notes: varchar("notes", { length: 500 }),
+    actorAdminId: uuid("actor_admin_id").references(() => adminUsers.id, {
+      onDelete: "restrict",
+    }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("order_events_order_created_idx").on(table.orderId, table.createdAt),
   ],
 );

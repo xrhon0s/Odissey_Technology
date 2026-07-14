@@ -43,6 +43,13 @@
       "when": 1784000331184,
       "tag": "0005_ordinary_mentor",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1784001474012,
+      "tag": "0006_huge_serpent_society",
+      "breakpoints": true
     }
   ]
 }

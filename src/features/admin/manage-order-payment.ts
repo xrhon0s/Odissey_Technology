@@ -5,6 +5,7 @@ import {
   adminUsers,
   inventory,
   inventoryMovements,
+  orderEvents,
   orderItems,
   orders,
   paymentEvents,
@@ -218,6 +219,13 @@ export async function manageOrderPayment(
         .update(orders)
         .set({ status: plan.nextOrderStatus, updatedAt: now })
         .where(eq(orders.id, order.id));
+      await transaction.insert(orderEvents).values({
+        actorAdminId: admin.id,
+        eventType: plan.eventType,
+        fromStatus: order.status,
+        orderId: order.id,
+        toStatus: plan.nextOrderStatus,
+      });
     }
 
     if (plan.nextPaymentStatus) {

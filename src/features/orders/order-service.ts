@@ -5,6 +5,7 @@ import { and, eq, inArray, lt, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import {
   inventory,
+  orderEvents,
   orderItems,
   orders,
   paymentEvents,
@@ -148,6 +149,14 @@ export async function createPendingOrder(
         .update(orders)
         .set({ status: "cancelled", updatedAt: now })
         .where(inArray(orders.id, expiredOrderIds));
+      await transaction.insert(orderEvents).values(
+        expiredOrderIds.map((orderId) => ({
+          eventType: "reservation_expired",
+          fromStatus: "pending" as const,
+          orderId,
+          toStatus: "cancelled" as const,
+        })),
+      );
     }
 
     const [existingOrder] = await transaction
@@ -274,6 +283,12 @@ export async function createPendingOrder(
     if (!createdOrder) {
       throw new Error("Order insert did not return a record");
     }
+
+    await transaction.insert(orderEvents).values({
+      eventType: "created",
+      orderId: createdOrder.id,
+      toStatus: "pending",
+    });
 
     await transaction.insert(orderItems).values(
       quote.items.map((item) => ({
