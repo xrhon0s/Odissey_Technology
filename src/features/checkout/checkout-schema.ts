@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { manualPaymentMethodSchema } from "@/features/payments/payment-methods";
+
 const checkoutLineSchema = z.object({
   quantity: z.number().int().min(1).max(10),
   variantId: z.uuid(),
@@ -26,6 +28,7 @@ export const checkoutCustomerSchema = z.object({
 export const checkoutFormSchema = z.object({
   address: checkoutAddressSchema.optional(),
   customer: checkoutCustomerSchema,
+  paymentMethod: manualPaymentMethodSchema,
   shippingMethodCode: z.string().trim().min(1, "Selecciona una opción"),
 });
 
@@ -34,6 +37,7 @@ export const checkoutQuoteRequestSchema = z
     address: checkoutAddressSchema.optional(),
     customer: checkoutCustomerSchema,
     items: z.array(checkoutLineSchema).min(1).max(50),
+    paymentMethod: manualPaymentMethodSchema,
     shippingMethodCode: z
       .string()
       .trim()

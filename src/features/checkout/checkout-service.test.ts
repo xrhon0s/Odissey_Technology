@@ -24,6 +24,7 @@ const request: CheckoutQuoteRequest = {
       variantId: "30000000-0000-4000-8000-000000000001",
     },
   ],
+  paymentMethod: "nequi",
   shippingMethodCode: "envio-nacional",
 };
 
@@ -74,6 +75,17 @@ describe("createCheckoutQuote", () => {
       ),
     ).rejects.toMatchObject({
       code: "ADDRESS_REQUIRED",
+    } satisfies Partial<CheckoutQuoteError>);
+  });
+
+  it("rejects cash delivery outside the Medellín metropolitan area", async () => {
+    await expect(
+      createCheckoutQuote(
+        { ...request, paymentMethod: "cash_on_delivery" },
+        createRepository(),
+      ),
+    ).rejects.toMatchObject({
+      code: "INVALID_PAYMENT_METHOD",
     } satisfies Partial<CheckoutQuoteError>);
   });
 });

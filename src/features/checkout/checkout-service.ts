@@ -1,4 +1,5 @@
 import type { CheckoutQuoteRequest } from "./checkout-schema";
+import { isPaymentMethodEligible } from "@/features/payments/payment-methods";
 
 export type CheckoutVariant = {
   availableQuantity: number;
@@ -40,6 +41,7 @@ export type CheckoutQuote = {
 export type CheckoutQuoteErrorCode =
   | "ADDRESS_REQUIRED"
   | "INVALID_ITEM"
+  | "INVALID_PAYMENT_METHOD"
   | "INVALID_SHIPPING_METHOD"
   | "OUT_OF_STOCK";
 
@@ -73,6 +75,13 @@ export async function createCheckoutQuote(
     throw new CheckoutQuoteError(
       "ADDRESS_REQUIRED",
       "Este método de envío requiere una dirección de entrega.",
+    );
+  }
+
+  if (!isPaymentMethodEligible(input)) {
+    throw new CheckoutQuoteError(
+      "INVALID_PAYMENT_METHOD",
+      "El pago en efectivo contraentrega solo está disponible en el área metropolitana de Medellín.",
     );
   }
 

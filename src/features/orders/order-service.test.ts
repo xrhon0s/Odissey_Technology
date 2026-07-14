@@ -20,6 +20,7 @@ const request: CreateOrderRequest = {
         variantId: "30000000-0000-4000-8000-000000000002",
       },
     ],
+    paymentMethod: "nequi",
     shippingMethodCode: "recogida-local",
   },
   checkoutAttemptId: "50000000-0000-4000-8000-000000000001",

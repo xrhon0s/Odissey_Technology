@@ -17,6 +17,7 @@ import {
   createCheckoutQuote,
   type CheckoutQuoteRepository,
 } from "@/features/checkout/checkout-service";
+import type { ManualPaymentMethod } from "@/features/payments/payment-methods";
 
 import type { CreateOrderRequest } from "./order-schema";
 
@@ -24,7 +25,7 @@ const RESERVATION_DURATION_IN_MINUTES = 30;
 
 export type PendingOrderResult = {
   id: string;
-  paymentMethod: "manual_transfer";
+  paymentMethod: ManualPaymentMethod;
   paymentStatus: "pending";
   reference: string;
   reservationExpiresAt: Date;
@@ -44,7 +45,8 @@ export class OrderCreationError extends Error {
 }
 
 export function createOrderRequestFingerprint(input: CreateOrderRequest) {
-  const { address, customer, items, shippingMethodCode } = input.checkout;
+  const { address, customer, items, paymentMethod, shippingMethodCode } =
+    input.checkout;
   const canonicalPayload = {
     address: address
       ? {
@@ -64,6 +66,7 @@ export function createOrderRequestFingerprint(input: CreateOrderRequest) {
     items: [...items]
       .sort((left, right) => left.variantId.localeCompare(right.variantId))
       .map(({ quantity, variantId }) => ({ quantity, variantId })),
+    paymentMethod,
     shippingMethodCode,
   };
 
@@ -114,6 +117,33 @@ export async function createPendingOrder(
           .where(eq(inventory.variantId, item.variantId));
       }
 
+      const expiredPayments = await transaction
+        .select({ id: payments.id })
+        .from(payments)
+        .where(
+          and(
+            inArray(payments.orderId, expiredOrderIds),
+            eq(payments.status, "pending"),
+          ),
+        );
+
+      if (expiredPayments.length > 0) {
+        const expiredPaymentIds = expiredPayments.map((payment) => payment.id);
+
+        await transaction
+          .update(payments)
+          .set({ status: "voided", updatedAt: now })
+          .where(inArray(payments.id, expiredPaymentIds));
+
+        await transaction.insert(paymentEvents).values(
+          expiredPaymentIds.map((paymentId) => ({
+            eventType: "reservation_expired",
+            paymentId,
+            payload: { status: "voided" },
+          })),
+        );
+      }
+
       await transaction
         .update(orders)
         .set({ status: "cancelled", updatedAt: now })
@@ -123,6 +153,8 @@ export async function createPendingOrder(
     const [existingOrder] = await transaction
       .select({
         id: orders.id,
+        paymentMethod: payments.method,
+        paymentStatus: payments.status,
         reference: orders.reference,
         requestFingerprint: orders.requestFingerprint,
         reservationExpiresAt: orders.reservationExpiresAt,
@@ -130,6 +162,7 @@ export async function createPendingOrder(
         totalInCop: orders.totalInCop,
       })
       .from(orders)
+      .innerJoin(payments, eq(payments.orderId, orders.id))
       .where(eq(orders.checkoutAttemptId, input.checkoutAttemptId))
       .limit(1);
 
@@ -141,7 +174,11 @@ export async function createPendingOrder(
         );
       }
 
-      if (existingOrder.status !== "pending") {
+      if (
+        existingOrder.status !== "pending" ||
+        existingOrder.paymentStatus !== "pending" ||
+        existingOrder.paymentMethod === "manual_transfer"
+      ) {
         throw new OrderCreationError(
           "IDEMPOTENCY_CONFLICT",
           "Este intento de compra ya fue procesado.",
@@ -150,7 +187,7 @@ export async function createPendingOrder(
 
       return {
         id: existingOrder.id,
-        paymentMethod: "manual_transfer",
+        paymentMethod: existingOrder.paymentMethod,
         paymentStatus: "pending",
         reference: existingOrder.reference,
         reservationExpiresAt: existingOrder.reservationExpiresAt,
@@ -255,6 +292,7 @@ export async function createPendingOrder(
       .insert(payments)
       .values({
         amountInCop: quote.totalInCop,
+        method: input.checkout.paymentMethod,
         orderId: createdOrder.id,
         reference: `PM-${createdOrder.reference}`,
       })
@@ -267,7 +305,7 @@ export async function createPendingOrder(
     await transaction.insert(paymentEvents).values({
       eventType: "created",
       paymentId: createdPayment.id,
-      payload: { method: "manual_transfer", status: "pending" },
+      payload: { method: input.checkout.paymentMethod, status: "pending" },
     });
 
     for (const item of quote.items) {
@@ -282,7 +320,7 @@ export async function createPendingOrder(
 
     return {
       id: createdOrder.id,
-      paymentMethod: "manual_transfer",
+      paymentMethod: input.checkout.paymentMethod,
       paymentStatus: "pending",
       reference: createdOrder.reference,
       reservationExpiresAt,

@@ -23,7 +23,13 @@ export const paymentStatus = pgEnum("payment_status", [
   "refunded",
 ]);
 
-export const paymentMethod = pgEnum("payment_method", ["manual_transfer"]);
+export const paymentMethod = pgEnum("payment_method", [
+  "manual_transfer",
+  "nequi",
+  "daviplata",
+  "bancolombia_transfer",
+  "cash_on_delivery",
+]);
 
 export const payments = pgTable(
   "payments",
@@ -33,7 +39,7 @@ export const payments = pgTable(
       .notNull()
       .references(() => orders.id, { onDelete: "restrict" }),
     reference: varchar("reference", { length: 48 }).notNull(),
-    method: paymentMethod("method").default("manual_transfer").notNull(),
+    method: paymentMethod("method").notNull(),
     status: paymentStatus("status").default("pending").notNull(),
     amountInCop: integer("amount_in_cop").notNull(),
     proofUrl: text("proof_url"),
