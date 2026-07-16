@@ -27,10 +27,14 @@ type ManageOrderPaymentInput = {
 };
 
 export type ManageOrderPaymentResult = {
+  customerEmail: string;
+  customerName: string;
   orderId: string;
   orderStatus: string;
   paymentId: string;
   paymentStatus: string;
+  reference: string;
+  totalInCop: number;
 };
 
 export class AdminOrderManagementError extends Error {
@@ -81,10 +85,13 @@ export async function manageOrderPayment(
 
     const [order] = await transaction
       .select({
+        customerEmail: orders.customerEmail,
+        customerName: orders.customerName,
         id: orders.id,
         reference: orders.reference,
         reservationExpiresAt: orders.reservationExpiresAt,
         status: orders.status,
+        totalInCop: orders.totalInCop,
       })
       .from(orders)
       .where(eq(orders.id, paymentReference.orderId))
@@ -253,10 +260,14 @@ export async function manageOrderPayment(
     });
 
     return {
+      customerEmail: order.customerEmail,
+      customerName: order.customerName,
       orderId: order.id,
       orderStatus: nextOrderStatus,
       paymentId: payment.id,
       paymentStatus: nextPaymentStatus,
+      reference: order.reference,
+      totalInCop: order.totalInCop,
     };
   });
 }

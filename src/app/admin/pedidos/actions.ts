@@ -12,6 +12,8 @@ import {
   InvalidPaymentActionError,
   type AdminPaymentAction,
 } from "@/features/admin/payment-actions";
+import { notifyOrderStatus } from "@/features/notifications/order-notifications";
+import { getPublicStoreSettings } from "@/db/queries/store-settings";
 
 const actionSchema = z.object({
   action: z.enum([
@@ -41,10 +43,32 @@ export async function managePaymentAction(
   if (!input.success) return { error: "La acción solicitada no es válida." };
 
   try {
-    await manageOrderPayment({
+    const result = await manageOrderPayment({
       ...input.data,
       actorAdminId: admin.id,
     });
+    const notificationStatus = {
+      approve_transfer: "confirmed",
+      confirm_cash_on_delivery: "confirmed",
+      decline_order: "cancelled",
+      record_cash_received: null,
+    }[input.data.action] as "cancelled" | "confirmed" | null;
+
+    if (notificationStatus) {
+      try {
+        await notifyOrderStatus({
+          customerEmail: result.customerEmail,
+          customerName: result.customerName,
+          orderId: result.orderId,
+          reference: result.reference,
+          settings: await getPublicStoreSettings(),
+          status: notificationStatus,
+          totalInCop: result.totalInCop,
+        });
+      } catch {
+        // El cambio administrativo ya fue aplicado y no depende del correo.
+      }
+    }
     revalidatePath("/admin");
 
     return { success: "Pedido actualizado correctamente." };

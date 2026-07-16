@@ -2,6 +2,7 @@ import { ZodError } from "zod";
 
 import { getPublicStoreSettings } from "@/db/queries/store-settings";
 import { CheckoutQuoteError } from "@/features/checkout/checkout-service";
+import { notifyOrderCreated } from "@/features/notifications/order-notifications";
 import { createOrderRequestSchema } from "@/features/orders/order-schema";
 import {
   createPendingOrder,
@@ -49,6 +50,21 @@ export async function POST(request: Request) {
                 }),
         }
       : null;
+
+    if (!order.reused) {
+      try {
+        await notifyOrderCreated({
+          customerEmail: input.checkout.customer.email,
+          customerName: input.checkout.customer.fullName,
+          orderId: order.id,
+          reference: order.reference,
+          settings,
+          totalInCop: order.totalInCop,
+        });
+      } catch {
+        // La entrega del correo nunca debe invalidar un pedido ya creado.
+      }
+    }
 
     return Response.json(
       { ok: true, order: { ...order, paymentInstructions } },

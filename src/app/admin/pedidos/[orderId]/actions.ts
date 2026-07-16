@@ -10,6 +10,8 @@ import {
 import { requireAdmin } from "@/features/admin/admin-access";
 import { InvalidOrderStatusTransitionError } from "@/features/admin/order-status-actions";
 import { shipmentInputSchema } from "@/features/orders/shipment";
+import { notifyOrderStatus } from "@/features/notifications/order-notifications";
+import { getPublicStoreSettings } from "@/db/queries/store-settings";
 
 const orderIdSchema = z.uuid();
 
@@ -42,11 +44,28 @@ export async function advanceOrderAction(
   }
 
   try {
-    await advanceOrderStatus({
+    const result = await advanceOrderStatus({
       actorAdminId: admin.id,
       orderId: orderId.data,
       shipment: shipment?.data,
     });
+    try {
+      await notifyOrderStatus({
+        customerEmail: result.customerEmail,
+        customerName: result.customerName,
+        estimatedDeliveryAt: result.estimatedDeliveryAt,
+        orderId: result.orderId,
+        reference: result.reference,
+        settings: await getPublicStoreSettings(),
+        shippingCarrier: result.shippingCarrier,
+        status: result.status,
+        totalInCop: result.totalInCop,
+        trackingNumber: result.trackingNumber,
+        trackingUrl: result.trackingUrl,
+      });
+    } catch {
+      // El despacho y su seguimiento no dependen del proveedor de correo.
+    }
     revalidatePath("/admin");
     revalidatePath(`/admin/pedidos/${orderId.data}`);
 

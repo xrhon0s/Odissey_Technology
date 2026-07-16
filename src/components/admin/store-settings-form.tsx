@@ -59,6 +59,10 @@ export function StoreSettingsForm({
           placeholder="ventas@odisseytechnology.com"
           className={inputClass}
         />
+        <span className="text-muted font-normal">
+          También recibirá los avisos de nuevos pedidos cuando el correo
+          automático esté configurado.
+        </span>
       </label>
 
       <details className="border-line overflow-hidden rounded-xl border" open>

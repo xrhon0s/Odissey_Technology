@@ -84,6 +84,12 @@ Los métodos de envío, sus precios, disponibilidad y orden se administran en `/
 
 Al despachar un pedido, el administrador registra transportadora, número de guía, enlace de rastreo y fecha estimada. El comprador puede consultar esos datos desde `/pedido`.
 
+## Notificaciones por correo
+
+Las notificaciones transaccionales son opcionales y usan la API REST de Resend sin agregar un SDK. Al configurar `RESEND_API_KEY`, `RESEND_FROM_EMAIL` y `NEXT_PUBLIC_APP_URL`, el cliente recibe avisos por creación, confirmación, preparación, despacho, entrega o cancelación. El correo de atención configurado en `/admin/configuracion` recibe los nuevos pedidos. Una falla del proveedor nunca revierte la compra ni una acción administrativa.
+
+Antes de enviar a clientes reales, verifica un dominio en Resend y usa una dirección de ese dominio en `RESEND_FROM_EMAIL`.
+
 ## Reservas de inventario
 
 Los pedidos pendientes reservan inventario durante 30 minutos. La tienda libera reservas vencidas durante nuevas cotizaciones y expone la ruta privada `GET /api/internal/release-reservations` para una ejecución programada. En producción configura `CRON_SECRET` con al menos 24 caracteres y programa una llamada periódica con el encabezado `Authorization: Bearer <CRON_SECRET>` desde el proveedor de despliegue elegido.

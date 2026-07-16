@@ -44,7 +44,14 @@ export async function advanceOrderStatus(input: AdvanceOrderStatusInput) {
     }
 
     const [order] = await transaction
-      .select({ id: orders.id, status: orders.status })
+      .select({
+        customerEmail: orders.customerEmail,
+        customerName: orders.customerName,
+        id: orders.id,
+        reference: orders.reference,
+        status: orders.status,
+        totalInCop: orders.totalInCop,
+      })
       .from(orders)
       .where(eq(orders.id, input.orderId))
       .for("update")
@@ -109,6 +116,17 @@ export async function advanceOrderStatus(input: AdvanceOrderStatusInput) {
       toStatus: nextStatus,
     });
 
-    return { orderId: order.id, status: nextStatus };
+    return {
+      customerEmail: order.customerEmail,
+      customerName: order.customerName,
+      estimatedDeliveryAt: input.shipment?.estimatedDeliveryAt,
+      orderId: order.id,
+      reference: order.reference,
+      shippingCarrier: input.shipment?.carrier,
+      status: nextStatus,
+      totalInCop: order.totalInCop,
+      trackingNumber: input.shipment?.trackingNumber,
+      trackingUrl: input.shipment?.trackingUrl,
+    };
   });
 }
