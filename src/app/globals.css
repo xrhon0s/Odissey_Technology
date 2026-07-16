@@ -127,21 +127,6 @@ textarea {
   will-change: transform;
 }
 
-.hero-image-blend {
-  -webkit-mask-image: radial-gradient(
-    ellipse 88% 84% at center,
-    black 52%,
-    rgb(0 0 0 / 0.94) 68%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    ellipse 88% 84% at center,
-    black 52%,
-    rgb(0 0 0 / 0.94) 68%,
-    transparent 100%
-  );
-}
-
 .hero-orbit {
   animation: hero-orbit-drift 7s ease-in-out infinite;
 }

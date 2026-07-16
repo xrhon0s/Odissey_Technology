@@ -103,6 +103,14 @@ export default async function Home() {
           <div className="relative -mx-4 min-h-[23rem] w-[calc(100%+2rem)] sm:mx-auto sm:w-full lg:min-h-[38rem] lg:max-w-[46rem]">
             <div
               aria-hidden="true"
+              className="border-brand/30 absolute top-[25%] right-[5%] bottom-[13%] left-[4%] -rotate-6 rounded-[50%] border shadow-[0_0_70px_rgb(18_199_199/0.12)]"
+            />
+            <div
+              aria-hidden="true"
+              className="border-accent/35 absolute top-[34%] right-[13%] bottom-[20%] left-[18%] rotate-12 rounded-[50%] border"
+            />
+            <div
+              aria-hidden="true"
               className="hero-orbit border-brand/35 absolute top-[16%] left-[13%] z-10 size-20 rounded-full border"
             />
             <div
@@ -111,12 +119,12 @@ export default async function Home() {
             />
             <div className="hero-product-float absolute inset-0">
               <Image
-                src="/images/hero-tech-orbit.webp"
+                src="/images/hero-tech-cutout.webp"
                 alt="Audífonos inalámbricos, estuche, cargador y cable flotando entre trazos de luz"
                 fill
                 priority
                 sizes="(min-width: 1024px) 58vw, 110vw"
-                className="hero-image-blend object-cover object-center drop-shadow-2xl lg:object-contain"
+                className="scale-[1.12] object-contain object-center drop-shadow-2xl"
               />
             </div>
             <span className="bg-foreground/55 text-brand absolute right-[8%] bottom-[9%] z-10 rounded-full border border-white/15 px-3 py-1.5 text-[10px] font-semibold tracking-[0.12em] uppercase backdrop-blur-md">
