@@ -2,17 +2,19 @@ import Image from "next/image";
 
 export function BrandMark({ inverse = false }: { inverse?: boolean }) {
   return (
-    <span
-      className={`inline-flex ${inverse ? "rounded-xl bg-white px-3 py-2" : ""}`}
-    >
+    <span className="inline-flex">
       <Image
-        src="/images/odissey-logo.webp"
+        src={
+          inverse
+            ? "/images/odissey-logo-white.png"
+            : "/images/odissey-logo.webp"
+        }
         alt="Odissey Technology"
-        width={2157}
-        height={389}
+        width={inverse ? 581 : 2157}
+        height={inverse ? 108 : 389}
         priority={!inverse}
-        sizes="(min-width: 640px) 210px, 150px"
-        className="h-auto w-[150px] sm:w-[210px]"
+        sizes="(min-width: 640px) 210px, 128px"
+        className="h-auto w-[128px] sm:w-[210px]"
       />
     </span>
   );

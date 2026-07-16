@@ -48,16 +48,20 @@ export default async function Home() {
   ]);
   return (
     <main className="flex-1 overflow-hidden">
-      <section className="bg-foreground relative isolate text-white">
+      <section className="bg-foreground relative isolate overflow-hidden text-white">
         <div
           aria-hidden="true"
-          className="border-brand/25 absolute -top-24 -right-32 -z-10 size-[28rem] rounded-full border-[72px] sm:size-[38rem]"
+          className="hero-ambient bg-brand/15 absolute top-1/2 right-[12%] -z-10 size-[28rem] -translate-y-1/2 rounded-full blur-[110px]"
         />
         <div
           aria-hidden="true"
-          className="bg-accent absolute right-[28%] bottom-14 -z-10 size-6 rounded-full"
+          className="border-brand/15 absolute -top-36 -right-48 -z-10 size-[34rem] rounded-full border-[1px] sm:size-[48rem]"
         />
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_0.8fr] lg:items-center lg:py-24">
+        <div
+          aria-hidden="true"
+          className="border-brand/10 absolute -right-20 -bottom-64 -z-10 size-[38rem] rounded-full border-[1px]"
+        />
+        <div className="mx-auto grid min-h-[calc(100svh-7rem)] max-w-7xl gap-6 px-4 py-12 sm:px-6 sm:py-16 lg:min-h-[43rem] lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:py-20">
           <div className="relative z-10">
             <p className="text-brand inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold tracking-[0.16em] uppercase">
               <span
@@ -89,35 +93,35 @@ export default async function Home() {
                 Consultar pedido
               </Link>
             </div>
-            <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 border-t border-white/10 pt-6 text-xs font-bold text-slate-300">
+            <div className="mt-10 flex flex-wrap gap-x-7 gap-y-3 border-t border-white/10 pt-6 text-xs font-bold text-slate-300">
               <span>✓ Garantía por funcionamiento</span>
               <span>✓ Pagos flexibles</span>
               <span>✓ Envíos a toda Colombia</span>
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[34rem] lg:mr-0">
+          <div className="relative -mx-4 min-h-[23rem] w-[calc(100%+2rem)] sm:mx-auto sm:w-full lg:min-h-[38rem] lg:max-w-[46rem]">
             <div
               aria-hidden="true"
-              className="border-accent/90 absolute top-[18%] left-[2%] size-20 rounded-full border-[18px]"
+              className="hero-orbit border-brand/35 absolute top-[16%] left-[13%] z-10 size-20 rounded-full border"
             />
             <div
               aria-hidden="true"
-              className="bg-brand absolute right-[2%] bottom-[14%] size-5 rounded-full"
+              className="hero-spark bg-accent absolute top-[17%] right-[12%] z-10 size-2.5 rounded-full shadow-[0_0_24px_var(--accent)]"
             />
-            <div className="hero-product-float relative aspect-[4/4.7] overflow-hidden rounded-[2.5rem]">
+            <div className="hero-product-float absolute inset-0">
               <Image
-                src="/images/hero-wireless-earbuds.webp"
-                alt="Audífonos inalámbricos blancos flotando sobre su estuche de carga abierto"
+                src="/images/hero-tech-orbit.webp"
+                alt="Audífonos inalámbricos, estuche, cargador y cable flotando entre trazos de luz"
                 fill
                 priority
-                sizes="(min-width: 1024px) 44vw, 95vw"
-                className="object-cover object-center drop-shadow-2xl"
+                sizes="(min-width: 1024px) 58vw, 110vw"
+                className="hero-image-blend object-cover object-center drop-shadow-2xl lg:object-contain"
               />
-              <span className="bg-foreground/75 text-brand absolute right-4 bottom-5 rounded-full border border-white/15 px-3 py-1.5 text-[10px] font-semibold tracking-[0.12em] uppercase backdrop-blur">
-                Sonido sin límites
-              </span>
             </div>
+            <span className="bg-foreground/55 text-brand absolute right-[8%] bottom-[9%] z-10 rounded-full border border-white/15 px-3 py-1.5 text-[10px] font-semibold tracking-[0.12em] uppercase backdrop-blur-md">
+              Sonido sin límites
+            </span>
           </div>
         </div>
       </section>

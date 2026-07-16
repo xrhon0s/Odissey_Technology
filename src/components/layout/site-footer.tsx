@@ -10,6 +10,20 @@ export async function SiteFooter() {
 
   return (
     <footer className="bg-foreground mt-auto px-6 pt-14 pb-8 text-sm text-slate-300">
+      <div className="mx-auto mb-12 grid max-w-7xl gap-px overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/10 sm:grid-cols-3">
+        {[
+          ["Envíos nacionales", "Recibe en cualquier ciudad de Colombia"],
+          ["Pagos flexibles", "Nequi, DaviPlata, Bancolombia y efectivo"],
+          ["Contraentrega local", "Disponible en Medellín y Valle de Aburrá"],
+        ].map(([title, description]) => (
+          <div key={title} className="bg-foreground p-5">
+            <p className="text-brand font-bold">{title}</p>
+            <p className="mt-1 text-xs leading-5 text-slate-400">
+              {description}
+            </p>
+          </div>
+        ))}
+      </div>
       <div className="mx-auto grid max-w-7xl gap-10 sm:grid-cols-[1.2fr_0.8fr_1fr]">
         <div>
           <div className="text-white">
@@ -34,17 +48,17 @@ export async function SiteFooter() {
           </p>
           <ul className="grid gap-3">
             <li>
-              <Link href="/catalogo" className="hover:text-white">
+              <Link href="/catalogo" className="transition hover:text-white">
                 Catálogo
               </Link>
             </li>
             <li>
-              <Link href="/carrito" className="hover:text-white">
+              <Link href="/carrito" className="transition hover:text-white">
                 Carrito
               </Link>
             </li>
             <li>
-              <Link href="/pedido" className="hover:text-white">
+              <Link href="/pedido" className="transition hover:text-white">
                 Consultar pedido
               </Link>
             </li>

@@ -8,11 +8,11 @@ export async function SiteHeader() {
   const settings = await getPublicStoreSettings();
 
   return (
-    <header className="border-line/80 bg-surface/95 sticky top-0 z-50 border-b backdrop-blur-md">
+    <header className="border-line/80 bg-surface/95 sticky top-0 z-50 border-b shadow-[0_1px_14px_rgb(7_26_51/0.04)] backdrop-blur-md">
       <div className="bg-brand text-foreground px-4 py-2 text-center text-[11px] font-semibold tracking-wide sm:text-xs">
         {settings.announcement}
       </div>
-      <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+      <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6">
         <Link
           href="/"
           className="text-foreground shrink-0 transition-opacity hover:opacity-75"
@@ -31,7 +31,7 @@ export async function SiteHeader() {
             </li>
             <li>
               <Link
-                className="hover:bg-surface-muted rounded-full px-3 py-2 transition-colors"
+                className="hover:bg-surface-muted rounded-full px-2.5 py-2 transition-colors sm:px-3"
                 href="/catalogo"
               >
                 Catálogo
