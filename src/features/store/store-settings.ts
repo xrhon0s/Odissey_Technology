@@ -1,8 +1,16 @@
 export const DEFAULT_STORE_SETTINGS = {
   announcement: "Envíos a toda Colombia",
+  bancolombiaAccountNumber: "23652931391",
+  bancolombiaEnabled: true,
+  bancolombiaKey: "@davids700",
   businessCity: null,
+  cashOnDeliveryEnabled: true,
+  daviplataEnabled: false,
   legalName: null,
   notificationAddress: null,
+  nequiEnabled: true,
+  nequiKey: "@NEQUIDAV5700",
+  nequiNumber: "3126485885",
   storeName: "Odissey Technology",
   supportEmail: null,
   taxId: null,
@@ -12,9 +20,17 @@ export const DEFAULT_STORE_SETTINGS = {
 
 export type PublicStoreSettings = {
   announcement: string;
+  bancolombiaAccountNumber: string | null;
+  bancolombiaEnabled: boolean;
+  bancolombiaKey: string | null;
   businessCity: string | null;
+  cashOnDeliveryEnabled: boolean;
+  daviplataEnabled: boolean;
   legalName: string | null;
   notificationAddress: string | null;
+  nequiEnabled: boolean;
+  nequiKey: string | null;
+  nequiNumber: string | null;
   storeName: string;
   supportEmail: string | null;
   taxId: string | null;

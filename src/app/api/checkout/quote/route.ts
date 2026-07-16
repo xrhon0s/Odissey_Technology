@@ -1,16 +1,27 @@
 import { ZodError } from "zod";
 
 import { checkoutQuoteRepository } from "@/db/queries/checkout";
+import { getPublicStoreSettings } from "@/db/queries/store-settings";
 import { checkoutQuoteRequestSchema } from "@/features/checkout/checkout-schema";
 import {
   CheckoutQuoteError,
   createCheckoutQuote,
 } from "@/features/checkout/checkout-service";
 import { releaseExpiredOrderReservations } from "@/features/orders/order-service";
+import { isManualPaymentMethodAvailable } from "@/features/payments/payment-methods";
 
 export async function POST(request: Request) {
   try {
     const input = checkoutQuoteRequestSchema.parse(await request.json());
+    const settings = await getPublicStoreSettings();
+
+    if (!isManualPaymentMethodAvailable(input.paymentMethod, settings)) {
+      throw new CheckoutQuoteError(
+        "INVALID_PAYMENT_METHOD",
+        "Este método de pago no está disponible en este momento.",
+      );
+    }
+
     await releaseExpiredOrderReservations();
     const quote = await createCheckoutQuote(input, checkoutQuoteRepository);
 

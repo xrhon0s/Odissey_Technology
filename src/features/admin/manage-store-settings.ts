@@ -32,12 +32,36 @@ const optionalWhatsApp = z.preprocess(
     .nullable(),
 );
 
+const optionalPaymentNumber = z.preprocess((value) => {
+  if (typeof value !== "string") return value;
+  const normalized = value.replace(/[^0-9]/g, "");
+  return normalized === "" ? null : normalized;
+}, z.string().min(10).max(30).nullable());
+
+const optionalPaymentKey = z.preprocess(
+  (value) =>
+    typeof value === "string" && value.trim() === ""
+      ? null
+      : typeof value === "string"
+        ? value.trim()
+        : value,
+  z.string().min(3).max(80).nullable(),
+);
+
 export const storeSettingsInputSchema = z
   .object({
     announcement: z.string().trim().min(3).max(180),
+    bancolombiaAccountNumber: optionalPaymentNumber,
+    bancolombiaEnabled: z.boolean(),
+    bancolombiaKey: optionalPaymentKey,
     businessCity: optionalShortText(120),
+    cashOnDeliveryEnabled: z.boolean(),
+    daviplataEnabled: z.boolean(),
     legalName: optionalShortText(160),
     notificationAddress: optionalShortText(240),
+    nequiEnabled: z.boolean(),
+    nequiKey: optionalPaymentKey,
+    nequiNumber: optionalPaymentNumber,
     storeName: z.string().trim().min(2).max(120),
     supportEmail: optionalEmail,
     taxId: optionalShortText(30),
@@ -50,6 +74,25 @@ export const storeSettingsInputSchema = z
         code: "custom",
         message: "Agrega el número antes de habilitar WhatsApp.",
         path: ["whatsappNumber"],
+      });
+    }
+    if (value.nequiEnabled && !value.nequiNumber && !value.nequiKey) {
+      context.addIssue({
+        code: "custom",
+        message: "Agrega el número o la llave de Nequi antes de habilitarlo.",
+        path: ["nequiNumber"],
+      });
+    }
+    if (
+      value.bancolombiaEnabled &&
+      !value.bancolombiaAccountNumber &&
+      !value.bancolombiaKey
+    ) {
+      context.addIssue({
+        code: "custom",
+        message:
+          "Agrega la cuenta o la llave de Bancolombia antes de habilitarlo.",
+        path: ["bancolombiaAccountNumber"],
       });
     }
   });

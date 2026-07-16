@@ -25,7 +25,7 @@ const purchaseBenefits = [
     number: "02",
     title: "Pagos flexibles",
     description:
-      "Paga por Nequi, DaviPlata, Bancolombia o en efectivo contraentrega en el Valle de Aburrá.",
+      "Paga por Nequi, Bancolombia o en efectivo contraentrega en el Valle de Aburrá.",
   },
   {
     number: "03",

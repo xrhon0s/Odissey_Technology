@@ -4,8 +4,16 @@ import { storeSettingsInputSchema } from "./manage-store-settings";
 
 const validInput = {
   announcement: "Envíos a toda Colombia",
+  bancolombiaAccountNumber: "23652931391",
+  bancolombiaEnabled: true,
+  bancolombiaKey: "@davids700",
   businessCity: "Medellín, Colombia",
+  cashOnDeliveryEnabled: true,
+  daviplataEnabled: false,
   legalName: "Odissey Technology S.A.S.",
+  nequiEnabled: true,
+  nequiKey: "@NEQUIDAV5700",
+  nequiNumber: "3126485885",
   notificationAddress: "Calle 1 # 2-3",
   storeName: "Odissey Technology",
   supportEmail: "ventas@example.com",
@@ -39,5 +47,15 @@ describe("storeSettingsInputSchema", () => {
         whatsappNumber: "",
       }),
     ).toMatchObject({ supportEmail: null, whatsappNumber: null });
+  });
+
+  it("requires payment details before enabling a transfer method", () => {
+    const result = storeSettingsInputSchema.safeParse({
+      ...validInput,
+      nequiKey: "",
+      nequiNumber: "",
+    });
+
+    expect(result.success).toBe(false);
   });
 });

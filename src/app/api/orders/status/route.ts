@@ -1,7 +1,12 @@
 import { ZodError } from "zod";
 
 import { getPublicOrderStatus } from "@/db/queries/public-orders";
+import { getPublicStoreSettings } from "@/db/queries/store-settings";
 import { orderLookupInputSchema } from "@/features/orders/order-lookup";
+import {
+  buildPaymentInstructions,
+  manualPaymentMethodSchema,
+} from "@/features/payments/payment-methods";
 
 export async function POST(request: Request) {
   try {
@@ -20,8 +25,19 @@ export async function POST(request: Request) {
       );
     }
 
+    const paymentMethod = manualPaymentMethodSchema.safeParse(
+      order.paymentMethod,
+    );
+    const paymentInstructions =
+      order.paymentStatus === "pending" && paymentMethod.success
+        ? buildPaymentInstructions(
+            paymentMethod.data,
+            await getPublicStoreSettings(),
+          )
+        : null;
+
     return Response.json(
-      { ok: true, order },
+      { ok: true, order: { ...order, paymentInstructions } },
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {

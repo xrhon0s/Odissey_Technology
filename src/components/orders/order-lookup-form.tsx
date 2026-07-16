@@ -3,7 +3,9 @@
 import { useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 
+import { PaymentInstructions } from "@/components/payments/payment-instructions";
 import { manualPaymentMethods } from "@/features/payments/payment-methods";
+import type { PaymentInstructionsData } from "@/features/payments/payment-methods";
 import { formatCurrency } from "@/lib/format-currency";
 
 type PublicOrder = {
@@ -16,6 +18,7 @@ type PublicOrder = {
     variantName: string;
   }>;
   paymentMethod: string;
+  paymentInstructions: PaymentInstructionsData | null;
   paymentStatus: string;
   reference: string;
   reservationExpiresAt: string;
@@ -191,6 +194,14 @@ function OrderStatus({ order }: { order: PublicOrder }) {
           </dd>
         </div>
       </dl>
+
+      {order.paymentStatus === "pending" && order.paymentInstructions ? (
+        <PaymentInstructions
+          instructions={order.paymentInstructions}
+          reference={order.reference}
+          totalInCop={order.totalInCop}
+        />
+      ) : null}
 
       <h3 className="text-foreground mt-6 font-bold">Productos</h3>
       <div className="divide-line mt-2 divide-y">

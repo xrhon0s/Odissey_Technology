@@ -108,9 +108,17 @@ export async function updateStoreSettingsAction(
   const admin = await requireAdmin();
   const input = storeSettingsInputSchema.safeParse({
     announcement: formData.get("announcement"),
+    bancolombiaAccountNumber: formData.get("bancolombiaAccountNumber"),
+    bancolombiaEnabled: formData.get("bancolombiaEnabled") === "on",
+    bancolombiaKey: formData.get("bancolombiaKey"),
     businessCity: formData.get("businessCity"),
+    cashOnDeliveryEnabled: formData.get("cashOnDeliveryEnabled") === "on",
+    daviplataEnabled: false,
     legalName: formData.get("legalName"),
     notificationAddress: formData.get("notificationAddress"),
+    nequiEnabled: formData.get("nequiEnabled") === "on",
+    nequiKey: formData.get("nequiKey"),
+    nequiNumber: formData.get("nequiNumber"),
     storeName: formData.get("storeName"),
     supportEmail: formData.get("supportEmail"),
     taxId: formData.get("taxId"),

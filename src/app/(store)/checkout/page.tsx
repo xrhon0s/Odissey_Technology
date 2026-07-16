@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import { CheckoutForm } from "@/components/checkout/checkout-form";
 import { listActiveShippingMethods } from "@/db/queries/checkout";
+import { getPublicStoreSettings } from "@/db/queries/store-settings";
+import { getAvailableManualPaymentMethods } from "@/features/payments/payment-methods";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -11,7 +13,11 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function CheckoutPage() {
-  const shippingMethods = await listActiveShippingMethods();
+  const [shippingMethods, settings] = await Promise.all([
+    listActiveShippingMethods(),
+    getPublicStoreSettings(),
+  ]);
+  const paymentMethods = getAvailableManualPaymentMethods(settings);
 
   return (
     <main className="bg-background flex-1">
@@ -29,7 +35,10 @@ export default async function CheckoutPage() {
         <p className="text-muted mt-3 mb-8 max-w-2xl leading-7">
           Confirma tus datos, la forma de entrega y cómo quieres pagar.
         </p>
-        <CheckoutForm shippingMethods={shippingMethods} />
+        <CheckoutForm
+          paymentMethods={paymentMethods}
+          shippingMethods={shippingMethods}
+        />
       </div>
     </main>
   );

@@ -13,7 +13,7 @@ export async function SiteFooter() {
       <div className="mx-auto mb-12 grid max-w-7xl gap-px overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/10 sm:grid-cols-3">
         {[
           ["Envíos nacionales", "Recibe en cualquier ciudad de Colombia"],
-          ["Pagos flexibles", "Nequi, DaviPlata, Bancolombia y efectivo"],
+          ["Pagos flexibles", "Nequi, Bancolombia y efectivo"],
           ["Contraentrega local", "Disponible en Medellín y Valle de Aburrá"],
         ].map(([title, description]) => (
           <div key={title} className="bg-foreground p-5">

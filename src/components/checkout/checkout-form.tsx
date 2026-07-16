@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
+import { PaymentInstructions } from "@/components/payments/payment-instructions";
 import {
   checkoutFormSchema,
   type CheckoutFormValues,
@@ -15,8 +16,9 @@ import type {
   CheckoutShippingMethod,
 } from "@/features/checkout/checkout-service";
 import {
-  manualPaymentMethods,
   type ManualPaymentMethod,
+  type ManualPaymentMethodOption,
+  type PaymentInstructionsData,
 } from "@/features/payments/payment-methods";
 import {
   PRIVACY_POLICY_VERSION,
@@ -35,6 +37,7 @@ type OrderResponse =
       order: {
         id: string;
         paymentMethod: ManualPaymentMethod;
+        paymentInstructions: PaymentInstructionsData | null;
         paymentStatus: "pending";
         reference: string;
         reservationExpiresAt: string;
@@ -46,13 +49,17 @@ type OrderResponse =
   | { code: string; message: string; ok: false };
 
 type CheckoutFormProps = {
+  paymentMethods: ManualPaymentMethodOption[];
   shippingMethods: CheckoutShippingMethod[];
 };
 
 const inputClassName =
   "h-11 w-full min-w-0 rounded-xl border border-line bg-surface px-3 text-sm text-foreground outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/10";
 
-export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
+export function CheckoutForm({
+  paymentMethods,
+  shippingMethods,
+}: CheckoutFormProps) {
   const clearCart = useCartStore((state) => state.clear);
   const hasHydrated = useCartStore((state) => state.hasHydrated);
   const items = useCartStore((state) => state.items);
@@ -68,6 +75,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
     null,
   );
   const defaultShippingMethod = shippingMethods[0]?.code ?? "";
+  const defaultPaymentMethod = paymentMethods[0]?.code ?? "nequi";
   const {
     control,
     formState: { errors, isSubmitting },
@@ -85,7 +93,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
         neighborhood: "",
       },
       customer: { email: "", fullName: "", phone: "" },
-      paymentMethod: "nequi",
+      paymentMethod: defaultPaymentMethod,
       shippingMethodCode: defaultShippingMethod,
     },
     resolver: zodResolver(checkoutFormSchema),
@@ -102,7 +110,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
   const selectedShippingMethod = shippingMethods.find(
     (shippingMethod) => shippingMethod.code === selectedShippingCode,
   );
-  const selectedPaymentMethod = manualPaymentMethods.find(
+  const selectedPaymentMethod = paymentMethods.find(
     (paymentMethod) => paymentMethod.code === selectedPaymentCode,
   );
 
@@ -136,7 +144,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
           <div className="flex justify-between gap-4">
             <dt className="text-slate-600">Forma de pago</dt>
             <dd className="text-foreground text-right font-semibold">
-              {manualPaymentMethods.find(
+              {paymentMethods.find(
                 (method) => method.code === order.paymentMethod,
               )?.name ?? "Pago manual"}
             </dd>
@@ -157,21 +165,13 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
             </dd>
           </div>
         </dl>
-        <div className="mt-6 rounded-xl bg-amber-50 p-4 text-left text-sm leading-6 text-amber-900">
-          <p className="font-semibold">Siguiente paso</p>
-          {order.paymentMethod === "cash_on_delivery" ? (
-            <p className="mt-1">
-              Conserva la referencia y ten disponible el valor exacto en
-              efectivo. El equipo confirmará la entrega antes de despachar.
-            </p>
-          ) : (
-            <p className="mt-1">
-              Conserva la referencia del pedido. El equipo te compartirá los
-              datos de transferencia y confirmará el pedido después de revisar
-              el comprobante.
-            </p>
-          )}
-        </div>
+        {order.paymentInstructions ? (
+          <PaymentInstructions
+            instructions={order.paymentInstructions}
+            reference={order.reference}
+            totalInCop={order.totalInCop}
+          />
+        ) : null}
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link
             href={`/pedido?reference=${encodeURIComponent(order.reference)}`}
@@ -429,7 +429,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
             pedido.
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {manualPaymentMethods.map((method) => (
+            {paymentMethods.map((method) => (
               <label
                 key={method.code}
                 className="border-line has-checked:border-brand has-checked:bg-brand-soft flex cursor-pointer gap-3 rounded-xl border p-4 transition"
@@ -456,6 +456,11 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
               </label>
             ))}
           </div>
+          {paymentMethods.length === 0 ? (
+            <p className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
+              No hay métodos de pago disponibles. Escríbenos antes de continuar.
+            </p>
+          ) : null}
         </section>
 
         <section className="border-line bg-surface rounded-[1.5rem] border p-5 sm:p-6">
@@ -563,7 +568,11 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
 
         <button
           type="submit"
-          disabled={isSubmitting || shippingMethods.length === 0}
+          disabled={
+            isSubmitting ||
+            paymentMethods.length === 0 ||
+            shippingMethods.length === 0
+          }
           className="bg-brand text-foreground mt-6 h-12 w-full rounded-full text-sm font-bold transition hover:bg-white disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-300"
         >
           {isSubmitting ? "Validando…" : "Validar compra"}

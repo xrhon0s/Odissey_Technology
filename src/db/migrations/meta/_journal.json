@@ -71,6 +71,13 @@
       "when": 1784055863814,
       "tag": "0009_nappy_hulk",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1784174599142,
+      "tag": "0010_past_puppet_master",
+      "breakpoints": true
     }
   ]
 }

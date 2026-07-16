@@ -16,9 +16,17 @@ export const getPublicStoreSettings = cache(
     const [settings] = await getDb()
       .select({
         announcement: storeSettings.announcement,
+        bancolombiaAccountNumber: storeSettings.bancolombiaAccountNumber,
+        bancolombiaEnabled: storeSettings.bancolombiaEnabled,
+        bancolombiaKey: storeSettings.bancolombiaKey,
         businessCity: storeSettings.businessCity,
+        cashOnDeliveryEnabled: storeSettings.cashOnDeliveryEnabled,
+        daviplataEnabled: storeSettings.daviplataEnabled,
         legalName: storeSettings.legalName,
         notificationAddress: storeSettings.notificationAddress,
+        nequiEnabled: storeSettings.nequiEnabled,
+        nequiKey: storeSettings.nequiKey,
+        nequiNumber: storeSettings.nequiNumber,
         storeName: storeSettings.storeName,
         supportEmail: storeSettings.supportEmail,
         taxId: storeSettings.taxId,
