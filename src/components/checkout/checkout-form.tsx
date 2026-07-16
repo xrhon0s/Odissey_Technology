@@ -50,7 +50,7 @@ type CheckoutFormProps = {
 };
 
 const inputClassName =
-  "h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-950 shadow-sm focus:border-cyan-600";
+  "h-11 w-full min-w-0 rounded-xl border border-line bg-surface px-3 text-sm text-foreground outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/10";
 
 export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
   const clearCart = useCartStore((state) => state.clear);
@@ -109,33 +109,33 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
   if (!hasHydrated) {
     return (
       <div aria-busy="true" className="grid animate-pulse gap-6 lg:grid-cols-2">
-        <div className="h-96 rounded-2xl bg-slate-200" />
-        <div className="h-72 rounded-2xl bg-slate-200" />
+        <div className="skeleton-shimmer bg-surface-muted h-96 rounded-2xl" />
+        <div className="skeleton-shimmer bg-surface-muted h-72 rounded-2xl" />
       </div>
     );
   }
 
   if (order) {
     return (
-      <section className="mx-auto max-w-2xl rounded-2xl border border-emerald-200 bg-white p-6 text-center shadow-sm sm:p-10">
+      <section className="bg-surface mx-auto max-w-2xl rounded-[1.75rem] border border-emerald-200 p-6 text-center shadow-sm sm:p-10">
         <p className="text-sm font-bold tracking-widest text-emerald-700 uppercase">
           Pedido creado
         </p>
-        <h2 className="mt-3 text-2xl font-bold text-slate-950 sm:text-3xl">
+        <h2 className="font-display text-foreground mt-3 text-2xl font-bold sm:text-3xl">
           Referencia {order.reference}
         </h2>
-        <p className="mt-4 text-slate-600">
+        <p className="text-muted mt-4">
           El pedido está pendiente y reservamos tus productos mientras
           coordinamos la confirmación del pago.
         </p>
-        <dl className="mx-auto mt-6 max-w-sm space-y-3 rounded-xl bg-slate-50 p-5 text-left">
+        <dl className="bg-background mx-auto mt-6 max-w-sm space-y-3 rounded-xl p-5 text-left">
           <div className="flex justify-between gap-4">
             <dt className="text-slate-600">Estado</dt>
-            <dd className="font-semibold text-slate-950">Pendiente</dd>
+            <dd className="text-foreground font-semibold">Pendiente</dd>
           </div>
           <div className="flex justify-between gap-4">
             <dt className="text-slate-600">Forma de pago</dt>
-            <dd className="text-right font-semibold text-slate-950">
+            <dd className="text-foreground text-right font-semibold">
               {manualPaymentMethods.find(
                 (method) => method.code === order.paymentMethod,
               )?.name ?? "Pago manual"}
@@ -143,13 +143,13 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
           </div>
           <div className="flex justify-between gap-4">
             <dt className="text-slate-600">Total</dt>
-            <dd className="font-semibold text-slate-950">
+            <dd className="text-foreground font-semibold">
               {formatCurrency(order.totalInCop)}
             </dd>
           </div>
           <div className="flex justify-between gap-4">
             <dt className="text-slate-600">Reserva hasta</dt>
-            <dd className="text-right font-semibold text-slate-950">
+            <dd className="text-foreground text-right font-semibold">
               {new Date(order.reservationExpiresAt).toLocaleTimeString(
                 "es-CO",
                 { hour: "numeric", minute: "2-digit" },
@@ -175,13 +175,13 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link
             href={`/pedido?reference=${encodeURIComponent(order.reference)}`}
-            className="inline-flex rounded-xl bg-cyan-700 px-5 py-3 text-sm font-semibold text-white"
+            className="bg-brand text-foreground hover:bg-brand-dark inline-flex rounded-full px-5 py-3 text-sm font-semibold transition hover:text-white"
           >
             Consultar este pedido
           </Link>
           <Link
             href="/catalogo"
-            className="inline-flex rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white"
+            className="bg-foreground hover:bg-brand-dark inline-flex rounded-full px-5 py-3 text-sm font-semibold text-white transition"
           >
             Volver al catálogo
           </Link>
@@ -191,16 +191,16 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
   }
   if (items.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-        <h2 className="text-xl font-bold text-slate-950">
+      <div className="border-line bg-surface rounded-[1.75rem] border border-dashed px-6 py-16 text-center">
+        <h2 className="font-display text-foreground text-xl font-bold">
           No hay productos para cotizar
         </h2>
-        <p className="mt-2 text-slate-600">
+        <p className="text-muted mt-2">
           Agrega productos al carrito antes de continuar.
         </p>
         <Link
           href="/catalogo"
-          className="mt-6 inline-flex rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white"
+          className="bg-foreground hover:bg-brand-dark mt-6 inline-flex rounded-full px-5 py-3 text-sm font-semibold text-white transition"
         >
           Ver catálogo
         </Link>
@@ -293,8 +293,10 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
       className="grid gap-8 lg:grid-cols-[1fr_380px] lg:items-start"
     >
       <div className="space-y-6">
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h2 className="text-xl font-bold text-slate-950">Tus datos</h2>
+        <section className="border-line bg-surface rounded-[1.5rem] border p-5 sm:p-6">
+          <h2 className="font-display text-foreground text-xl font-bold">
+            Tus datos
+          </h2>
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <Field
               label="Nombre completo"
@@ -331,26 +333,28 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h2 className="text-xl font-bold text-slate-950">Entrega</h2>
+        <section className="border-line bg-surface rounded-[1.5rem] border p-5 sm:p-6">
+          <h2 className="font-display text-foreground text-xl font-bold">
+            Entrega
+          </h2>
           <div className="mt-5 space-y-3">
             {shippingMethods.map((method) => (
               <label
                 key={method.code}
-                className="flex cursor-pointer gap-3 rounded-xl border border-slate-200 p-4 has-checked:border-cyan-600 has-checked:bg-cyan-50"
+                className="border-line has-checked:border-brand has-checked:bg-brand-soft flex cursor-pointer gap-3 rounded-xl border p-4 transition"
               >
                 <input
                   type="radio"
                   value={method.code}
-                  className="mt-1 size-4 accent-cyan-700"
+                  className="accent-brand mt-1 size-4"
                   {...register("shippingMethodCode")}
                 />
                 <span className="flex-1">
-                  <span className="flex justify-between gap-3 font-semibold text-slate-950">
+                  <span className="text-foreground flex justify-between gap-3 font-semibold">
                     {method.name}
                     <span>{formatCurrency(method.priceInCop)}</span>
                   </span>
-                  <span className="mt-1 block text-sm text-slate-600">
+                  <span className="text-muted mt-1 block text-sm">
                     {method.description}
                   </span>
                 </span>
@@ -408,7 +412,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
               <Field label="Indicaciones (opcional)" className="sm:col-span-2">
                 <textarea
                   rows={3}
-                  className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-950 shadow-sm focus:border-cyan-600"
+                  className="border-line bg-surface text-foreground focus:border-brand min-h-24 w-full rounded-xl border px-3 py-2 text-sm outline-none"
                   {...register("address.deliveryNotes")}
                 />
               </Field>
@@ -416,9 +420,11 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
           )}
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <h2 className="text-xl font-bold text-slate-950">Forma de pago</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
+        <section className="border-line bg-surface rounded-[1.5rem] border p-5 sm:p-6">
+          <h2 className="font-display text-foreground text-xl font-bold">
+            Forma de pago
+          </h2>
+          <p className="text-muted mt-2 text-sm leading-6">
             Todos los pagos se verifican manualmente antes de confirmar el
             pedido.
           </p>
@@ -426,19 +432,19 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
             {manualPaymentMethods.map((method) => (
               <label
                 key={method.code}
-                className="flex cursor-pointer gap-3 rounded-xl border border-slate-200 p-4 has-checked:border-cyan-600 has-checked:bg-cyan-50"
+                className="border-line has-checked:border-brand has-checked:bg-brand-soft flex cursor-pointer gap-3 rounded-xl border p-4 transition"
               >
                 <input
                   type="radio"
                   value={method.code}
-                  className="mt-1 size-4 accent-cyan-700"
+                  className="accent-brand mt-1 size-4"
                   {...register("paymentMethod")}
                 />
                 <span>
-                  <span className="font-semibold text-slate-950">
+                  <span className="text-foreground font-semibold">
                     {method.name}
                   </span>
-                  <span className="mt-1 block text-sm leading-5 text-slate-600">
+                  <span className="text-muted mt-1 block text-sm leading-5">
                     {method.description}
                   </span>
                   {method.requiresMetropolitanDelivery && (
@@ -452,11 +458,11 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
-          <label className="flex items-start gap-3 text-sm leading-6 text-slate-700">
+        <section className="border-line bg-surface rounded-[1.5rem] border p-5 sm:p-6">
+          <label className="text-foreground flex items-start gap-3 text-sm leading-6">
             <input
               type="checkbox"
-              className="mt-1 size-4 shrink-0 accent-cyan-700"
+              className="accent-brand mt-1 size-4 shrink-0"
               {...register("acceptedTerms")}
             />
             <span>
@@ -464,7 +470,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
               <Link
                 href="/terminos-y-condiciones"
                 target="_blank"
-                className="font-semibold text-cyan-800 hover:underline"
+                className="text-brand-dark font-semibold hover:underline"
               >
                 términos y condiciones
               </Link>{" "}
@@ -472,7 +478,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
               <Link
                 href="/politica-de-privacidad"
                 target="_blank"
-                className="font-semibold text-cyan-800 hover:underline"
+                className="text-brand-dark font-semibold hover:underline"
               >
                 política de tratamiento de datos
               </Link>
@@ -487,13 +493,13 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
         </section>
       </div>
 
-      <aside className="rounded-2xl bg-slate-950 p-6 text-white lg:sticky lg:top-6">
+      <aside className="bg-foreground rounded-[1.5rem] p-6 text-white lg:sticky lg:top-32">
         <h2 className="text-lg font-bold">Revisión segura</h2>
         <p className="mt-2 text-sm leading-6 text-slate-300">
           Validaremos precios, disponibilidad y envío directamente en el
           servidor.
         </p>
-        <div className="mt-5 space-y-3 border-t border-slate-700 pt-5 text-sm">
+        <div className="mt-5 space-y-3 border-t border-white/15 pt-5 text-sm">
           {items.map((item) => (
             <div key={item.variantId} className="flex justify-between gap-4">
               <span className="text-slate-300">
@@ -550,7 +556,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
               disabled={isCreatingOrder}
               className="mt-4 h-11 w-full rounded-xl bg-emerald-400 text-sm font-bold text-emerald-950 hover:bg-emerald-300 disabled:cursor-not-allowed disabled:bg-emerald-900 disabled:text-emerald-300"
             >
-              {isCreatingOrder ? "Creando pedido…" : "Crear pedido pendiente"}
+              {isCreatingOrder ? "Confirmando pedido…" : "Confirmar pedido"}
             </button>
           </div>
         )}
@@ -558,7 +564,7 @@ export function CheckoutForm({ shippingMethods }: CheckoutFormProps) {
         <button
           type="submit"
           disabled={isSubmitting || shippingMethods.length === 0}
-          className="mt-6 h-12 w-full rounded-xl bg-cyan-500 text-sm font-bold text-slate-950 hover:bg-cyan-400 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-300"
+          className="bg-brand text-foreground mt-6 h-12 w-full rounded-full text-sm font-bold transition hover:bg-white disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-300"
         >
           {isSubmitting ? "Validando…" : "Validar compra"}
         </button>
@@ -583,7 +589,7 @@ type FieldProps = {
 function Field({ children, className = "", error, label }: FieldProps) {
   return (
     <label
-      className={`grid gap-1.5 text-sm font-semibold text-slate-700 ${className}`}
+      className={`text-foreground grid min-w-0 gap-1.5 text-sm font-semibold ${className}`}
     >
       {label}
       {children}

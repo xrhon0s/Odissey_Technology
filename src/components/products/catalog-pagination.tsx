@@ -30,7 +30,7 @@ export function CatalogPagination({
       {filters.page > 1 ? (
         <Link
           href={pageHref(filters, filters.page - 1)}
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold hover:bg-slate-50"
+          className="border-line bg-surface hover:border-brand rounded-full border px-4 py-2 text-sm font-semibold transition"
         >
           Anterior
         </Link>
@@ -41,7 +41,7 @@ export function CatalogPagination({
       {filters.page < totalPages ? (
         <Link
           href={pageHref(filters, filters.page + 1)}
-          className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold hover:bg-slate-50"
+          className="border-line bg-surface hover:border-brand rounded-full border px-4 py-2 text-sm font-semibold transition"
         >
           Siguiente
         </Link>

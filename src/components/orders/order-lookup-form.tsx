@@ -43,7 +43,7 @@ const statusLabels: Record<string, string> = {
 };
 
 const inputClass =
-  "h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-950";
+  "h-11 w-full rounded-xl border border-line bg-surface px-3 text-sm text-foreground outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/10";
 
 export function OrderLookupForm() {
   const searchParams = useSearchParams();
@@ -85,10 +85,10 @@ export function OrderLookupForm() {
   return (
     <div className="grid gap-8 lg:grid-cols-[360px_1fr] lg:items-start">
       <form
-        className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-5"
+        className="border-line bg-surface grid gap-4 rounded-[1.5rem] border p-5"
         onSubmit={submit}
       >
-        <label className="grid gap-1 text-sm font-semibold text-slate-700">
+        <label className="text-foreground grid gap-1.5 text-sm font-semibold">
           Referencia del pedido
           <input
             className={inputClass}
@@ -99,7 +99,7 @@ export function OrderLookupForm() {
             required
           />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-slate-700">
+        <label className="text-foreground grid gap-1.5 text-sm font-semibold">
           Correo usado en la compra
           <input
             autoComplete="email"
@@ -111,7 +111,7 @@ export function OrderLookupForm() {
           />
         </label>
         <button
-          className="h-11 rounded-xl bg-slate-950 px-4 text-sm font-bold text-white disabled:bg-slate-400"
+          className="bg-foreground hover:bg-brand-dark h-11 rounded-full px-4 text-sm font-bold text-white transition disabled:bg-slate-400"
           disabled={pending}
           type="submit"
         >
@@ -131,11 +131,17 @@ export function OrderLookupForm() {
 
 function LookupInstructions() {
   return (
-    <section className="rounded-2xl border border-dashed border-slate-300 bg-white p-8">
-      <h2 className="text-xl font-bold text-slate-950">
+    <section className="border-line bg-surface rounded-[1.5rem] border border-dashed p-8">
+      <span
+        aria-hidden="true"
+        className="bg-brand-soft text-brand-dark grid size-12 place-items-center rounded-full text-xl"
+      >
+        ⌕
+      </span>
+      <h2 className="font-display text-foreground mt-5 text-xl font-bold">
         Ten a mano los datos de la compra
       </h2>
-      <p className="mt-2 max-w-xl text-slate-600">
+      <p className="text-muted mt-2 max-w-xl leading-7">
         Por seguridad, pedimos la referencia completa y el mismo correo usado al
         crear el pedido. La consulta no muestra tu dirección ni tu teléfono.
       </p>
@@ -149,57 +155,57 @@ function OrderStatus({ order }: { order: PublicOrder }) {
       ?.name ?? "Pago manual";
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6">
+    <section className="border-line bg-surface rounded-[1.5rem] border p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="font-mono text-sm font-bold text-cyan-800">
+          <p className="text-brand-dark font-mono text-sm font-bold">
             {order.reference}
           </p>
-          <h2 className="mt-1 text-2xl font-bold text-slate-950">
+          <h2 className="font-display text-foreground mt-1 text-2xl font-bold">
             {statusLabels[order.status] ?? order.status}
           </h2>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="text-muted mt-1 text-sm">
             Creado el {new Date(order.createdAt).toLocaleString("es-CO")}
           </p>
         </div>
-        <p className="text-2xl font-bold text-slate-950">
+        <p className="font-display text-foreground text-2xl font-bold">
           {formatCurrency(order.totalInCop)}
         </p>
       </div>
 
-      <dl className="mt-6 grid gap-3 rounded-xl bg-slate-50 p-4 text-sm sm:grid-cols-2">
+      <dl className="bg-background mt-6 grid gap-3 rounded-xl p-4 text-sm sm:grid-cols-2">
         <div>
           <dt className="text-slate-500">Estado del pago</dt>
-          <dd className="font-semibold text-slate-950">
+          <dd className="text-foreground font-semibold">
             {statusLabels[order.paymentStatus] ?? order.paymentStatus}
           </dd>
         </div>
         <div>
           <dt className="text-slate-500">Método de pago</dt>
-          <dd className="font-semibold text-slate-950">{paymentName}</dd>
+          <dd className="text-foreground font-semibold">{paymentName}</dd>
         </div>
         <div className="sm:col-span-2">
           <dt className="text-slate-500">Entrega</dt>
-          <dd className="font-semibold text-slate-950">
+          <dd className="text-foreground font-semibold">
             {order.shippingMethodName}
           </dd>
         </div>
       </dl>
 
-      <h3 className="mt-6 font-bold text-slate-950">Productos</h3>
-      <div className="mt-2 divide-y divide-slate-100">
+      <h3 className="text-foreground mt-6 font-bold">Productos</h3>
+      <div className="divide-line mt-2 divide-y">
         {order.items.map((item) => (
           <div
             className="flex justify-between gap-4 py-3 text-sm"
             key={item.id}
           >
             <div>
-              <p className="font-semibold text-slate-950">
+              <p className="text-foreground font-semibold">
                 {item.quantity} × {item.productName}
               </p>
               <p className="text-slate-500">{item.variantName}</p>
             </div>
-            <p className="font-semibold text-slate-950">
+            <p className="text-foreground font-semibold">
               {formatCurrency(item.lineTotalInCop)}
             </p>
           </div>

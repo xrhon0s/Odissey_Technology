@@ -17,24 +17,30 @@ export function CartView() {
   if (!hasHydrated) {
     return (
       <div aria-busy="true" className="animate-pulse space-y-4">
-        <div className="h-32 rounded-2xl bg-slate-200" />
-        <div className="h-32 rounded-2xl bg-slate-200" />
+        <div className="skeleton-shimmer bg-surface-muted h-32 rounded-2xl" />
+        <div className="skeleton-shimmer bg-surface-muted h-32 rounded-2xl" />
       </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-        <h2 className="text-xl font-bold text-slate-950">
+      <div className="border-line bg-surface rounded-[1.75rem] border border-dashed px-6 py-16 text-center">
+        <span
+          aria-hidden="true"
+          className="bg-brand-soft text-brand-dark mx-auto grid size-14 place-items-center rounded-full text-2xl"
+        >
+          ＋
+        </span>
+        <h2 className="font-display text-foreground mt-5 text-xl font-bold">
           Tu carrito está vacío
         </h2>
-        <p className="mt-2 text-slate-600">
-          Explora el catálogo y agrega una variante para comenzar.
+        <p className="text-muted mt-2">
+          Explora el catálogo y encuentra tu próximo accesorio.
         </p>
         <Link
           href="/catalogo"
-          className="mt-6 inline-flex rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white"
+          className="bg-foreground hover:bg-brand-dark mt-6 inline-flex rounded-full px-6 py-3 text-sm font-semibold text-white transition"
         >
           Ver catálogo
         </Link>
@@ -50,9 +56,9 @@ export function CartView() {
         {items.map((item) => (
           <article
             key={item.variantId}
-            className="grid grid-cols-[88px_1fr] gap-4 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-[112px_1fr_auto]"
+            className="border-line bg-surface grid grid-cols-[88px_1fr] gap-4 rounded-[1.5rem] border p-4 transition hover:shadow-sm sm:grid-cols-[112px_1fr_auto]"
           >
-            <div className="relative aspect-square overflow-hidden rounded-xl bg-slate-100">
+            <div className="bg-surface-muted relative aspect-square overflow-hidden rounded-[1.15rem]">
               {item.imageUrl ? (
                 <Image
                   src={item.imageUrl}
@@ -62,7 +68,7 @@ export function CartView() {
                   className="object-cover"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center p-2 text-center text-xs text-slate-500">
+                <div className="text-muted flex h-full items-center justify-center p-2 text-center text-xs">
                   Sin imagen
                 </div>
               )}
@@ -70,13 +76,13 @@ export function CartView() {
             <div>
               <Link
                 href={`/producto/${item.productSlug}`}
-                className="font-bold text-slate-950 hover:text-cyan-800"
+                className="text-foreground hover:text-brand-dark font-bold transition"
               >
                 {item.productName}
               </Link>
-              <p className="mt-1 text-sm text-slate-600">{item.variantName}</p>
-              <p className="mt-1 text-xs text-slate-500">SKU: {item.sku}</p>
-              <label className="mt-4 grid max-w-28 gap-1 text-xs font-semibold text-slate-700">
+              <p className="text-muted mt-1 text-sm">{item.variantName}</p>
+              <p className="text-muted mt-1 text-xs">SKU: {item.sku}</p>
+              <label className="text-foreground mt-4 grid max-w-28 gap-1.5 text-xs font-semibold">
                 Cantidad
                 <input
                   type="number"
@@ -86,7 +92,7 @@ export function CartView() {
                   onChange={(event) =>
                     setQuantity(item.variantId, Number(event.target.value))
                   }
-                  className="h-10 rounded-lg border border-slate-300 px-3"
+                  className="border-line bg-background focus:border-brand h-10 rounded-xl border px-3 outline-none"
                 />
               </label>
               <button
@@ -97,16 +103,21 @@ export function CartView() {
                 Eliminar
               </button>
             </div>
-            <p className="col-span-2 text-right font-bold text-slate-950 sm:col-span-1">
+            <p className="font-display text-foreground col-span-2 text-right font-bold sm:col-span-1">
               {formatCurrency(item.unitPriceInCop * item.quantity)}
             </p>
           </article>
         ))}
       </div>
 
-      <aside className="rounded-2xl bg-slate-950 p-6 text-white lg:sticky lg:top-6">
-        <h2 className="text-lg font-bold">Resumen</h2>
-        <div className="mt-5 flex justify-between border-t border-slate-700 pt-5">
+      <aside className="bg-foreground rounded-[1.5rem] p-6 text-white lg:sticky lg:top-32">
+        <p className="text-brand text-xs font-bold tracking-[0.16em] uppercase">
+          Resumen
+        </p>
+        <h2 className="font-display mt-2 text-xl font-bold">
+          Total de la compra
+        </h2>
+        <div className="mt-5 flex justify-between border-t border-white/15 pt-5">
           <span>Total parcial</span>
           <strong>{formatCurrency(total)}</strong>
         </div>
@@ -115,7 +126,7 @@ export function CartView() {
         </p>
         <Link
           href="/checkout"
-          className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-cyan-500 text-sm font-bold text-slate-950 hover:bg-cyan-400"
+          className="bg-brand text-foreground mt-6 flex h-12 w-full items-center justify-center rounded-full text-sm font-bold transition hover:bg-white"
         >
           Continuar al checkout
         </Link>
