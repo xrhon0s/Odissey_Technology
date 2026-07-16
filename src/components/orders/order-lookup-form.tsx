@@ -10,6 +10,7 @@ import { formatCurrency } from "@/lib/format-currency";
 
 type PublicOrder = {
   createdAt: string;
+  estimatedDeliveryAt: string | null;
   items: Array<{
     id: string;
     lineTotalInCop: number;
@@ -23,9 +24,12 @@ type PublicOrder = {
   reference: string;
   reservationExpiresAt: string;
   shippingInCop: number;
+  shippingCarrier: string | null;
   shippingMethodName: string;
   status: string;
   subtotalInCop: number;
+  trackingNumber: string | null;
+  trackingUrl: string | null;
   totalInCop: number;
 };
 
@@ -194,6 +198,39 @@ function OrderStatus({ order }: { order: PublicOrder }) {
           </dd>
         </div>
       </dl>
+
+      {order.shippingCarrier && order.trackingNumber ? (
+        <section className="border-brand/20 bg-brand-soft mt-6 rounded-2xl border p-5">
+          <p className="text-brand-dark text-xs font-bold tracking-widest uppercase">
+            Seguimiento del envío
+          </p>
+          <h3 className="font-display text-foreground mt-2 text-xl font-bold">
+            Tu pedido va con {order.shippingCarrier}
+          </h3>
+          <p className="text-muted mt-2 text-sm">
+            Guía:{" "}
+            <strong className="text-foreground font-mono">
+              {order.trackingNumber}
+            </strong>
+          </p>
+          {order.estimatedDeliveryAt ? (
+            <p className="text-muted mt-1 text-sm">
+              Entrega estimada:{" "}
+              {new Date(order.estimatedDeliveryAt).toLocaleDateString("es-CO")}
+            </p>
+          ) : null}
+          {order.trackingUrl ? (
+            <a
+              className="bg-foreground hover:bg-brand-dark mt-4 inline-flex rounded-full px-5 py-2.5 text-sm font-bold text-white transition"
+              href={order.trackingUrl}
+              rel="noreferrer"
+              target="_blank"
+            >
+              Rastrear envío →
+            </a>
+          ) : null}
+        </section>
+      ) : null}
 
       {order.paymentStatus === "pending" && order.paymentInstructions ? (
         <PaymentInstructions

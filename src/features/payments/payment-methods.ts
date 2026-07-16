@@ -77,6 +77,7 @@ export function getAvailableManualPaymentMethods(
 }
 
 export type PaymentInstructionsData = {
+  confirmationUrl: string | null;
   details: Array<{ label: string; value: string }>;
   message: string;
   qrImage: {
@@ -99,6 +100,7 @@ export function buildPaymentInstructions(
 ): PaymentInstructionsData | null {
   if (method === "cash_on_delivery") {
     return {
+      confirmationUrl: null,
       details: [],
       message:
         "Ten disponible el valor exacto en efectivo. Confirmaremos contigo la entrega antes de despachar.",
@@ -109,6 +111,7 @@ export function buildPaymentInstructions(
 
   if (method === "nequi") {
     return {
+      confirmationUrl: null,
       details: [
         ...(settings.nequiNumber
           ? [{ label: "Número Nequi", value: settings.nequiNumber }]
@@ -131,6 +134,7 @@ export function buildPaymentInstructions(
 
   if (method === "bancolombia_transfer") {
     return {
+      confirmationUrl: null,
       details: [
         ...(settings.bancolombiaAccountNumber
           ? [

@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { AdvanceOrderButton } from "@/components/admin/advance-order-button";
 import { OrderActionButton } from "@/components/admin/order-action-button";
+import { ShipmentForm } from "@/components/admin/shipment-form";
 import { getAdminOrderById } from "@/db/queries/admin-orders";
 import { requireAdmin } from "@/features/admin/admin-access";
 import { manualPaymentMethods } from "@/features/payments/payment-methods";
@@ -122,6 +123,9 @@ export default async function AdminOrderDetailPage({
                     {event.createdAt.toLocaleString("es-CO")}
                     {event.actorName ? ` · ${event.actorName}` : " · Sistema"}
                   </p>
+                  {event.notes ? (
+                    <p className="text-muted mt-1 text-xs">{event.notes}</p>
+                  ) : null}
                 </li>
               ))}
             </ol>
@@ -180,10 +184,13 @@ export default async function AdminOrderDetailPage({
                   tone="danger"
                 />
               )}
-              {advanceLabel && (
+              {advanceLabel && order.status !== "preparing" && (
                 <AdvanceOrderButton label={advanceLabel} orderId={order.id} />
               )}
             </div>
+            {order.status === "preparing" ? (
+              <ShipmentForm orderId={order.id} />
+            ) : null}
           </section>
 
           <section className="border-line bg-surface rounded-2xl border p-5">
@@ -206,6 +213,32 @@ export default async function AdminOrderDetailPage({
                 Recogida coordinada con el cliente.
               </p>
             )}
+            {order.shippingCarrier ? (
+              <dl className="border-line mt-4 space-y-2 border-t pt-4 text-sm">
+                <div>
+                  <dt className="text-muted text-xs">Transportadora</dt>
+                  <dd className="text-foreground font-semibold">
+                    {order.shippingCarrier}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-muted text-xs">Número de guía</dt>
+                  <dd className="text-foreground font-mono font-semibold break-all">
+                    {order.trackingNumber}
+                  </dd>
+                </div>
+                {order.trackingUrl ? (
+                  <a
+                    className="text-brand-dark inline-flex font-bold hover:underline"
+                    href={order.trackingUrl}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    Abrir rastreo →
+                  </a>
+                ) : null}
+              </dl>
+            ) : null}
           </section>
 
           <section className="border-line bg-surface rounded-2xl border p-5">

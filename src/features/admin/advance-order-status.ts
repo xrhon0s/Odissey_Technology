@@ -2,17 +2,20 @@ import { and, eq } from "drizzle-orm";
 
 import { getDb } from "@/db";
 import { adminUsers, orderEvents, orders, payments } from "@/db/schema";
+import type { ShipmentInput } from "@/features/orders/shipment";
 
 import { planNextOrderStatus } from "./order-status-actions";
 
 type AdvanceOrderStatusInput = {
   actorAdminId: string;
   orderId: string;
+  shipment?: ShipmentInput;
 };
 
 export class AdvanceOrderStatusError extends Error {
   constructor(
-    public readonly code: "ADMIN_FORBIDDEN" | "ORDER_NOT_FOUND",
+    public readonly code:
+      "ADMIN_FORBIDDEN" | "INVALID_SHIPMENT" | "ORDER_NOT_FOUND",
     message: string,
   ) {
     super(message);
@@ -69,17 +72,40 @@ export async function advanceOrderStatus(input: AdvanceOrderStatusInput) {
     }
 
     const nextStatus = planNextOrderStatus(order.status, payment.status);
+
+    if (nextStatus === "shipped" && !input.shipment) {
+      throw new AdvanceOrderStatusError(
+        "INVALID_SHIPMENT",
+        "Completa los datos de la transportadora y la guía.",
+      );
+    }
+
     const now = new Date();
 
     await transaction
       .update(orders)
-      .set({ status: nextStatus, updatedAt: now })
+      .set({
+        ...(nextStatus === "shipped" && input.shipment
+          ? {
+              estimatedDeliveryAt: input.shipment.estimatedDeliveryAt,
+              shippingCarrier: input.shipment.carrier,
+              trackingNumber: input.shipment.trackingNumber,
+              trackingUrl: input.shipment.trackingUrl,
+            }
+          : {}),
+        status: nextStatus,
+        updatedAt: now,
+      })
       .where(eq(orders.id, order.id));
     await transaction.insert(orderEvents).values({
       actorAdminId: admin.id,
       eventType: "status_advanced",
       fromStatus: order.status,
       orderId: order.id,
+      notes:
+        nextStatus === "shipped" && input.shipment
+          ? `${input.shipment.carrier} · guía ${input.shipment.trackingNumber}`
+          : undefined,
       toStatus: nextStatus,
     });
 

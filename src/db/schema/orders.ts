@@ -6,6 +6,7 @@ import {
   jsonb,
   pgEnum,
   pgTable,
+  text,
   timestamp,
   uniqueIndex,
   uuid,
@@ -56,6 +57,12 @@ export const orders = pgTable(
     shippingMethodName: varchar("shipping_method_name", {
       length: 120,
     }).notNull(),
+    shippingCarrier: varchar("shipping_carrier", { length: 120 }),
+    trackingNumber: varchar("tracking_number", { length: 120 }),
+    trackingUrl: text("tracking_url"),
+    estimatedDeliveryAt: timestamp("estimated_delivery_at", {
+      withTimezone: true,
+    }),
     subtotalInCop: integer("subtotal_in_cop").notNull(),
     shippingInCop: integer("shipping_in_cop").notNull(),
     totalInCop: integer("total_in_cop").notNull(),

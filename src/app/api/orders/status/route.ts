@@ -5,8 +5,10 @@ import { getPublicStoreSettings } from "@/db/queries/store-settings";
 import { orderLookupInputSchema } from "@/features/orders/order-lookup";
 import {
   buildPaymentInstructions,
+  manualPaymentMethods,
   manualPaymentMethodSchema,
 } from "@/features/payments/payment-methods";
+import { buildPaymentProofWhatsAppUrl } from "@/features/store/store-settings";
 
 export async function POST(request: Request) {
   try {
@@ -28,13 +30,29 @@ export async function POST(request: Request) {
     const paymentMethod = manualPaymentMethodSchema.safeParse(
       order.paymentMethod,
     );
-    const paymentInstructions =
+    const settings = await getPublicStoreSettings();
+    const basePaymentInstructions =
       order.paymentStatus === "pending" && paymentMethod.success
-        ? buildPaymentInstructions(
-            paymentMethod.data,
-            await getPublicStoreSettings(),
-          )
+        ? buildPaymentInstructions(paymentMethod.data, settings)
         : null;
+    const paymentName = paymentMethod.success
+      ? (manualPaymentMethods.find(
+          (method) => method.code === paymentMethod.data,
+        )?.name ?? "Pago manual")
+      : "Pago manual";
+    const paymentInstructions = basePaymentInstructions
+      ? {
+          ...basePaymentInstructions,
+          confirmationUrl:
+            paymentMethod.success && paymentMethod.data !== "cash_on_delivery"
+              ? buildPaymentProofWhatsAppUrl(settings, {
+                  paymentMethodName: paymentName,
+                  reference: order.reference,
+                  totalInCop: order.totalInCop,
+                })
+              : null,
+        }
+      : null;
 
     return Response.json(
       { ok: true, order: { ...order, paymentInstructions } },

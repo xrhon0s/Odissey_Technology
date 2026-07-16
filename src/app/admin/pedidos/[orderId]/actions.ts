@@ -9,6 +9,7 @@ import {
 } from "@/features/admin/advance-order-status";
 import { requireAdmin } from "@/features/admin/admin-access";
 import { InvalidOrderStatusTransitionError } from "@/features/admin/order-status-actions";
+import { shipmentInputSchema } from "@/features/orders/shipment";
 
 const orderIdSchema = z.uuid();
 
@@ -23,8 +24,29 @@ export async function advanceOrderAction(
 
   if (!orderId.success) return { error: "El pedido no es válido." };
 
+  const hasShipment = formData.get("shipmentForm") === "1";
+  const shipment = hasShipment
+    ? shipmentInputSchema.safeParse({
+        carrier: formData.get("carrier"),
+        estimatedDeliveryAt: formData.get("estimatedDeliveryAt"),
+        trackingNumber: formData.get("trackingNumber"),
+        trackingUrl: formData.get("trackingUrl"),
+      })
+    : null;
+
+  if (shipment && !shipment.success) {
+    return {
+      error:
+        shipment.error.issues[0]?.message ?? "Revisa los datos del despacho.",
+    };
+  }
+
   try {
-    await advanceOrderStatus({ actorAdminId: admin.id, orderId: orderId.data });
+    await advanceOrderStatus({
+      actorAdminId: admin.id,
+      orderId: orderId.data,
+      shipment: shipment?.data,
+    });
     revalidatePath("/admin");
     revalidatePath(`/admin/pedidos/${orderId.data}`);
 

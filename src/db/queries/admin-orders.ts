@@ -1,4 +1,6 @@
-import { asc, count, desc, eq } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, or } from "drizzle-orm";
+
+import type { AdminOrderFilters } from "@/features/admin/admin-order-filters";
 
 import { getDb } from "..";
 import {
@@ -10,8 +12,29 @@ import {
   payments,
 } from "../schema";
 
-export async function listAdminOrders(limit = 50) {
+export async function listAdminOrders(
+  filters: AdminOrderFilters = {},
+  limit = 50,
+) {
   const database = getDb();
+  const conditions = [];
+
+  if (filters.orderStatus) {
+    conditions.push(eq(orders.status, filters.orderStatus));
+  }
+  if (filters.paymentStatus) {
+    conditions.push(eq(payments.status, filters.paymentStatus));
+  }
+  if (filters.query) {
+    const term = `%${filters.query}%`;
+    conditions.push(
+      or(
+        ilike(orders.reference, term),
+        ilike(orders.customerName, term),
+        ilike(orders.customerEmail, term),
+      )!,
+    );
+  }
 
   return database
     .select({
@@ -31,6 +54,7 @@ export async function listAdminOrders(limit = 50) {
     .from(orders)
     .innerJoin(payments, eq(payments.orderId, orders.id))
     .innerJoin(orderItems, eq(orderItems.orderId, orders.id))
+    .where(and(...conditions))
     .groupBy(orders.id, payments.id)
     .orderBy(desc(orders.createdAt))
     .limit(Math.min(Math.max(limit, 1), 100));
@@ -53,7 +77,11 @@ export async function getAdminOrderById(orderId: string) {
       reservationExpiresAt: orders.reservationExpiresAt,
       shippingInCop: orders.shippingInCop,
       shippingMethodName: orders.shippingMethodName,
+      estimatedDeliveryAt: orders.estimatedDeliveryAt,
+      shippingCarrier: orders.shippingCarrier,
       status: orders.status,
+      trackingNumber: orders.trackingNumber,
+      trackingUrl: orders.trackingUrl,
       subtotalInCop: orders.subtotalInCop,
       totalInCop: orders.totalInCop,
     })

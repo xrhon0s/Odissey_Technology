@@ -85,6 +85,16 @@ export function PaymentInstructions({
               comprobante e indica la referencia <strong>{reference}</strong>.
             </p>
           </div>
+          {instructions.confirmationUrl ? (
+            <a
+              className="mt-4 flex min-h-12 w-full items-center justify-center rounded-full bg-emerald-600 px-5 py-3 text-center text-sm font-extrabold text-white transition hover:bg-emerald-700"
+              href={instructions.confirmationUrl}
+              rel="noreferrer"
+              target="_blank"
+            >
+              Enviar comprobante por WhatsApp →
+            </a>
+          ) : null}
         </div>
       </div>
     </section>

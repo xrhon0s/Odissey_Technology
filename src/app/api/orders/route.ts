@@ -10,7 +10,9 @@ import {
 import {
   buildPaymentInstructions,
   isManualPaymentMethodAvailable,
+  manualPaymentMethods,
 } from "@/features/payments/payment-methods";
+import { buildPaymentProofWhatsAppUrl } from "@/features/store/store-settings";
 
 export async function POST(request: Request) {
   try {
@@ -27,10 +29,26 @@ export async function POST(request: Request) {
     }
 
     const order = await createPendingOrder(input);
-    const paymentInstructions = buildPaymentInstructions(
+    const basePaymentInstructions = buildPaymentInstructions(
       order.paymentMethod,
       settings,
     );
+    const paymentName =
+      manualPaymentMethods.find((method) => method.code === order.paymentMethod)
+        ?.name ?? "Pago manual";
+    const paymentInstructions = basePaymentInstructions
+      ? {
+          ...basePaymentInstructions,
+          confirmationUrl:
+            order.paymentMethod === "cash_on_delivery"
+              ? null
+              : buildPaymentProofWhatsAppUrl(settings, {
+                  paymentMethodName: paymentName,
+                  reference: order.reference,
+                  totalInCop: order.totalInCop,
+                }),
+        }
+      : null;
 
     return Response.json(
       { ok: true, order: { ...order, paymentInstructions } },

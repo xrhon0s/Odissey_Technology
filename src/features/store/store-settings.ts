@@ -49,3 +49,29 @@ export function buildWhatsAppUrl(
   const message = `Hola, quiero recibir información sobre los productos de ${settings.storeName}.`;
   return `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(message)}`;
 }
+
+export function buildPaymentProofWhatsAppUrl(
+  settings: Pick<PublicStoreSettings, "whatsappEnabled" | "whatsappNumber">,
+  order: {
+    paymentMethodName: string;
+    reference: string;
+    totalInCop: number;
+  },
+) {
+  if (!settings.whatsappEnabled || !settings.whatsappNumber) return null;
+
+  const formattedTotal = new Intl.NumberFormat("es-CO", {
+    currency: "COP",
+    maximumFractionDigits: 0,
+    style: "currency",
+  }).format(order.totalInCop);
+  const message = [
+    "Hola, ya realicé el pago de mi pedido.",
+    `Referencia: ${order.reference}`,
+    `Valor: ${formattedTotal}`,
+    `Método: ${order.paymentMethodName}`,
+    "Adjunto el comprobante para su verificación.",
+  ].join("\n");
+
+  return `https://wa.me/${settings.whatsappNumber}?text=${encodeURIComponent(message)}`;
+}

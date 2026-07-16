@@ -4,7 +4,7 @@ Ecommerce colombiano de accesorios tecnológicos. El MVP reúne tienda pública,
 
 ## Stack
 
-Next.js (App Router), React, TypeScript estricto, Tailwind CSS y pnpm. La arquitectura incorpora PostgreSQL, Supabase Auth y Storage, Drizzle, Zod, Resend, Sentry, GA4, Vitest y Playwright conforme se implementen sus dominios. El MVP comienza con transferencias verificadas manualmente; una pasarela podrá incorporarse después de validar el negocio.
+Next.js (App Router), React, TypeScript estricto, Tailwind CSS y pnpm. La arquitectura incorpora PostgreSQL, Supabase Auth y Storage, Drizzle, Zod y Vitest. El MVP comienza con transferencias verificadas manualmente; una pasarela podrá incorporarse después de validar el negocio.
 
 ## Requisitos
 
@@ -76,11 +76,17 @@ El volumen `postgres_data` conserva la información entre reinicios. Eliminar es
 
 ## Pagos manuales
 
-El checkout permite seleccionar Nequi, DaviPlata, transferencia Bancolombia o efectivo contraentrega. Los tres medios electrónicos quedan pendientes de revisión manual; los datos reales de las cuentas no se guardan en el repositorio.
+El checkout permite seleccionar Nequi, transferencia Bancolombia o efectivo contraentrega. DaviPlata permanece deshabilitado hasta completar su configuración. Las transferencias quedan pendientes de revisión manual y, cuando WhatsApp está habilitado, el comprador puede enviar el comprobante con la referencia, valor y método prellenados.
 
 El efectivo contraentrega se valida en el servidor y solo se acepta para recogida local o entregas en los diez municipios del Valle de Aburrá: Medellín, Barbosa, Girardota, Copacabana, Bello, Itagüí, Envigado, Sabaneta, La Estrella y Caldas.
 
 Los métodos de envío, sus precios, disponibilidad y orden se administran en `/admin/configuracion`; no es necesario modificar la base de datos para ajustar el checkout.
+
+Al despachar un pedido, el administrador registra transportadora, número de guía, enlace de rastreo y fecha estimada. El comprador puede consultar esos datos desde `/pedido`.
+
+## Reservas de inventario
+
+Los pedidos pendientes reservan inventario durante 30 minutos. La tienda libera reservas vencidas durante nuevas cotizaciones y expone la ruta privada `GET /api/internal/release-reservations` para una ejecución programada. En producción configura `CRON_SECRET` con al menos 24 caracteres y programa una llamada periódica con el encabezado `Authorization: Bearer <CRON_SECRET>` desde el proveedor de despliegue elegido.
 
 ## Consulta de pedidos
 

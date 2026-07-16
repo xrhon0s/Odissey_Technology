@@ -17,8 +17,12 @@ export async function getPublicOrderStatus(reference: string, email: string) {
       reservationExpiresAt: orders.reservationExpiresAt,
       shippingInCop: orders.shippingInCop,
       shippingMethodName: orders.shippingMethodName,
+      estimatedDeliveryAt: orders.estimatedDeliveryAt,
+      shippingCarrier: orders.shippingCarrier,
       status: orders.status,
       subtotalInCop: orders.subtotalInCop,
+      trackingNumber: orders.trackingNumber,
+      trackingUrl: orders.trackingUrl,
       totalInCop: orders.totalInCop,
     })
     .from(orders)
@@ -45,6 +49,7 @@ export async function getPublicOrderStatus(reference: string, email: string) {
 
   return {
     createdAt: order.createdAt,
+    estimatedDeliveryAt: order.estimatedDeliveryAt,
     items,
     paymentMethod: order.paymentMethod,
     paymentStatus: effectiveState.paymentStatus,
@@ -52,8 +57,11 @@ export async function getPublicOrderStatus(reference: string, email: string) {
     reservationExpiresAt: order.reservationExpiresAt,
     shippingInCop: order.shippingInCop,
     shippingMethodName: order.shippingMethodName,
+    shippingCarrier: order.shippingCarrier,
     status: effectiveState.status,
     subtotalInCop: order.subtotalInCop,
+    trackingNumber: order.trackingNumber,
+    trackingUrl: order.trackingUrl,
     totalInCop: order.totalInCop,
   };
 }

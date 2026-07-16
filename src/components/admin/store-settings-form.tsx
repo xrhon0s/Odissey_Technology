@@ -214,7 +214,9 @@ export function StoreSettingsForm({
           className={inputClass}
         />
         <span className="text-muted font-normal">
-          Incluye el código de país. Para Colombia comienza con 57.
+          Incluye el código de país. Para Colombia comienza con 57. Al
+          habilitarlo, los clientes podrán enviar el comprobante desde su
+          pedido.
         </span>
       </label>
       <label className="text-foreground flex items-center gap-2 text-sm font-semibold">
