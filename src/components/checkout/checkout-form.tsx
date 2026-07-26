@@ -49,6 +49,12 @@ type OrderResponse =
   | { code: string; message: string; ok: false };
 
 type CheckoutFormProps = {
+  customer: {
+    email: string;
+    fullName: string;
+    id: string;
+    phone: string | null;
+  } | null;
   paymentMethods: ManualPaymentMethodOption[];
   shippingMethods: CheckoutShippingMethod[];
 };
@@ -57,6 +63,7 @@ const inputClassName =
   "h-11 w-full min-w-0 rounded-xl border border-line bg-surface px-3 text-sm text-foreground outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/10";
 
 export function CheckoutForm({
+  customer,
   paymentMethods,
   shippingMethods,
 }: CheckoutFormProps) {
@@ -92,7 +99,11 @@ export function CheckoutForm({
         department: "",
         neighborhood: "",
       },
-      customer: { email: "", fullName: "", phone: "" },
+      customer: {
+        email: customer?.email ?? "",
+        fullName: customer?.fullName ?? "",
+        phone: customer?.phone ?? "",
+      },
       paymentMethod: defaultPaymentMethod,
       shippingMethodCode: defaultShippingMethod,
     },
@@ -174,10 +185,14 @@ export function CheckoutForm({
         ) : null}
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link
-            href={`/pedido?reference=${encodeURIComponent(order.reference)}`}
+            href={
+              customer
+                ? `/cuenta/pedidos/${order.id}`
+                : `/pedido?reference=${encodeURIComponent(order.reference)}`
+            }
             className="bg-brand text-foreground hover:bg-brand-dark inline-flex rounded-full px-5 py-3 text-sm font-semibold transition hover:text-white"
           >
-            Consultar este pedido
+            {customer ? "Ver en mi cuenta" : "Consultar este pedido"}
           </Link>
           <Link
             href="/catalogo"
@@ -298,6 +313,22 @@ export function CheckoutForm({
           <h2 className="font-display text-foreground text-xl font-bold">
             Tus datos
           </h2>
+          {customer ? (
+            <p className="text-muted mt-1 text-sm">
+              Completamos estos campos desde tu cuenta. Puedes ajustarlos para
+              este pedido.
+            </p>
+          ) : (
+            <p className="text-muted mt-1 text-sm">
+              ¿Quieres conservar tus pedidos?{" "}
+              <Link
+                className="text-brand-dark font-semibold underline-offset-4 hover:underline"
+                href="/cuenta/acceder"
+              >
+                Inicia sesión
+              </Link>
+            </p>
+          )}
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <Field
               id="customer-full-name"

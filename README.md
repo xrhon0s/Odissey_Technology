@@ -111,6 +111,24 @@ ya vencidos.
 
 El comprador puede consultar el estado en `/pedido` usando la referencia y el mismo correo de la compra. La respuesta pública muestra el avance del pedido, pago, entrega, productos y totales, pero omite dirección, teléfono e historial administrativo.
 
+## Cuentas de clientes
+
+Las cuentas son opcionales y reutilizan Supabase Auth. El cliente puede
+registrarse, confirmar su correo, iniciar o cerrar sesión, recuperar su
+contraseña, actualizar nombre y celular, y consultar en `/cuenta` los pedidos
+realizados mientras tenía la sesión iniciada. El checkout completa sus datos
+guardados, pero permite ajustarlos para una compra concreta.
+
+Los pedidos de invitados no se vinculan automáticamente por coincidencia de
+correo: continúan disponibles mediante referencia y correo en `/pedido`. Esta
+decisión evita exponer compras anteriores si la política de verificación de
+correo del proyecto se configuró incorrectamente.
+
+Para que los enlaces de confirmación y recuperación regresen a la tienda,
+configura `NEXT_PUBLIC_APP_URL` y añade en Supabase Auth las URL permitidas para
+`/cuenta/confirmar`. Mantén habilitada la confirmación de correo para cuentas
+reales.
+
 ## Acceso administrativo
 
 El panel usa Supabase Auth con sesión por cookies y vuelve a verificar en PostgreSQL que el usuario pertenezca a `admin_users` y esté activo. Sin configuración, `/admin` permanece cerrado y `/login` explica qué falta.

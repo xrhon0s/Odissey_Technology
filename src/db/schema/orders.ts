@@ -15,6 +15,7 @@ import {
 
 import { productVariants } from "./catalog";
 import { adminUsers } from "./admin";
+import { customerProfiles } from "./customers";
 
 export const orderStatus = pgEnum("order_status", [
   "pending",
@@ -47,6 +48,9 @@ export const orders = pgTable(
     customerName: varchar("customer_name", { length: 120 }).notNull(),
     customerEmail: varchar("customer_email", { length: 254 }).notNull(),
     customerPhone: varchar("customer_phone", { length: 20 }).notNull(),
+    customerId: uuid("customer_id").references(() => customerProfiles.id, {
+      onDelete: "set null",
+    }),
     termsAcceptedAt: timestamp("terms_accepted_at", { withTimezone: true }),
     termsVersion: varchar("terms_version", { length: 20 }),
     privacyPolicyVersion: varchar("privacy_policy_version", { length: 20 }),
@@ -82,6 +86,10 @@ export const orders = pgTable(
     index("orders_status_created_idx").on(table.status, table.createdAt),
     index("orders_customer_email_created_idx").on(
       table.customerEmail,
+      table.createdAt,
+    ),
+    index("orders_customer_id_created_idx").on(
+      table.customerId,
       table.createdAt,
     ),
     check("orders_subtotal_non_negative", sql`${table.subtotalInCop} >= 0`),

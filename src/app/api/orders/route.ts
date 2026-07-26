@@ -2,6 +2,10 @@ import { ZodError } from "zod";
 
 import { getPublicStoreSettings } from "@/db/queries/store-settings";
 import { CheckoutQuoteError } from "@/features/checkout/checkout-service";
+import {
+  ensureCustomerProfile,
+  getCustomerIdentity,
+} from "@/features/customers/customer-access";
 import { notifyOrderCreated } from "@/features/notifications/order-notifications";
 import { createOrderRequestSchema } from "@/features/orders/order-schema";
 import {
@@ -55,7 +59,16 @@ export async function POST(request: Request) {
       );
     }
 
-    const order = await createPendingOrder(input);
+    const identity = await getCustomerIdentity();
+    const authenticatedCustomer =
+      identity &&
+      identity.email === input.checkout.customer.email.trim().toLowerCase()
+        ? await ensureCustomerProfile(identity)
+        : null;
+    const order = await createPendingOrder(
+      input,
+      authenticatedCustomer?.id ?? null,
+    );
     const basePaymentInstructions = buildPaymentInstructions(
       order.paymentMethod,
       settings,

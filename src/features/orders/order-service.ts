@@ -182,6 +182,7 @@ export function releaseExpiredOrderReservations() {
 
 export async function createPendingOrder(
   input: CreateOrderRequest,
+  customerId: string | null = null,
 ): Promise<PendingOrderResult> {
   const requestFingerprint = createOrderRequestFingerprint(input);
 
@@ -297,6 +298,7 @@ export async function createPendingOrder(
         addressSnapshot: input.checkout.address ?? null,
         checkoutAttemptId: input.checkoutAttemptId,
         customerEmail: input.checkout.customer.email,
+        customerId,
         customerName: input.checkout.customer.fullName,
         customerPhone: input.checkout.customer.phone,
         privacyPolicyVersion: input.checkout.privacyPolicyVersion,

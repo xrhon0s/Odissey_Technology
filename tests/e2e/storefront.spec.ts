@@ -1,6 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-const publicRoutes = ["/", "/catalogo", "/carrito", "/checkout", "/pedido"];
+const publicRoutes = [
+  "/",
+  "/catalogo",
+  "/carrito",
+  "/checkout",
+  "/pedido",
+  "/cuenta/acceder",
+  "/cuenta/recuperar",
+];
 
 for (const route of publicRoutes) {
   test(`${route} renders without horizontal overflow`, async ({ page }) => {
@@ -91,6 +99,34 @@ test("admin remains closed without an authenticated session", async ({
         document.documentElement.clientWidth,
     ),
   ).toBe(true);
+});
+
+test("customer account offers optional registration and login", async ({
+  page,
+}) => {
+  await page.goto("/cuenta/acceder");
+
+  await expect(
+    page.getByRole("heading", { name: "Inicia sesión" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Crea tu cuenta" }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Ingresar" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Crear cuenta" }),
+  ).toBeVisible();
+});
+
+test("customer order history stays protected without a session", async ({
+  page,
+}) => {
+  await page.goto("/cuenta");
+
+  await expect(page).toHaveURL(/\/cuenta\/acceder$/);
+  await expect(
+    page.getByRole("heading", { name: "Compra con menos pasos." }),
+  ).toBeVisible();
 });
 
 test("security headers and bounded JSON are active", async ({ request }) => {

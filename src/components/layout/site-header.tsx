@@ -3,9 +3,13 @@ import Link from "next/link";
 import { CartStatusLink } from "@/components/cart/cart-status-link";
 import { BrandMark } from "@/components/ui/brand-mark";
 import { getPublicStoreSettings } from "@/db/queries/store-settings";
+import { getCustomerIdentity } from "@/features/customers/customer-access";
 
 export async function SiteHeader() {
-  const settings = await getPublicStoreSettings();
+  const [settings, customer] = await Promise.all([
+    getPublicStoreSettings(),
+    getCustomerIdentity(),
+  ]);
 
   return (
     <header className="border-line/80 bg-surface/95 sticky top-0 z-50 border-b shadow-[0_1px_14px_rgb(7_26_51/0.04)] backdrop-blur-md">
@@ -43,6 +47,20 @@ export async function SiteHeader() {
                 href="/pedido"
               >
                 Mi pedido
+              </Link>
+            </li>
+            <li>
+              <Link
+                aria-label={customer ? "Ir a mi cuenta" : "Iniciar sesión"}
+                className="hover:bg-surface-muted rounded-full px-2.5 py-2 transition-colors sm:px-3"
+                href={customer ? "/cuenta" : "/cuenta/acceder"}
+              >
+                <span className="hidden lg:inline">
+                  {customer ? "Mi cuenta" : "Ingresar"}
+                </span>
+                <span aria-hidden="true" className="lg:hidden">
+                  Cuenta
+                </span>
               </Link>
             </li>
             <li>
