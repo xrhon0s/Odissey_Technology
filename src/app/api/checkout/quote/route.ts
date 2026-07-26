@@ -9,10 +9,25 @@ import {
 } from "@/features/checkout/checkout-service";
 import { releaseExpiredOrderReservations } from "@/features/orders/order-service";
 import { isManualPaymentMethodAvailable } from "@/features/payments/payment-methods";
+import {
+  enforceRateLimit,
+  invalidBodyResponse,
+  InvalidRequestBodyError,
+  readBoundedJson,
+} from "@/features/security/public-api-security";
 
 export async function POST(request: Request) {
   try {
-    const input = checkoutQuoteRequestSchema.parse(await request.json());
+    const input = checkoutQuoteRequestSchema.parse(
+      await readBoundedJson(request),
+    );
+    const rateLimitResponse = await enforceRateLimit(request, {
+      limit: 40,
+      scope: "checkout_quote_ip",
+      windowMs: 10 * 60 * 1000,
+    });
+    if (rateLimitResponse) return rateLimitResponse;
+
     const settings = await getPublicStoreSettings();
 
     if (!isManualPaymentMethodAvailable(input.paymentMethod, settings)) {
@@ -27,6 +42,10 @@ export async function POST(request: Request) {
 
     return Response.json({ ok: true, quote });
   } catch (error) {
+    if (error instanceof InvalidRequestBodyError) {
+      return invalidBodyResponse(error);
+    }
+
     if (error instanceof ZodError) {
       return Response.json(
         {

@@ -1,7 +1,8 @@
+import { deleteExpiredRateLimits } from "@/db/queries/rate-limits";
 import { releaseExpiredOrderReservations } from "@/features/orders/order-service";
 import { isReservationCleanupAuthorized } from "@/features/orders/reservation-cleanup";
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   if (
     !isReservationCleanupAuthorized(
       request.headers.get("authorization"),
@@ -14,7 +15,10 @@ export async function GET(request: Request) {
     );
   }
 
-  const releasedOrders = await releaseExpiredOrderReservations();
+  const [releasedOrders] = await Promise.all([
+    releaseExpiredOrderReservations(),
+    deleteExpiredRateLimits(),
+  ]);
 
   return Response.json(
     { ok: true, releasedOrders },

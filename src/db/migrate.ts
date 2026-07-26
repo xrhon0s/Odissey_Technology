@@ -16,7 +16,19 @@ async function runMigrations() {
   }
 }
 
-void runMigrations().catch(() => {
-  console.error("Database migration failed");
+function describeError(error: unknown) {
+  const messages: string[] = [];
+  let current = error;
+
+  for (let depth = 0; depth < 3 && current instanceof Error; depth += 1) {
+    messages.push(current.message);
+    current = current.cause;
+  }
+
+  return messages.join(" → ") || "Unknown database error";
+}
+
+void runMigrations().catch((error: unknown) => {
+  console.error("Database migration failed:", describeError(error));
   process.exitCode = 1;
 });

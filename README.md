@@ -32,6 +32,7 @@ La aplicación estará disponible en `http://localhost:3000`.
 | `pnpm lint`               | ESLint                                       |
 | `pnpm typecheck`          | TypeScript sin emitir archivos               |
 | `pnpm test`               | Pruebas unitarias                            |
+| `pnpm test:e2e`           | Flujos críticos en Chromium                  |
 | `pnpm test:watch`         | Vitest interactivo                           |
 | `pnpm format:check`       | Verificar formato                            |
 | `pnpm format`             | Aplicar formato                              |
@@ -90,9 +91,21 @@ Las notificaciones transaccionales son opcionales y usan la API REST de Resend s
 
 Antes de enviar a clientes reales, verifica un dominio en Resend y usa una dirección de ese dominio en `RESEND_FROM_EMAIL`.
 
-## Reservas de inventario
+## Protección contra abuso y reservas
 
-Los pedidos pendientes reservan inventario durante 30 minutos. La tienda libera reservas vencidas durante nuevas cotizaciones y expone la ruta privada `GET /api/internal/release-reservations` para una ejecución programada. En producción configura `CRON_SECRET` con al menos 24 caracteres y programa una llamada periódica con el encabezado `Authorization: Bearer <CRON_SECRET>` desde el proveedor de despliegue elegido.
+Las rutas públicas de cotización, creación y consulta de pedidos limitan el
+número de intentos mediante ventanas persistidas en PostgreSQL. Las identidades
+se guardan como hashes HMAC, no como direcciones IP o correos legibles. Configura
+`RATE_LIMIT_SECRET` con un valor aleatorio de al menos 32 caracteres antes de
+ejecutar la aplicación en producción.
+
+Los pedidos pendientes reservan inventario durante 30 minutos. La tienda libera
+reservas vencidas durante nuevas cotizaciones y expone la ruta privada
+`POST /api/internal/release-reservations` para una ejecución programada. En
+producción configura `CRON_SECRET` con al menos 24 caracteres y programa una
+llamada periódica con el encabezado `Authorization: Bearer <CRON_SECRET>` desde
+el proveedor de despliegue elegido. La misma tarea elimina contadores antiabuso
+ya vencidos.
 
 ## Consulta de pedidos
 
@@ -148,7 +161,10 @@ pnpm test
 pnpm build
 ```
 
-Playwright se incorporará cuando exista el primer flujo crítico navegable.
+Playwright cubre en escritorio y móvil las rutas públicas, el recorrido desde
+catálogo hasta checkout, el acceso administrativo cerrado, el salto al contenido
+por teclado, desbordes horizontales y cabeceras de seguridad. Ejecuta
+`pnpm exec playwright install chromium` una vez antes de `pnpm test:e2e`.
 
 ## Estructura
 

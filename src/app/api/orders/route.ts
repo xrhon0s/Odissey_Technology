@@ -14,10 +14,36 @@ import {
   manualPaymentMethods,
 } from "@/features/payments/payment-methods";
 import { buildPaymentProofWhatsAppUrl } from "@/features/store/store-settings";
+import {
+  enforceRateLimit,
+  invalidBodyResponse,
+  InvalidRequestBodyError,
+  readBoundedJson,
+} from "@/features/security/public-api-security";
 
 export async function POST(request: Request) {
   try {
-    const input = createOrderRequestSchema.parse(await request.json());
+    const input = createOrderRequestSchema.parse(
+      await readBoundedJson(request),
+    );
+    const ipRateLimitResponse = await enforceRateLimit(request, {
+      limit: 6,
+      scope: "order_create_ip",
+      windowMs: 60 * 60 * 1000,
+    });
+    if (ipRateLimitResponse) return ipRateLimitResponse;
+
+    const customerRateLimitResponse = await enforceRateLimit(
+      request,
+      {
+        limit: 8,
+        scope: "order_create_customer",
+        windowMs: 60 * 60 * 1000,
+      },
+      input.checkout.customer.email,
+    );
+    if (customerRateLimitResponse) return customerRateLimitResponse;
+
     const settings = await getPublicStoreSettings();
 
     if (
@@ -71,6 +97,10 @@ export async function POST(request: Request) {
       { status: order.reused ? 200 : 201 },
     );
   } catch (error) {
+    if (error instanceof InvalidRequestBodyError) {
+      return invalidBodyResponse(error);
+    }
+
     if (error instanceof ZodError) {
       return Response.json(
         {
