@@ -2,7 +2,11 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 items-center px-6 py-20 text-center">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="mx-auto flex w-full max-w-3xl flex-1 items-center px-6 py-20 text-center"
+    >
       <div className="border-line bg-surface w-full rounded-[2rem] border p-10 shadow-sm">
         <p className="text-brand-dark text-sm font-bold tracking-widest">404</p>
         <h1 className="font-display text-foreground mt-2 text-3xl font-bold">

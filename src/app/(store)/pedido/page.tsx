@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 export default function OrderLookupPage() {
   return (
-    <main className="bg-background flex-1">
+    <main id="main-content" tabIndex={-1} className="bg-background flex-1">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
         <p className="text-brand-dark flex items-center gap-2 text-xs font-semibold tracking-[0.18em] uppercase">
           <span

@@ -50,11 +50,12 @@ export default async function TermsPage() {
       <section>
         <h2>4. Pagos</h2>
         <p>
-          Los medios disponibles se informan durante el checkout. Nequi, Nequi y
-          Bancolombia se verifican manualmente. El efectivo contraentrega solo
-          se ofrece para entregas habilitadas en el Valle de Aburrá. Nunca deben
-          enviarse claves, códigos de acceso o información bancaria sensible por
-          los canales de atención.
+          Los medios disponibles se informan durante el checkout. Los pagos por
+          llave y las transferencias a Nequi o Bancolombia se verifican
+          manualmente. El efectivo contraentrega solo se ofrece para entregas
+          habilitadas en el Valle de Aburrá. Nunca deben enviarse claves,
+          códigos de acceso o información bancaria sensible por los canales de
+          atención.
         </p>
       </section>
       <section>

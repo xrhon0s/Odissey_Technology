@@ -1,6 +1,8 @@
 export default function CatalogLoading() {
   return (
     <main
+      id="main-content"
+      tabIndex={-1}
       className="bg-background flex-1"
       aria-busy="true"
       aria-label="Cargando catálogo"

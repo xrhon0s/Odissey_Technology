@@ -14,7 +14,7 @@ export function LegalDocument({
   updatedAt: string;
 }) {
   return (
-    <main className="flex-1 bg-slate-50">
+    <main id="main-content" tabIndex={-1} className="flex-1 bg-slate-50">
       <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
         <p className="text-sm font-bold tracking-widest text-cyan-700 uppercase">
           Información legal

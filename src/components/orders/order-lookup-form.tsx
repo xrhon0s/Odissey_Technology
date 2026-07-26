@@ -92,12 +92,19 @@ export function OrderLookupForm() {
   return (
     <div className="grid gap-8 lg:grid-cols-[360px_1fr] lg:items-start">
       <form
+        aria-busy={pending}
         className="border-line bg-surface grid gap-4 rounded-[1.5rem] border p-5"
         onSubmit={submit}
       >
-        <label className="text-foreground grid gap-1.5 text-sm font-semibold">
+        <label
+          htmlFor="order-reference"
+          className="text-foreground grid gap-1.5 text-sm font-semibold"
+        >
           Referencia del pedido
           <input
+            id="order-reference"
+            autoComplete="off"
+            autoCapitalize="characters"
             className={inputClass}
             defaultValue={searchParams.get("reference") ?? ""}
             maxLength={40}
@@ -106,9 +113,13 @@ export function OrderLookupForm() {
             required
           />
         </label>
-        <label className="text-foreground grid gap-1.5 text-sm font-semibold">
+        <label
+          htmlFor="order-email"
+          className="text-foreground grid gap-1.5 text-sm font-semibold"
+        >
           Correo usado en la compra
           <input
+            id="order-email"
             autoComplete="email"
             className={inputClass}
             maxLength={254}
@@ -125,13 +136,19 @@ export function OrderLookupForm() {
           {pending ? "Consultando…" : "Consultar pedido"}
         </button>
         {error ? (
-          <p className="text-sm text-red-700" role="alert">
+          <p
+            className="text-sm text-red-700"
+            role="alert"
+            aria-live="assertive"
+          >
             {error}
           </p>
         ) : null}
       </form>
 
-      {order ? <OrderStatus order={order} /> : <LookupInstructions />}
+      <div aria-live="polite">
+        {order ? <OrderStatus order={order} /> : <LookupInstructions />}
+      </div>
     </div>
   );
 }

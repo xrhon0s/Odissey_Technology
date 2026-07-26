@@ -44,7 +44,11 @@ export default async function AdminProductsPage() {
     listAdminProducts(),
   ]);
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10"
+    >
       <AdminPageHeader
         action={
           <a

@@ -47,7 +47,7 @@ export default async function Home() {
     catalogService.listProducts({ page: 1, pageSize: 4, sort: "featured" }),
   ]);
   return (
-    <main className="flex-1 overflow-hidden">
+    <main id="main-content" tabIndex={-1} className="flex-1 overflow-hidden">
       <section className="bg-foreground relative isolate overflow-hidden text-white">
         <div
           aria-hidden="true"

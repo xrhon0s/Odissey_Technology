@@ -21,7 +21,11 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
 
   if (!parsedFilters.success) {
     return (
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-16 sm:px-6">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-16 sm:px-6"
+      >
         <div className="rounded-[1.75rem] border border-amber-200 bg-amber-50 p-8 text-center">
           <h1 className="font-display text-foreground text-2xl font-bold">
             Filtros no válidos
@@ -47,7 +51,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   ]);
 
   return (
-    <main className="bg-background flex-1">
+    <main id="main-content" tabIndex={-1} className="bg-background flex-1">
       <section className="border-line bg-surface border-b">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
           <p className="text-brand-dark flex items-center gap-2 text-xs font-semibold tracking-[0.18em] uppercase">

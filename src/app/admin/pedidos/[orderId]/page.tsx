@@ -57,7 +57,11 @@ export default async function AdminOrderDetailPage({
   const advanceLabel = advanceLabels[order.status];
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10"
+    >
       <Link
         href="/admin/pedidos"
         className="text-brand-dark text-sm font-extrabold hover:underline"

@@ -289,6 +289,7 @@ export function CheckoutForm({
 
   return (
     <form
+      aria-busy={isSubmitting || isCreatingOrder}
       onSubmit={handleSubmit(submitCheckout)}
       className="grid gap-8 lg:grid-cols-[1fr_380px] lg:items-start"
     >
@@ -299,17 +300,34 @@ export function CheckoutForm({
           </h2>
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <Field
+              id="customer-full-name"
               label="Nombre completo"
               error={errors.customer?.fullName?.message}
             >
               <input
+                id="customer-full-name"
+                aria-invalid={Boolean(errors.customer?.fullName)}
+                aria-describedby={
+                  errors.customer?.fullName
+                    ? "customer-full-name-error"
+                    : undefined
+                }
                 autoComplete="name"
                 className={inputClassName}
                 {...register("customer.fullName")}
               />
             </Field>
-            <Field label="Celular" error={errors.customer?.phone?.message}>
+            <Field
+              id="customer-phone"
+              label="Celular"
+              error={errors.customer?.phone?.message}
+            >
               <input
+                id="customer-phone"
+                aria-invalid={Boolean(errors.customer?.phone)}
+                aria-describedby={
+                  errors.customer?.phone ? "customer-phone-error" : undefined
+                }
                 autoComplete="tel"
                 inputMode="tel"
                 placeholder="3001234567"
@@ -318,11 +336,17 @@ export function CheckoutForm({
               />
             </Field>
             <Field
+              id="customer-email"
               label="Correo electrónico"
               error={errors.customer?.email?.message}
               className="sm:col-span-2"
             >
               <input
+                id="customer-email"
+                aria-invalid={Boolean(errors.customer?.email)}
+                aria-describedby={
+                  errors.customer?.email ? "customer-email-error" : undefined
+                }
                 autoComplete="email"
                 inputMode="email"
                 type="email"
@@ -334,10 +358,21 @@ export function CheckoutForm({
         </section>
 
         <section className="border-line bg-surface rounded-[1.5rem] border p-5 sm:p-6">
-          <h2 className="font-display text-foreground text-xl font-bold">
+          <h2
+            id="shipping-method-title"
+            className="font-display text-foreground text-xl font-bold"
+          >
             Entrega
           </h2>
-          <div className="mt-5 space-y-3">
+          <div
+            role="radiogroup"
+            aria-invalid={Boolean(errors.shippingMethodCode)}
+            aria-labelledby="shipping-method-title"
+            aria-describedby={
+              errors.shippingMethodCode ? "shipping-method-error" : undefined
+            }
+            className="mt-5 space-y-3"
+          >
             {shippingMethods.map((method) => (
               <label
                 key={method.code}
@@ -361,7 +396,11 @@ export function CheckoutForm({
               </label>
             ))}
             {errors.shippingMethodCode && (
-              <p className="text-sm text-red-700">
+              <p
+                id="shipping-method-error"
+                role="alert"
+                className="text-sm text-red-700"
+              >
                 {errors.shippingMethodCode.message}
               </p>
             )}
@@ -370,47 +409,80 @@ export function CheckoutForm({
           {selectedShippingMethod?.requiresAddress && (
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <Field
+                id="address-department"
                 label="Departamento"
                 error={errors.address?.department?.message}
               >
                 <input
+                  id="address-department"
+                  aria-invalid={Boolean(errors.address?.department)}
+                  aria-describedby={
+                    errors.address?.department
+                      ? "address-department-error"
+                      : undefined
+                  }
                   autoComplete="address-level1"
                   className={inputClassName}
                   {...register("address.department")}
                 />
               </Field>
-              <Field label="Ciudad" error={errors.address?.city?.message}>
+              <Field
+                id="address-city"
+                label="Ciudad"
+                error={errors.address?.city?.message}
+              >
                 <input
+                  id="address-city"
+                  aria-invalid={Boolean(errors.address?.city)}
+                  aria-describedby={
+                    errors.address?.city ? "address-city-error" : undefined
+                  }
                   autoComplete="address-level2"
                   className={inputClassName}
                   {...register("address.city")}
                 />
               </Field>
               <Field
+                id="address-line-1"
                 label="Dirección"
                 error={errors.address?.addressLine1?.message}
                 className="sm:col-span-2"
               >
                 <input
+                  id="address-line-1"
+                  aria-invalid={Boolean(errors.address?.addressLine1)}
+                  aria-describedby={
+                    errors.address?.addressLine1
+                      ? "address-line-1-error"
+                      : undefined
+                  }
                   autoComplete="street-address"
                   className={inputClassName}
                   {...register("address.addressLine1")}
                 />
               </Field>
-              <Field label="Complemento (opcional)">
+              <Field id="address-line-2" label="Complemento (opcional)">
                 <input
+                  id="address-line-2"
+                  autoComplete="address-line2"
                   className={inputClassName}
                   {...register("address.addressLine2")}
                 />
               </Field>
-              <Field label="Barrio (opcional)">
+              <Field id="address-neighborhood" label="Barrio (opcional)">
                 <input
+                  id="address-neighborhood"
                   className={inputClassName}
                   {...register("address.neighborhood")}
                 />
               </Field>
-              <Field label="Indicaciones (opcional)" className="sm:col-span-2">
+              <Field
+                id="delivery-notes"
+                label="Indicaciones (opcional)"
+                className="sm:col-span-2"
+              >
                 <textarea
+                  id="delivery-notes"
                   rows={3}
                   className="border-line bg-surface text-foreground focus:border-brand min-h-24 w-full rounded-xl border px-3 py-2 text-sm outline-none"
                   {...register("address.deliveryNotes")}
@@ -421,14 +493,21 @@ export function CheckoutForm({
         </section>
 
         <section className="border-line bg-surface rounded-[1.5rem] border p-5 sm:p-6">
-          <h2 className="font-display text-foreground text-xl font-bold">
+          <h2
+            id="payment-method-title"
+            className="font-display text-foreground text-xl font-bold"
+          >
             Forma de pago
           </h2>
           <p className="text-muted mt-2 text-sm leading-6">
             Todos los pagos se verifican manualmente antes de confirmar el
             pedido.
           </p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <div
+            role="radiogroup"
+            aria-labelledby="payment-method-title"
+            className="mt-5 grid gap-3 sm:grid-cols-2"
+          >
             {paymentMethods.map((method) => (
               <label
                 key={method.code}
@@ -466,6 +545,10 @@ export function CheckoutForm({
         <section className="border-line bg-surface rounded-[1.5rem] border p-5 sm:p-6">
           <label className="text-foreground flex items-start gap-3 text-sm leading-6">
             <input
+              aria-invalid={Boolean(errors.acceptedTerms)}
+              aria-describedby={
+                errors.acceptedTerms ? "accepted-terms-error" : undefined
+              }
               type="checkbox"
               className="accent-brand mt-1 size-4 shrink-0"
               {...register("acceptedTerms")}
@@ -491,7 +574,11 @@ export function CheckoutForm({
             </span>
           </label>
           {errors.acceptedTerms ? (
-            <p className="mt-2 text-sm text-red-700">
+            <p
+              id="accepted-terms-error"
+              role="alert"
+              className="mt-2 text-sm text-red-700"
+            >
               {errors.acceptedTerms.message}
             </p>
           ) : null}
@@ -518,6 +605,7 @@ export function CheckoutForm({
         {serverError && (
           <p
             role="alert"
+            aria-live="assertive"
             className="mt-5 rounded-xl bg-red-950 p-3 text-sm text-red-100"
           >
             {serverError}
@@ -592,17 +680,23 @@ type FieldProps = {
   children: React.ReactNode;
   className?: string;
   error?: string;
+  id: string;
   label: string;
 };
 
-function Field({ children, className = "", error, label }: FieldProps) {
+function Field({ children, className = "", error, id, label }: FieldProps) {
   return (
     <label
+      htmlFor={id}
       className={`text-foreground grid min-w-0 gap-1.5 text-sm font-semibold ${className}`}
     >
       {label}
       {children}
-      {error && <span className="text-xs text-red-700">{error}</span>}
+      {error && (
+        <span id={`${id}-error`} role="alert" className="text-xs text-red-700">
+          {error}
+        </span>
+      )}
     </label>
   );
 }

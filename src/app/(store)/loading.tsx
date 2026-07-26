@@ -1,6 +1,12 @@
 export default function StoreLoading() {
   return (
-    <main aria-busy="true" aria-label="Cargando contenido" className="flex-1">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      aria-busy="true"
+      aria-label="Cargando contenido"
+      className="flex-1"
+    >
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
         <div className="skeleton-shimmer bg-surface-muted h-4 w-28 rounded-full" />
         <div className="skeleton-shimmer bg-surface-muted mt-5 h-12 max-w-xl rounded-2xl" />

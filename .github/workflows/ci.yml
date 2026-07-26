@@ -65,5 +65,18 @@ jobs:
       - name: Apply database migrations
         run: pnpm exec tsx src/db/migrate.ts
 
+      - name: Seed browser test catalog
+        run: pnpm exec tsx src/db/seed.ts
+        env:
+          SEED_DEMO_DATA: "true"
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run browser tests
+        run: pnpm test:e2e
+        env:
+          RATE_LIMIT_SECRET: odissey-ci-rate-limit-secret-2026
+
       - name: Build
         run: pnpm build

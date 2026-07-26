@@ -11,7 +11,11 @@ export default function LoginPage() {
   const isConfigured = getSupabasePublicConfig() !== null;
 
   return (
-    <main className="bg-brand-navy flex min-h-screen items-center justify-center px-4 py-12">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="bg-brand-navy flex min-h-screen items-center justify-center px-4 py-12"
+    >
       <section className="bg-surface w-full max-w-md rounded-3xl p-6 shadow-2xl sm:p-8">
         <BrandMark />
         <p className="text-brand-dark mt-8 text-xs font-extrabold tracking-[0.16em] uppercase">

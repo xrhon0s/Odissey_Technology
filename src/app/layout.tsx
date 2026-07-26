@@ -23,8 +23,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es-CO" className="h-full antialiased">
-      <body className="min-h-full">{children}</body>
+    <html
+      lang="es-CO"
+      className="h-full antialiased"
+      data-scroll-behavior="smooth"
+    >
+      <body className="min-h-full">
+        <a className="skip-link" href="#main-content">
+          Saltar al contenido principal
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

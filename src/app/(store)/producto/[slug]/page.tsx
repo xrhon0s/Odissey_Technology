@@ -41,7 +41,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const mainImage = product.images[0];
 
   return (
-    <main className="bg-background flex-1">
+    <main id="main-content" tabIndex={-1} className="bg-background flex-1">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10">
         <nav
           aria-label="Migas de pan"

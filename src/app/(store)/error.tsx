@@ -7,7 +7,11 @@ export default function StoreError({
   unstable_retry: () => void;
 }) {
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 items-center px-6 py-20">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="mx-auto flex w-full max-w-3xl flex-1 items-center px-6 py-20"
+    >
       <div
         role="alert"
         className="w-full rounded-[2rem] border border-red-200 bg-red-50 p-8 text-center"
