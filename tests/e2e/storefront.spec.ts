@@ -118,6 +118,53 @@ test("customer account offers optional registration and login", async ({
   ).toBeVisible();
 });
 
+test("customer registration keeps data and explains password progress", async ({
+  page,
+}) => {
+  await page.goto("/cuenta/acceder");
+
+  const registration = page
+    .getByRole("heading", { name: "Crea tu cuenta" })
+    .locator("..");
+  const fullName = registration.getByLabel("Nombre completo");
+  const phone = registration.getByLabel("Celular");
+  const email = registration.getByLabel("Correo electrónico");
+  const password = registration.getByLabel("Contraseña", { exact: true });
+  const confirmation = registration.getByLabel("Repetir contraseña");
+  const submit = registration.getByRole("button", { name: "Crear cuenta" });
+
+  await fullName.fill("David Sánchez");
+  await phone.fill("3126485885");
+  await email.fill("cliente@example.com");
+  await password.fill("12345678");
+  await confirmation.fill("87654321");
+
+  await expect(registration.getByText("Mínimo 8 caracteres")).toContainText(
+    "Cumplido.",
+  );
+  await expect(registration.getByText("Al menos una letra")).toContainText(
+    "Pendiente.",
+  );
+  await expect(
+    registration.getByText("Ambas contraseñas coinciden"),
+  ).toContainText("Pendiente.");
+  await expect(submit).toBeDisabled();
+  await expect(fullName).toHaveValue("David Sánchez");
+  await expect(phone).toHaveValue("3126485885");
+  await expect(email).toHaveValue("cliente@example.com");
+
+  await password.fill("odissey2026");
+  await confirmation.fill("odissey2026");
+
+  await expect(registration.getByText("Al menos una letra")).toContainText(
+    "Cumplido.",
+  );
+  await expect(
+    registration.getByText("Ambas contraseñas coinciden"),
+  ).toContainText("Cumplido.");
+  await expect(submit).toBeEnabled();
+});
+
 test("customer account entry is visible from the storefront", async ({
   page,
 }) => {

@@ -1,8 +1,13 @@
 import { z } from "zod";
 
+import { CUSTOMER_PASSWORD_MIN_LENGTH } from "./customer-password";
+
 const passwordSchema = z
   .string()
-  .min(8, "Usa al menos 8 caracteres.")
+  .min(
+    CUSTOMER_PASSWORD_MIN_LENGTH,
+    `Usa al menos ${CUSTOMER_PASSWORD_MIN_LENGTH} caracteres.`,
+  )
   .max(200)
   .regex(/[A-Za-z]/, "Incluye al menos una letra.")
   .regex(/[0-9]/, "Incluye al menos un número.");

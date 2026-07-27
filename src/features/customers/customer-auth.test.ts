@@ -6,6 +6,7 @@ import {
   customerRegistrationSchema,
   customerReturnPathSchema,
 } from "./customer-auth";
+import { getCustomerPasswordChecks } from "./customer-password";
 
 describe("customerRegistrationSchema", () => {
   const validRegistration = {
@@ -39,6 +40,26 @@ describe("customerRegistrationSchema", () => {
         passwordConfirmation: "sololetras",
       }).success,
     ).toBe(false);
+  });
+});
+
+describe("getCustomerPasswordChecks", () => {
+  it("reports password progress independently", () => {
+    expect(getCustomerPasswordChecks("12345678", "87654321")).toEqual({
+      hasLetter: false,
+      hasMinimumLength: true,
+      hasNumber: true,
+      passwordsMatch: false,
+    });
+  });
+
+  it("reports every requirement when passwords are ready", () => {
+    expect(getCustomerPasswordChecks("odissey2026", "odissey2026")).toEqual({
+      hasLetter: true,
+      hasMinimumLength: true,
+      hasNumber: true,
+      passwordsMatch: true,
+    });
   });
 });
 
