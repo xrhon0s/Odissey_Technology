@@ -23,7 +23,10 @@ export async function SiteHeader() {
         >
           <BrandMark />
         </Link>
-        <nav aria-label="Navegación principal" className="min-w-0">
+        <nav
+          aria-label="Navegación principal"
+          className="hidden min-w-0 sm:block"
+        >
           <ul className="text-foreground flex items-center gap-1 text-sm font-bold sm:gap-2">
             <li>
               <Link
@@ -50,25 +53,82 @@ export async function SiteHeader() {
               </Link>
             </li>
             <li>
-              <Link
-                aria-label={customer ? "Ir a mi cuenta" : "Iniciar sesión"}
-                className="hover:bg-surface-muted rounded-full px-2.5 py-2 transition-colors sm:px-3"
-                href={customer ? "/cuenta" : "/cuenta/acceder"}
-              >
-                <span className="hidden lg:inline">
-                  {customer ? "Mi cuenta" : "Ingresar"}
-                </span>
-                <span aria-hidden="true" className="lg:hidden">
-                  Cuenta
-                </span>
-              </Link>
+              <AccountLink authenticated={Boolean(customer)} />
             </li>
             <li>
               <CartStatusLink />
             </li>
           </ul>
         </nav>
+        <div className="flex items-center gap-1.5 sm:hidden">
+          <AccountLink authenticated={Boolean(customer)} compact />
+          <CartStatusLink />
+        </div>
       </div>
+      <nav
+        aria-label="Navegación móvil"
+        className="border-line/80 border-t px-3 sm:hidden"
+      >
+        <ul className="text-foreground grid grid-cols-3 text-center text-xs font-bold">
+          <li>
+            <Link
+              className="hover:text-brand-dark block py-2.5 transition-colors"
+              href="/"
+            >
+              Inicio
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="hover:text-brand-dark block py-2.5 transition-colors"
+              href="/catalogo"
+            >
+              Catálogo
+            </Link>
+          </li>
+          <li>
+            <Link
+              className="hover:text-brand-dark block py-2.5 transition-colors"
+              href="/pedido"
+            >
+              Mis pedidos
+            </Link>
+          </li>
+        </ul>
+      </nav>
     </header>
+  );
+}
+
+function AccountLink({
+  authenticated,
+  compact = false,
+}: {
+  authenticated: boolean;
+  compact?: boolean;
+}) {
+  return (
+    <Link
+      aria-label={
+        authenticated ? "Ir a mi cuenta" : "Acceder o crear mi cuenta"
+      }
+      className={`border-foreground/15 hover:border-brand hover:bg-brand-soft inline-flex h-11 items-center justify-center gap-2 rounded-full border font-bold transition-colors ${
+        compact ? "px-3 text-xs" : "px-4 text-sm"
+      }`}
+      href={authenticated ? "/cuenta" : "/cuenta/acceder"}
+    >
+      <svg
+        aria-hidden="true"
+        className="size-4 shrink-0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.9"
+        viewBox="0 0 24 24"
+      >
+        <circle cx="12" cy="8" r="3.25" />
+        <path d="M5.75 19c.65-3.1 2.75-4.75 6.25-4.75S17.6 15.9 18.25 19" />
+      </svg>
+      {compact ? "Cuenta" : "Mi cuenta"}
+    </Link>
   );
 }

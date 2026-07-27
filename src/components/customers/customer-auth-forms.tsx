@@ -32,7 +32,7 @@ function Feedback({ state }: { state: CustomerAuthState }) {
   ) : null;
 }
 
-export function CustomerAuthForms() {
+export function CustomerAuthForms({ nextPath }: { nextPath: string }) {
   const [loginState, loginAction, loginPending] = useActionState(
     customerLoginAction,
     initialState,
@@ -54,6 +54,7 @@ export function CustomerAuthForms() {
           checkout.
         </p>
         <form action={loginAction} className="mt-6 grid gap-4">
+          <input name="next" type="hidden" value={nextPath} />
           <label className="text-foreground grid gap-1.5 text-sm font-semibold">
             Correo electrónico
             <input
@@ -105,6 +106,7 @@ export function CustomerAuthForms() {
           Es opcional: siempre podrás comprar como invitado.
         </p>
         <form action={registrationAction} className="mt-6 grid gap-4">
+          <input name="next" type="hidden" value={nextPath} />
           <label className="text-foreground grid gap-1.5 text-sm font-semibold">
             Nombre completo
             <input

@@ -49,3 +49,7 @@ export const customerPasswordUpdateSchema = z
     message: "Las contraseñas no coinciden.",
     path: ["passwordConfirmation"],
   });
+
+export const customerReturnPathSchema = z
+  .enum(["/carrito", "/checkout", "/cuenta"])
+  .catch("/cuenta");

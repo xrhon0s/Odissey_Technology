@@ -4,6 +4,7 @@ import {
   customerLoginSchema,
   customerPasswordUpdateSchema,
   customerRegistrationSchema,
+  customerReturnPathSchema,
 } from "./customer-auth";
 
 describe("customerRegistrationSchema", () => {
@@ -58,5 +59,15 @@ describe("customer authentication inputs", () => {
         passwordConfirmation: "odissey2027",
       }).success,
     ).toBe(false);
+  });
+
+  it("only accepts known return paths", () => {
+    expect(customerReturnPathSchema.parse("/checkout")).toBe("/checkout");
+    expect(customerReturnPathSchema.parse("//malicious.example")).toBe(
+      "/cuenta",
+    );
+    expect(customerReturnPathSchema.parse("https://malicious.example")).toBe(
+      "/cuenta",
+    );
   });
 });

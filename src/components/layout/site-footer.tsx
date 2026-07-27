@@ -62,6 +62,14 @@ export async function SiteFooter() {
                 Consultar pedido
               </Link>
             </li>
+            <li>
+              <Link
+                href="/cuenta"
+                className="text-brand font-semibold transition hover:text-white"
+              >
+                Mi cuenta
+              </Link>
+            </li>
             {whatsappUrl ? (
               <li>
                 <a

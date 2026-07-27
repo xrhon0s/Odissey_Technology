@@ -118,6 +118,19 @@ test("customer account offers optional registration and login", async ({
   ).toBeVisible();
 });
 
+test("customer account entry is visible from the storefront", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const accountLink = page.getByRole("link", {
+    name: "Acceder o crear mi cuenta",
+  });
+  await expect(accountLink).toBeVisible();
+  await accountLink.click();
+  await expect(page).toHaveURL(/\/cuenta\/acceder$/);
+});
+
 test("customer order history stays protected without a session", async ({
   page,
 }) => {

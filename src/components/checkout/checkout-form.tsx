@@ -323,7 +323,7 @@ export function CheckoutForm({
               ¿Quieres conservar tus pedidos?{" "}
               <Link
                 className="text-brand-dark font-semibold underline-offset-4 hover:underline"
-                href="/cuenta/acceder"
+                href="/cuenta/acceder?next=/checkout"
               >
                 Inicia sesión
               </Link>

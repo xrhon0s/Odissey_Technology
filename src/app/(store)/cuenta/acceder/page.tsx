@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { CustomerAuthForms } from "@/components/customers/customer-auth-forms";
 import { getCustomerIdentity } from "@/features/customers/customer-access";
+import { customerReturnPathSchema } from "@/features/customers/customer-auth";
 
 export const metadata: Metadata = {
   title: "Cuenta de cliente",
@@ -10,8 +11,14 @@ export const metadata: Metadata = {
 };
 export const dynamic = "force-dynamic";
 
-export default async function CustomerAccessPage() {
-  if (await getCustomerIdentity()) redirect("/cuenta");
+export default async function CustomerAccessPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; next?: string }>;
+}) {
+  const query = await searchParams;
+  const nextPath = customerReturnPathSchema.parse(query.next);
+  if (await getCustomerIdentity()) redirect(nextPath);
 
   return (
     <main id="main-content" tabIndex={-1} className="bg-background flex-1">
@@ -30,7 +37,16 @@ export default async function CustomerAccessPage() {
           Guarda tus datos y encuentra tus pedidos vinculados en un solo lugar.
           Crear una cuenta nunca será obligatorio para comprar.
         </p>
-        <CustomerAuthForms />
+        {query.error === "confirmation" ? (
+          <p
+            className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"
+            role="alert"
+          >
+            El enlace de confirmación venció o no es válido. Intenta iniciar
+            sesión o solicita un nuevo correo.
+          </p>
+        ) : null}
+        <CustomerAuthForms nextPath={nextPath} />
       </div>
     </main>
   );

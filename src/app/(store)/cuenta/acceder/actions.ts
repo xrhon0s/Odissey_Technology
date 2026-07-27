@@ -6,6 +6,7 @@ import { z } from "zod";
 import {
   customerLoginSchema,
   customerRegistrationSchema,
+  customerReturnPathSchema,
 } from "@/features/customers/customer-auth";
 import {
   ensureCustomerProfile,
@@ -18,10 +19,13 @@ export type CustomerAuthState = {
   success?: string;
 };
 
-function getConfirmationUrl() {
+function getConfirmationUrl(nextPath: string) {
   const appUrl = z.url().safeParse(process.env.NEXT_PUBLIC_APP_URL);
   return appUrl.success
-    ? new URL("/cuenta/confirmar?next=/cuenta", appUrl.data).toString()
+    ? new URL(
+        `/cuenta/confirmar?next=${encodeURIComponent(nextPath)}`,
+        appUrl.data,
+      ).toString()
     : undefined;
 }
 
@@ -33,6 +37,7 @@ export async function customerLoginAction(
     email: formData.get("email"),
     password: formData.get("password"),
   });
+  const nextPath = customerReturnPathSchema.parse(formData.get("next"));
 
   if (!credentials.success) {
     return { error: "Revisa el correo y la contraseña." };
@@ -64,7 +69,7 @@ export async function customerLoginAction(
       ).data ?? null,
   });
 
-  redirect("/cuenta");
+  redirect(nextPath);
 }
 
 export async function customerRegistrationAction(
@@ -78,6 +83,7 @@ export async function customerRegistrationAction(
     passwordConfirmation: formData.get("passwordConfirmation"),
     phone: formData.get("phone"),
   });
+  const nextPath = customerReturnPathSchema.parse(formData.get("next"));
 
   if (!registration.success) {
     return {
@@ -93,7 +99,7 @@ export async function customerRegistrationAction(
   }
 
   const { email, fullName, password, phone } = registration.data;
-  const emailRedirectTo = getConfirmationUrl();
+  const emailRedirectTo = getConfirmationUrl(nextPath);
   const { data, error } = await supabase.auth.signUp({
     email,
     options: {
@@ -124,5 +130,5 @@ export async function customerRegistrationAction(
     phone,
   };
   await ensureCustomerProfile(identity);
-  redirect("/cuenta");
+  redirect(nextPath);
 }
