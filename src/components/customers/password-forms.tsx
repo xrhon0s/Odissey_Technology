@@ -3,7 +3,6 @@
 import { useActionState } from "react";
 
 import {
-  requestPasswordResetAction,
   updateCustomerPasswordAction,
   type PasswordActionState,
 } from "@/app/(store)/cuenta/recuperar/actions";
@@ -28,37 +27,6 @@ function Feedback({ state }: { state: PasswordActionState }) {
       {state.success}
     </p>
   ) : null;
-}
-
-export function PasswordResetRequestForm() {
-  const [state, action, pending] = useActionState(
-    requestPasswordResetAction,
-    initialState,
-  );
-
-  return (
-    <form action={action} className="mt-6 grid gap-4">
-      <label className="text-foreground grid gap-1.5 text-sm font-semibold">
-        Correo electrónico
-        <input
-          autoComplete="email"
-          className={inputClass}
-          maxLength={254}
-          name="email"
-          required
-          type="email"
-        />
-      </label>
-      <Feedback state={state} />
-      <button
-        className="bg-foreground hover:bg-brand-dark h-12 rounded-full px-5 text-sm font-bold text-white transition disabled:bg-slate-400"
-        disabled={pending}
-        type="submit"
-      >
-        {pending ? "Enviando…" : "Enviar enlace"}
-      </button>
-    </form>
-  );
 }
 
 export function PasswordUpdateForm() {

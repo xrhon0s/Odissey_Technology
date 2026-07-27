@@ -116,6 +116,20 @@ test("customer account offers optional registration and login", async ({
   await expect(
     page.getByRole("button", { name: "Crear cuenta" }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Olvidé mi contraseña" }),
+  ).toHaveCount(0);
+});
+
+test("password recovery does not promise automatic email", async ({ page }) => {
+  await page.goto("/cuenta/recuperar");
+
+  await expect(
+    page.getByRole("heading", { name: "Recuperación no disponible" }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Enviar enlace" })).toHaveCount(
+    0,
+  );
 });
 
 test("customer registration keeps data and explains password progress", async ({

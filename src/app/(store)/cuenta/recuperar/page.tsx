@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PasswordResetRequestForm } from "@/components/customers/password-forms";
-
 export const metadata: Metadata = { title: "Recuperar cuenta" };
 
 export default function PasswordRecoveryPage() {
@@ -14,12 +12,13 @@ export default function PasswordRecoveryPage() {
             Acceso
           </p>
           <h1 className="font-display text-foreground mt-2 text-3xl font-bold">
-            Recupera tu cuenta
+            Recuperación no disponible
           </h1>
           <p className="text-muted mt-3 leading-7">
-            Te enviaremos un enlace para definir una contraseña nueva.
+            En esta primera versión no enviaremos correos automáticos para
+            recuperar contraseñas. Puedes seguir comprando como invitado sin
+            necesidad de iniciar sesión.
           </p>
-          <PasswordResetRequestForm />
           <Link
             className="text-brand-dark mt-5 inline-flex text-sm font-bold"
             href="/cuenta/acceder"

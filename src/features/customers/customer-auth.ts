@@ -41,10 +41,6 @@ export const customerProfileSchema = z.object({
     .regex(/^\+?[0-9][0-9\s-]{6,19}$/, "Escribe un celular válido."),
 });
 
-export const customerPasswordResetRequestSchema = z.object({
-  email: z.email("Escribe un correo válido.").max(254),
-});
-
 export const customerPasswordUpdateSchema = z
   .object({
     password: passwordSchema,

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useActionState, useState } from "react";
 
 import {
@@ -148,12 +147,10 @@ export function CustomerAuthForms({ nextPath }: { nextPath: string }) {
           >
             {loginPending ? "Ingresando…" : "Ingresar"}
           </button>
-          <Link
-            className="text-brand-dark text-center text-sm font-semibold underline-offset-4 hover:underline"
-            href="/cuenta/recuperar"
-          >
-            Olvidé mi contraseña
-          </Link>
+          <p className="text-muted text-center text-xs leading-5">
+            La recuperación automática estará disponible cuando definamos el
+            servicio de correo.
+          </p>
         </form>
       </section>
 
@@ -167,130 +164,124 @@ export function CustomerAuthForms({ nextPath }: { nextPath: string }) {
         <p className="text-muted mt-2 text-sm leading-6">
           Es opcional: siempre podrás comprar como invitado.
         </p>
-        {registrationState.success ? (
-          <div className="mt-6">
-            <Feedback state={registrationState} />
+        <form action={registrationAction} className="mt-6 grid gap-4">
+          <input name="next" type="hidden" value={nextPath} />
+          <label className="text-foreground grid gap-1.5 text-sm font-semibold">
+            Nombre completo
+            <input
+              autoComplete="name"
+              className={inputClass}
+              maxLength={120}
+              name="fullName"
+              onChange={(event) =>
+                updateRegistrationField("fullName", event.target.value)
+              }
+              required
+              value={registrationFields.fullName}
+            />
+          </label>
+          <label className="text-foreground grid gap-1.5 text-sm font-semibold">
+            Celular
+            <input
+              autoComplete="tel"
+              className={inputClass}
+              inputMode="tel"
+              maxLength={20}
+              name="phone"
+              onChange={(event) =>
+                updateRegistrationField("phone", event.target.value)
+              }
+              placeholder="3001234567"
+              required
+              value={registrationFields.phone}
+            />
+          </label>
+          <label className="text-foreground grid gap-1.5 text-sm font-semibold">
+            Correo electrónico
+            <input
+              autoComplete="email"
+              className={inputClass}
+              maxLength={254}
+              name="email"
+              onChange={(event) =>
+                updateRegistrationField("email", event.target.value)
+              }
+              required
+              type="email"
+              value={registrationFields.email}
+            />
+          </label>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="text-foreground grid gap-1.5 text-sm font-semibold">
+              Contraseña
+              <input
+                autoComplete="new-password"
+                className={inputClass}
+                maxLength={200}
+                minLength={CUSTOMER_PASSWORD_MIN_LENGTH}
+                name="password"
+                onChange={(event) =>
+                  updateRegistrationField("password", event.target.value)
+                }
+                required
+                type="password"
+                value={registrationFields.password}
+              />
+            </label>
+            <label className="text-foreground grid gap-1.5 text-sm font-semibold">
+              Repetir contraseña
+              <input
+                autoComplete="new-password"
+                className={inputClass}
+                maxLength={200}
+                minLength={CUSTOMER_PASSWORD_MIN_LENGTH}
+                name="passwordConfirmation"
+                onChange={(event) =>
+                  updateRegistrationField(
+                    "passwordConfirmation",
+                    event.target.value,
+                  )
+                }
+                required
+                type="password"
+                value={registrationFields.passwordConfirmation}
+              />
+            </label>
           </div>
-        ) : (
-          <form action={registrationAction} className="mt-6 grid gap-4">
-            <input name="next" type="hidden" value={nextPath} />
-            <label className="text-foreground grid gap-1.5 text-sm font-semibold">
-              Nombre completo
-              <input
-                autoComplete="name"
-                className={inputClass}
-                maxLength={120}
-                name="fullName"
-                onChange={(event) =>
-                  updateRegistrationField("fullName", event.target.value)
-                }
-                required
-                value={registrationFields.fullName}
-              />
-            </label>
-            <label className="text-foreground grid gap-1.5 text-sm font-semibold">
-              Celular
-              <input
-                autoComplete="tel"
-                className={inputClass}
-                inputMode="tel"
-                maxLength={20}
-                name="phone"
-                onChange={(event) =>
-                  updateRegistrationField("phone", event.target.value)
-                }
-                placeholder="3001234567"
-                required
-                value={registrationFields.phone}
-              />
-            </label>
-            <label className="text-foreground grid gap-1.5 text-sm font-semibold">
-              Correo electrónico
-              <input
-                autoComplete="email"
-                className={inputClass}
-                maxLength={254}
-                name="email"
-                onChange={(event) =>
-                  updateRegistrationField("email", event.target.value)
-                }
-                required
-                type="email"
-                value={registrationFields.email}
-              />
-            </label>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <label className="text-foreground grid gap-1.5 text-sm font-semibold">
-                Contraseña
-                <input
-                  autoComplete="new-password"
-                  className={inputClass}
-                  maxLength={200}
-                  minLength={CUSTOMER_PASSWORD_MIN_LENGTH}
-                  name="password"
-                  onChange={(event) =>
-                    updateRegistrationField("password", event.target.value)
-                  }
-                  required
-                  type="password"
-                  value={registrationFields.password}
-                />
-              </label>
-              <label className="text-foreground grid gap-1.5 text-sm font-semibold">
-                Repetir contraseña
-                <input
-                  autoComplete="new-password"
-                  className={inputClass}
-                  maxLength={200}
-                  minLength={CUSTOMER_PASSWORD_MIN_LENGTH}
-                  name="passwordConfirmation"
-                  onChange={(event) =>
-                    updateRegistrationField(
-                      "passwordConfirmation",
-                      event.target.value,
-                    )
-                  }
-                  required
-                  type="password"
-                  value={registrationFields.passwordConfirmation}
-                />
-              </label>
-            </div>
-            <div
-              aria-label="Requisitos de la contraseña"
-              className="border-brand/20 rounded-2xl border bg-white/65 p-4"
+          <div
+            aria-label="Requisitos de la contraseña"
+            className="border-brand/20 rounded-2xl border bg-white/65 p-4"
+          >
+            <p className="text-foreground text-sm font-semibold">
+              Tu contraseña debe tener:
+            </p>
+            <ul
+              aria-live="polite"
+              className="mt-3 grid gap-2 text-xs sm:grid-cols-2"
             >
-              <p className="text-foreground text-sm font-semibold">
-                Tu contraseña debe tener:
-              </p>
-              <ul
-                aria-live="polite"
-                className="mt-3 grid gap-2 text-xs sm:grid-cols-2"
-              >
-                <PasswordRequirement complete={passwordChecks.hasMinimumLength}>
-                  Mínimo {CUSTOMER_PASSWORD_MIN_LENGTH} caracteres
-                </PasswordRequirement>
-                <PasswordRequirement complete={passwordChecks.hasLetter}>
-                  Al menos una letra
-                </PasswordRequirement>
-                <PasswordRequirement complete={passwordChecks.hasNumber}>
-                  Al menos un número
-                </PasswordRequirement>
-                <PasswordRequirement complete={passwordChecks.passwordsMatch}>
-                  Ambas contraseñas coinciden
-                </PasswordRequirement>
-              </ul>
-            </div>
-            <Feedback state={registrationState} />
-            <button
-              className="bg-brand text-foreground hover:bg-brand-dark h-12 rounded-full px-5 text-sm font-bold transition hover:text-white disabled:cursor-wait disabled:bg-slate-400"
-              disabled={registrationPending || !passwordIsValid}
-              type="submit"
-            >
-              {registrationPending ? "Creando cuenta…" : "Crear cuenta"}
-            </button>
-          </form>
-        )}
+              <PasswordRequirement complete={passwordChecks.hasMinimumLength}>
+                Mínimo {CUSTOMER_PASSWORD_MIN_LENGTH} caracteres
+              </PasswordRequirement>
+              <PasswordRequirement complete={passwordChecks.hasLetter}>
+                Al menos una letra
+              </PasswordRequirement>
+              <PasswordRequirement complete={passwordChecks.hasNumber}>
+                Al menos un número
+              </PasswordRequirement>
+              <PasswordRequirement complete={passwordChecks.passwordsMatch}>
+                Ambas contraseñas coinciden
+              </PasswordRequirement>
+            </ul>
+          </div>
+          <Feedback state={registrationState} />
+          <button
+            className="bg-brand text-foreground hover:bg-brand-dark h-12 rounded-full px-5 text-sm font-bold transition hover:text-white disabled:cursor-wait disabled:bg-slate-400"
+            disabled={registrationPending || !passwordIsValid}
+            type="submit"
+          >
+            {registrationPending ? "Creando cuenta…" : "Crear cuenta"}
+          </button>
+        </form>
       </section>
     </div>
   );

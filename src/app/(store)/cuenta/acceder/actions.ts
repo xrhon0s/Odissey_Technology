@@ -1,7 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { z } from "zod";
 
 import {
   customerLoginSchema,
@@ -18,16 +17,6 @@ export type CustomerAuthState = {
   error?: string;
   success?: string;
 };
-
-function getConfirmationUrl(nextPath: string) {
-  const appUrl = z.url().safeParse(process.env.NEXT_PUBLIC_APP_URL);
-  return appUrl.success
-    ? new URL(
-        `/cuenta/confirmar?next=${encodeURIComponent(nextPath)}`,
-        appUrl.data,
-      ).toString()
-    : undefined;
-}
 
 export async function customerLoginAction(
   _previousState: CustomerAuthState,
@@ -99,11 +88,9 @@ export async function customerRegistrationAction(
   }
 
   const { email, fullName, password, phone } = registration.data;
-  const emailRedirectTo = getConfirmationUrl(nextPath);
   const { data, error } = await supabase.auth.signUp({
     email,
     options: {
-      ...(emailRedirectTo ? { emailRedirectTo } : {}),
       data: { full_name: fullName, phone },
     },
     password,
@@ -118,8 +105,8 @@ export async function customerRegistrationAction(
 
   if (!data.session) {
     return {
-      success:
-        "Revisa tu correo y confirma la cuenta. Después podrás iniciar sesión.",
+      error:
+        "El registro inmediato todavía no está habilitado. Por ahora puedes comprar como invitado.",
     };
   }
 
