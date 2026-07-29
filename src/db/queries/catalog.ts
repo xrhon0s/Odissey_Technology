@@ -44,13 +44,58 @@ export type CatalogPage = {
 export async function listActiveCategories() {
   return getDb()
     .select({
+      description: categories.description,
       id: categories.id,
       name: categories.name,
       slug: categories.slug,
+      updatedAt: categories.updatedAt,
     })
     .from(categories)
     .where(eq(categories.isActive, true))
     .orderBy(asc(categories.sortOrder), asc(categories.name));
+}
+
+export async function getActiveCategoryBySlug(slug: string) {
+  const [category] = await getDb()
+    .select({
+      description: categories.description,
+      id: categories.id,
+      name: categories.name,
+      slug: categories.slug,
+      updatedAt: categories.updatedAt,
+    })
+    .from(categories)
+    .where(and(eq(categories.slug, slug), eq(categories.isActive, true)))
+    .limit(1);
+
+  return category ?? null;
+}
+
+export async function listActiveProductSeoEntries() {
+  return getDb()
+    .select({
+      imageUrl: sql<string | null>`(
+        select image.url
+        from product_images image
+        where image.product_id = ${products.id}
+        order by image.sort_order asc, image.created_at asc
+        limit 1
+      )`,
+      slug: products.slug,
+      updatedAt: products.updatedAt,
+    })
+    .from(products)
+    .innerJoin(categories, eq(products.categoryId, categories.id))
+    .innerJoin(productVariants, eq(productVariants.productId, products.id))
+    .where(
+      and(
+        eq(products.status, "active"),
+        eq(categories.isActive, true),
+        eq(productVariants.isActive, true),
+      ),
+    )
+    .groupBy(products.id)
+    .orderBy(asc(products.slug));
 }
 
 function getCatalogConditions(filters: CatalogFilters): SQL[] {

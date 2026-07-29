@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
 import { ProductPurchasePanel } from "@/components/products/product-purchase-panel";
 import { ProductGallery } from "@/components/products/product-gallery";
 import { productSlugSchema } from "@/features/catalog/catalog-filters";
 import { catalogService } from "@/features/catalog/catalog-service";
+import { JsonLd } from "@/features/seo/json-ld";
+import { canonicalPath } from "@/features/seo/metadata";
+import { buildProductStructuredData } from "@/features/seo/structured-data";
 
 type ProductPageProps = { params: Promise<{ slug: string }> };
+
+const getProduct = cache((slug: string) =>
+  catalogService.getProductBySlug(slug),
+);
 
 export async function generateMetadata({
   params,
@@ -15,19 +23,29 @@ export async function generateMetadata({
   const parsedSlug = productSlugSchema.safeParse((await params).slug);
   if (!parsedSlug.success) return { title: "Producto" };
 
-  const product = await catalogService.getProductBySlug(parsedSlug.data);
+  const product = await getProduct(parsedSlug.data);
   if (!product) return { title: "Producto" };
 
+  const description = product.description.slice(0, 160);
+  const image = product.images[0];
+
   return {
+    alternates: canonicalPath(`/producto/${product.slug}`),
     title: product.name,
-    description: product.description.slice(0, 160),
-    openGraph: product.images[0]
-      ? {
-          images: [
-            { alt: product.images[0].altText, url: product.images[0].url },
-          ],
-        }
-      : undefined,
+    description,
+    openGraph: {
+      description,
+      images: image ? [{ alt: image.altText, url: image.url }] : undefined,
+      title: product.name,
+      type: "website",
+      url: `/producto/${product.slug}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      description,
+      images: image ? [{ alt: image.altText, url: image.url }] : undefined,
+      title: product.name,
+    },
   };
 }
 
@@ -35,13 +53,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const parsedSlug = productSlugSchema.safeParse((await params).slug);
   if (!parsedSlug.success) notFound();
 
-  const product = await catalogService.getProductBySlug(parsedSlug.data);
+  const product = await getProduct(parsedSlug.data);
   if (!product) notFound();
 
   const mainImage = product.images[0];
 
   return (
     <main id="main-content" tabIndex={-1} className="bg-background flex-1">
+      <JsonLd data={buildProductStructuredData(product)} />
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10">
         <nav
           aria-label="Migas de pan"
@@ -51,7 +70,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
             Catálogo
           </Link>
           <span aria-hidden="true">/</span>
-          <span>{product.categoryName}</span>
+          <Link
+            href={`/categoria/${product.categorySlug}`}
+            className="hover:text-brand transition"
+          >
+            {product.categoryName}
+          </Link>
         </nav>
 
         <div className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16">

@@ -6,15 +6,51 @@ import { CatalogPagination } from "@/components/products/catalog-pagination";
 import { ProductCard } from "@/components/products/product-card";
 import { catalogFiltersSchema } from "@/features/catalog/catalog-filters";
 import { catalogService } from "@/features/catalog/catalog-service";
+import { canonicalPath } from "@/features/seo/metadata";
 
-export const metadata: Metadata = {
-  title: "Catálogo",
-  description: "Explora accesorios tecnológicos disponibles en Colombia.",
-};
+const catalogDescription =
+  "Explora audífonos, cargadores, cables y accesorios tecnológicos disponibles en Colombia.";
 
 type CatalogPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
+
+export async function generateMetadata({
+  searchParams,
+}: CatalogPageProps): Promise<Metadata> {
+  const parsed = catalogFiltersSchema.safeParse(await searchParams);
+  if (!parsed.success) {
+    return {
+      alternates: canonicalPath("/catalogo"),
+      description: catalogDescription,
+      robots: { follow: true, index: false },
+      title: "Catálogo",
+    };
+  }
+
+  const filters = parsed.data;
+  const pageSuffix = filters.page > 1 ? `?page=${filters.page}` : "";
+  const canonical = filters.category
+    ? `/categoria/${filters.category}${pageSuffix}`
+    : `/catalogo${pageSuffix}`;
+  const isFiltered =
+    Boolean(filters.search) ||
+    filters.sort !== "featured" ||
+    filters.pageSize !== 12;
+
+  return {
+    alternates: canonicalPath(canonical),
+    description: catalogDescription,
+    openGraph: {
+      description: catalogDescription,
+      title: "Catálogo de accesorios tecnológicos",
+      type: "website",
+      url: canonical,
+    },
+    robots: isFiltered ? { follow: true, index: false } : undefined,
+    title: filters.page > 1 ? `Catálogo — Página ${filters.page}` : "Catálogo",
+  };
+}
 
 export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const parsedFilters = catalogFiltersSchema.safeParse(await searchParams);

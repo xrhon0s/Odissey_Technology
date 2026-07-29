@@ -3,13 +3,30 @@ import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/manrope";
 import "./globals.css";
+import { getSiteUrl } from "@/features/seo/site-url";
 
 export const metadata: Metadata = {
+  applicationName: "Odissey Technology",
+  metadataBase: getSiteUrl(),
   title: {
     default: "Odissey Technology",
     template: "%s | Odissey Technology",
   },
-  description: "Accesorios tecnológicos para Colombia.",
+  description:
+    "Audífonos, cargadores, cables y accesorios tecnológicos con envíos a toda Colombia.",
+  openGraph: {
+    description: "Tecnología útil, pagos flexibles y envíos a toda Colombia.",
+    locale: "es_CO",
+    siteName: "Odissey Technology",
+    title: "Odissey Technology",
+    type: "website",
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    description: "Tecnología útil, pagos flexibles y envíos a toda Colombia.",
+    title: "Odissey Technology",
+  },
 };
 
 export const viewport: Viewport = {

@@ -85,6 +85,9 @@ export async function createCategoryAction(
   try {
     await createCategory(admin.id, input.data);
     revalidatePath("/admin/productos");
+    revalidatePath("/catalogo");
+    revalidatePath(`/categoria/${input.data.slug}`);
+    revalidatePath("/sitemap.xml");
     return { success: "Categoría creada correctamente." };
   } catch (error) {
     return { error: actionError(error) };
@@ -112,6 +115,8 @@ export async function updateCategoryAction(
     revalidatePath("/admin");
     revalidatePath("/admin/productos");
     revalidatePath("/catalogo");
+    revalidatePath(`/categoria/${input.data.slug}`);
+    revalidatePath("/sitemap.xml");
     return { success: "Categoría actualizada correctamente." };
   } catch (error) {
     return { error: actionError(error) };
@@ -144,6 +149,7 @@ export async function createProductAction(
   revalidatePath("/admin");
   revalidatePath("/admin/productos");
   revalidatePath("/catalogo");
+  revalidatePath("/sitemap.xml");
   redirect(`/admin/productos/${productId}`);
 }
 
@@ -165,6 +171,7 @@ export async function updateProductAction(
     revalidatePath(`/admin/productos/${productId.data}`);
     revalidatePath("/catalogo");
     revalidatePath(`/producto/${input.data.slug}`);
+    revalidatePath("/sitemap.xml");
     return { success: "Producto actualizado correctamente." };
   } catch (error) {
     return { error: actionError(error) };
@@ -193,6 +200,7 @@ export async function createVariantAction(
     revalidatePath("/admin/productos");
     revalidatePath(`/admin/productos/${productId.data}`);
     revalidatePath("/catalogo");
+    revalidatePath("/sitemap.xml");
     return { success: "Variante creada con su inventario inicial." };
   } catch (error) {
     return { error: actionError(error) };
@@ -232,6 +240,7 @@ export async function updateVariantAction(
     revalidatePath("/admin/productos");
     revalidatePath(`/admin/productos/${productId.data}`);
     revalidatePath("/catalogo");
+    revalidatePath("/sitemap.xml");
     return { success: "Variante actualizada correctamente." };
   } catch (error) {
     return { error: actionError(error) };
@@ -271,6 +280,7 @@ export async function addProductImageAction(
     revalidatePath("/admin/productos");
     revalidatePath(`/admin/productos/${productId.data}`);
     revalidatePath("/catalogo");
+    revalidatePath("/sitemap.xml");
     return { success: "Imagen agregada al producto." };
   } catch (error) {
     if (uploaded) {
@@ -299,6 +309,7 @@ export async function updateProductImageAction(
     revalidatePath("/admin/productos");
     revalidatePath(`/admin/productos/${productId.data}`);
     revalidatePath("/catalogo");
+    revalidatePath("/sitemap.xml");
     return { success: "Imagen actualizada correctamente." };
   } catch (error) {
     return { error: actionError(error) };
@@ -321,6 +332,7 @@ export async function removeProductImageAction(
     revalidatePath("/admin/productos");
     revalidatePath(`/admin/productos/${productId.data}`);
     revalidatePath("/catalogo");
+    revalidatePath("/sitemap.xml");
   } catch (error) {
     return { error: actionError(error) };
   }

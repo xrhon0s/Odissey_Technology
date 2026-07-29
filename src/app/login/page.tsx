@@ -3,8 +3,12 @@ import type { Metadata } from "next";
 import { LoginForm } from "@/components/admin/login-form";
 import { BrandMark } from "@/components/ui/brand-mark";
 import { getSupabasePublicConfig } from "@/config/supabase";
+import { privatePageRobots } from "@/features/seo/metadata";
 
-export const metadata: Metadata = { title: "Acceso administrativo" };
+export const metadata: Metadata = {
+  robots: privatePageRobots,
+  title: "Acceso administrativo",
+};
 export const dynamic = "force-dynamic";
 
 export default function LoginPage() {

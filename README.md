@@ -129,6 +129,26 @@ registro cree la sesión inmediatamente. La recuperación automática de
 contraseña queda pendiente hasta definir un servicio de correo; mientras tanto,
 la compra como invitado continúa disponible.
 
+## SEO y publicación
+
+La tienda genera metadatos, URLs canónicas, `robots.txt`, `sitemap.xml`,
+manifest, imágenes sociales y datos estructurados de organización, categorías,
+productos, ofertas y migas de pan. El sitemap incluye únicamente categorías y
+productos activos, junto con sus fechas e imágenes, y se invalida cuando cambia
+el catálogo.
+
+Antes de publicar es obligatorio configurar `NEXT_PUBLIC_APP_URL` con el origen
+HTTPS definitivo, sin rutas adicionales (por ejemplo,
+`https://tienda.ejemplo.com`). Mientras no exista una URL pública HTTPS,
+`robots.txt` bloquea toda indexación para evitar que un ambiente local o de
+pruebas aparezca en buscadores. Las páginas privadas —administración, cuenta,
+carrito, checkout y consulta de pedidos— también declaran `noindex`.
+
+Después del despliegue se debe registrar el dominio en Google Search Console,
+enviar `/sitemap.xml` y validar varias fichas con Rich Results Test. Google
+Merchant Center y las analíticas se configuran al final, cuando el dominio sea
+estable.
+
 ## Acceso administrativo
 
 El panel usa Supabase Auth con sesión por cookies y vuelve a verificar en PostgreSQL que el usuario pertenezca a `admin_users` y esté activo. Sin configuración, `/admin` permanece cerrado y `/login` explica qué falta.

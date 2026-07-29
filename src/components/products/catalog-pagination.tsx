@@ -2,21 +2,29 @@ import Link from "next/link";
 
 import type { CatalogFilters } from "@/features/catalog/catalog-filters";
 
-function pageHref(filters: CatalogFilters, page: number): string {
+function pageHref(
+  basePath: string,
+  filters: CatalogFilters,
+  page: number,
+): string {
   const parameters = new URLSearchParams();
   if (filters.search) parameters.set("search", filters.search);
-  if (filters.category) parameters.set("category", filters.category);
+  if (basePath === "/catalogo" && filters.category)
+    parameters.set("category", filters.category);
   if (filters.sort !== "featured") parameters.set("sort", filters.sort);
   if (filters.pageSize !== 12)
     parameters.set("pageSize", String(filters.pageSize));
-  parameters.set("page", String(page));
-  return `/catalogo?${parameters.toString()}`;
+  if (page > 1) parameters.set("page", String(page));
+  const query = parameters.toString();
+  return query ? `${basePath}?${query}` : basePath;
 }
 
 export function CatalogPagination({
+  basePath = "/catalogo",
   filters,
   totalPages,
 }: {
+  basePath?: string;
   filters: CatalogFilters;
   totalPages: number;
 }) {
@@ -29,7 +37,7 @@ export function CatalogPagination({
     >
       {filters.page > 1 ? (
         <Link
-          href={pageHref(filters, filters.page - 1)}
+          href={pageHref(basePath, filters, filters.page - 1)}
           className="border-line bg-surface hover:border-brand rounded-full border px-4 py-2 text-sm font-semibold transition"
         >
           Anterior
@@ -40,7 +48,7 @@ export function CatalogPagination({
       </span>
       {filters.page < totalPages ? (
         <Link
-          href={pageHref(filters, filters.page + 1)}
+          href={pageHref(basePath, filters, filters.page + 1)}
           className="border-line bg-surface hover:border-brand rounded-full border px-4 py-2 text-sm font-semibold transition"
         >
           Siguiente

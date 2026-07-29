@@ -4,8 +4,10 @@ import { createCatalogService } from "./catalog-service";
 
 function createRepository() {
   return {
+    findCategoryBySlug: vi.fn().mockResolvedValue(null),
     findProductBySlug: vi.fn().mockResolvedValue(null),
     listCategories: vi.fn().mockResolvedValue([]),
+    listProductSeoEntries: vi.fn().mockResolvedValue([]),
     listProducts: vi.fn().mockResolvedValue({
       items: [],
       page: 1,
@@ -57,5 +59,23 @@ describe("catalogService", () => {
     expect(repository.findProductBySlug).toHaveBeenCalledWith(
       "cable-lightning",
     );
+  });
+
+  it("normalizes a category slug before querying", async () => {
+    const repository = createRepository();
+    const service = createCatalogService(repository);
+
+    await service.getCategoryBySlug(" Cables-USB ");
+
+    expect(repository.findCategoryBySlug).toHaveBeenCalledWith("cables-usb");
+  });
+
+  it("lists active products for SEO through the repository", async () => {
+    const repository = createRepository();
+    const service = createCatalogService(repository);
+
+    await service.listProductSeoEntries();
+
+    expect(repository.listProductSeoEntries).toHaveBeenCalledOnce();
   });
 });

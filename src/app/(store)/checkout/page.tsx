@@ -8,10 +8,12 @@ import {
   getCustomerIdentity,
 } from "@/features/customers/customer-access";
 import { getAvailableManualPaymentMethods } from "@/features/payments/payment-methods";
+import { privatePageRobots } from "@/features/seo/metadata";
 
 export const metadata: Metadata = {
   title: "Checkout",
   description: "Valida tus datos, productos y método de entrega.",
+  robots: privatePageRobots,
 };
 
 export const dynamic = "force-dynamic";

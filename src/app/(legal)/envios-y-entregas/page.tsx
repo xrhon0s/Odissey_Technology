@@ -4,7 +4,10 @@ import { LegalDocument } from "@/components/legal/legal-document";
 import { getPublicStoreSettings } from "@/db/queries/store-settings";
 import { LEGAL_LAST_UPDATED } from "@/features/legal/legal-documents";
 
-export const metadata: Metadata = { title: "Envíos y entregas" };
+export const metadata: Metadata = {
+  alternates: { canonical: "/envios-y-entregas" },
+  title: "Envíos y entregas",
+};
 export const dynamic = "force-dynamic";
 
 export default async function ShippingPage() {

@@ -4,9 +4,11 @@ import { Suspense } from "react";
 
 import { OrderLookupForm } from "@/components/orders/order-lookup-form";
 import { getCustomerIdentity } from "@/features/customers/customer-access";
+import { privatePageRobots } from "@/features/seo/metadata";
 
 export const metadata: Metadata = {
   description: "Consulta el estado de un pedido de Odissey Technology.",
+  robots: privatePageRobots,
   title: "Consulta tu pedido",
 };
 

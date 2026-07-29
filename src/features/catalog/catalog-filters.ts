@@ -28,11 +28,13 @@ export const catalogFiltersSchema = z
   })
   .strict();
 
-export const productSlugSchema = z
+const slugSchema = z
   .string()
   .trim()
   .toLowerCase()
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
-  .max(200);
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+
+export const categorySlugSchema = slugSchema.max(140);
+export const productSlugSchema = slugSchema.max(200);
 
 export type CatalogFilters = z.infer<typeof catalogFiltersSchema>;

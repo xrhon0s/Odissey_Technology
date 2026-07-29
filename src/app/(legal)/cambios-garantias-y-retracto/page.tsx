@@ -4,7 +4,10 @@ import { LegalDocument } from "@/components/legal/legal-document";
 import { getPublicStoreSettings } from "@/db/queries/store-settings";
 import { LEGAL_LAST_UPDATED } from "@/features/legal/legal-documents";
 
-export const metadata: Metadata = { title: "Cambios, garantías y retracto" };
+export const metadata: Metadata = {
+  alternates: { canonical: "/cambios-garantias-y-retracto" },
+  title: "Cambios, garantías y retracto",
+};
 export const dynamic = "force-dynamic";
 
 export default async function ReturnsPage() {

@@ -12,7 +12,8 @@ export function BrandMark({ inverse = false }: { inverse?: boolean }) {
         alt="Odissey Technology"
         width={inverse ? 581 : 2157}
         height={inverse ? 108 : 389}
-        priority={!inverse}
+        fetchPriority={inverse ? "auto" : "high"}
+        loading="eager"
         sizes="(min-width: 640px) 210px, 128px"
         className="h-auto w-[128px] sm:w-[210px]"
       />

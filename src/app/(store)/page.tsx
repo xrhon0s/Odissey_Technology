@@ -7,6 +7,7 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { catalogService } from "@/features/catalog/catalog-service";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/" },
   title: "Accesorios tecnológicos en Colombia",
   description:
     "Audífonos, cargadores, cables y accesorios tecnológicos con envíos en Colombia.",
@@ -157,7 +158,7 @@ export default async function Home() {
             {categories.map((category, index) => (
               <Link
                 key={category.id}
-                href={`/catalogo?category=${category.slug}`}
+                href={`/categoria/${category.slug}`}
                 className={`group relative min-h-48 overflow-hidden rounded-[1.75rem] p-6 transition hover:-translate-y-1 ${categoryStyles[index % categoryStyles.length]}`}
               >
                 <span className="text-xs font-bold tracking-[0.16em] opacity-65">

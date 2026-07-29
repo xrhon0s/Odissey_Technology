@@ -7,7 +7,10 @@ import {
   TERMS_VERSION,
 } from "@/features/legal/legal-documents";
 
-export const metadata: Metadata = { title: "Términos y condiciones" };
+export const metadata: Metadata = {
+  alternates: { canonical: "/terminos-y-condiciones" },
+  title: "Términos y condiciones",
+};
 export const dynamic = "force-dynamic";
 
 export default async function TermsPage() {

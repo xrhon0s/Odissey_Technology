@@ -203,6 +203,89 @@ test("customer order history stays protected without a session", async ({
   ).toBeVisible();
 });
 
+test("public pages expose canonical and structured SEO data", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const homeCanonical = await page
+    .locator('link[rel="canonical"]')
+    .getAttribute("href");
+  expect(new URL(homeCanonical ?? "").pathname).toBe("/");
+  const storeStructuredData = await page
+    .locator('script[type="application/ld+json"]')
+    .textContent();
+  expect(storeStructuredData).toContain('"@type":"Organization"');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    "content",
+    /opengraph-image/,
+  );
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+    "content",
+    "summary_large_image",
+  );
+
+  await page.goto("/catalogo?search=audifonos");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    "content",
+    /noindex/,
+  );
+  const catalogCanonical = await page
+    .locator('link[rel="canonical"]')
+    .getAttribute("href");
+  expect(new URL(catalogCanonical ?? "").pathname).toBe("/catalogo");
+
+  await page.goto("/carrito");
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    "content",
+    /noindex/,
+  );
+});
+
+test("category and product pages are indexable commerce documents", async ({
+  page,
+}) => {
+  await page.goto("/categoria/audifonos");
+  await expect(page).toHaveURL(/\/categoria\/audifonos$/);
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Audífonos" }),
+  ).toBeVisible();
+
+  await page.goto("/producto/audifonos-bluetooth-nova");
+  await expect(page).toHaveURL(/\/producto\/audifonos-bluetooth-nova$/);
+
+  const structuredData = await page
+    .locator('script[type="application/ld+json"]')
+    .allTextContents();
+  expect(structuredData.join(" ")).toContain('"@type":"Product"');
+  expect(structuredData.join(" ")).toContain('"priceCurrency":"COP"');
+  expect(structuredData.join(" ")).toContain('"@type":"BreadcrumbList"');
+});
+
+test("SEO discovery endpoints are available", async ({ request }) => {
+  const robots = await request.get("/robots.txt");
+  expect(robots.ok()).toBe(true);
+  expect(await robots.text()).toContain("User-Agent:");
+
+  const sitemap = await request.get("/sitemap.xml");
+  expect(sitemap.ok()).toBe(true);
+  expect(sitemap.headers()["content-type"]).toContain("application/xml");
+  expect(await sitemap.text()).toContain("/producto/audifonos-bluetooth-nova");
+
+  const manifest = await request.get("/manifest.webmanifest");
+  expect(manifest.ok()).toBe(true);
+  expect(await manifest.json()).toMatchObject({
+    lang: "es-CO",
+    name: "Odissey Technology",
+  });
+
+  for (const imagePath of ["/opengraph-image", "/twitter-image"]) {
+    const image = await request.get(imagePath);
+    expect(image.ok()).toBe(true);
+    expect(image.headers()["content-type"]).toContain("image/png");
+  }
+});
+
 test("security headers and bounded JSON are active", async ({ request }) => {
   const pageResponse = await request.get("/");
   expect(pageResponse.headers()["x-content-type-options"]).toBe("nosniff");

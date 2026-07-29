@@ -1,11 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { logoutAction } from "@/app/login/actions";
 import { AdminNavigation } from "@/components/admin/admin-navigation";
 import { BrandMark } from "@/components/ui/brand-mark";
 import { requireAdmin } from "@/features/admin/admin-access";
+import { privatePageRobots } from "@/features/seo/metadata";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = { robots: privatePageRobots };
 
 export default async function AdminLayout({
   children,

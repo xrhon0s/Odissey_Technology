@@ -7,7 +7,10 @@ import {
   PRIVACY_POLICY_VERSION,
 } from "@/features/legal/legal-documents";
 
-export const metadata: Metadata = { title: "Política de privacidad" };
+export const metadata: Metadata = {
+  alternates: { canonical: "/politica-de-privacidad" },
+  title: "Política de privacidad",
+};
 export const dynamic = "force-dynamic";
 
 export default async function PrivacyPage() {

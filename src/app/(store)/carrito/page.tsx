@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 
 import { CartView } from "@/components/cart/cart-view";
+import { privatePageRobots } from "@/features/seo/metadata";
 
 export const metadata: Metadata = {
   title: "Carrito",
   description: "Revisa los productos seleccionados antes del checkout.",
+  robots: privatePageRobots,
 };
 
 export default function CartPage() {
