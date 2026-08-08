@@ -13,6 +13,24 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/odissey
+      MIGRATION_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/odissey
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: odissey
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout repository
@@ -26,7 +44,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies
@@ -43,6 +61,22 @@ jobs:
 
       - name: Run unit tests
         run: pnpm test
+
+      - name: Apply database migrations
+        run: pnpm exec tsx src/db/migrate.ts
+
+      - name: Seed browser test catalog
+        run: pnpm exec tsx src/db/seed.ts
+        env:
+          SEED_DEMO_DATA: "true"
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run browser tests
+        run: pnpm test:e2e
+        env:
+          RATE_LIMIT_SECRET: odissey-ci-rate-limit-secret-2026
 
       - name: Build
         run: pnpm build
