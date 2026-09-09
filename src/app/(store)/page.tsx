@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
+import { EarbudsScrollStory } from "@/components/home/earbuds-scroll-story";
 import { ProductCard } from "@/components/products/product-card";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { catalogService } from "@/features/catalog/catalog-service";
@@ -134,6 +135,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <EarbudsScrollStory />
 
       {categories.length > 0 ? (
         <section
